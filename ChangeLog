@@ -1,8 +1,31 @@
-Plan for the next version: make it easy for the user to add support for new
-filetypes (including documentation etc.). Also add user preferences (including
-recent file list and serialization options) and render tabs correctly
-in text/coment nodes. Add more keyboard bindings based on user input.
-And of course a lot of bug fixes.
+
+version 0.3.2
+=============
+ - for attributes for which a choicelist is available, an arrow is
+   drawn so that you can easily see which attributes have choicelists.
+ - the text view is now editable:
+    - each time you switch back to the tree view, the dom tree is rebuild,
+      as is the tree view itself.
+    - the text editor doesn't (yet) provide any advanced functionality,
+      such as automatic indenting or element name popups.
+    - non-well-formed files can now also be opened, these will be displayed
+      in text view by default, and you can't switch to tree view until
+      the xml is well-formed. When opening a file this way, the character
+      encoding isn't yet correctly determined, the java default is used.
+    - when saving a file while in text mode, Pollo will use the encoding
+      defined in the "<?xml" declaraction.
+ - The cocoon special mode is not available anymore, it will return in
+   a later release when there will be a plugin framework.
+ - The menubar now contains commands that were previously only available
+   with the context menu.
+ - tuned the sizes of the panels in the splitpanes
+ - in the dialog for choosing the type of view, double click on the list
+   is now supported.
+ - Some buttons, like the ones on the XPath query panel, cannot get
+   focus anymore, leaving the focus wherever it was before you pressed
+   the button.
+ - Added a bar displaying the XPath path to the currently selected node
+   (also works when selecting attributes).
 
 version 0.3.1
 =============
