@@ -180,18 +180,32 @@ public class Pollo implements XmlModelListener
 
     public void exit(Frame parent)
     {
+        if (!closeAllFiles(parent, null))
+            return;
+
+        storeConfiguration();
+        System.exit(0);
+    }
+
+    /**
+     * Closes all open files.
+     *
+     * @param exception closes all files except this one. This can be null.
+     * @return true if all files were closed
+     */
+    public boolean closeAllFiles(Frame parent, XmlModel exception)
+    {
         // note: since the openFiles list is changed in the loop,
         // it is not possible to use an iterator.
-        do
+        int i = 0;
+        while (i < openFiles.size())
         {
-            XmlModel xmlModel;
-            try
+            XmlModel xmlModel = (XmlModel)openFiles.get(i);
+
+            if (exception == xmlModel)
             {
-                xmlModel = (XmlModel)openFiles.get(0);
-            }
-            catch (IndexOutOfBoundsException e)
-            {
-                break;
+                i++;
+                continue;
             }
 
             boolean ok = false;
@@ -208,13 +222,11 @@ public class Pollo implements XmlModelListener
             if (!ok)
             {
                 // user selected cancel so don't quit
-                return;
+                return false;
             }
         }
-        while (true);
 
-        storeConfiguration();
-        System.exit(0);
+        return openFiles.size() == 0;
     }
 
     protected void storeConfiguration()
