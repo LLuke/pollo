@@ -6,11 +6,9 @@ FEATURES
    I get good effects putting element and attribute names to a bold,
    non-italic font.
 BUG FIXES
- - pressing space in the text editor used for editing text nodes,
-   comment nodes, ... caused the ToggleExpandCollapseAction to
-   be executed. Apparently the space key isn't consumed by the
-   JTextArea? Fixed by checking that the XmlEditor must have focus.
-   Anyone who knows more about this behaviour, please let me know.
+ - changed shortcut for toggle expand/collapse to control space
+   instead of just space, since otherwise pressing space in the
+   editor for text nodes also invoked this action.
  - when changing text view to tree view in the dropdown, and the switch
    to tree view failed, then tree view stayed incorrectly selected
    in the dropdown
