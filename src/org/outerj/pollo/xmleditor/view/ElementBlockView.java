@@ -104,9 +104,11 @@ public class ElementBlockView extends ChildrenBlockView
         int iconH = startH + BORDER_WIDTH + COLLAPSE_SIGN_SIZE + COLLAPSESIGN_ICON_SPACING;
         elementSpec.icon.paintIcon(xmlEditor, gr, iconH, iconV);
 
-        int baseline = startV + max(new int[] {xmlEditor.getElementNameFontMetrics().getAscent(),
+        int textHeight = max(new int[] {xmlEditor.getElementNameFontMetrics().getAscent(),
                 xmlEditor.getAttributeNameFontMetrics().getAscent(),
-                xmlEditor.getAttributeValueFontMetrics().getAscent()}) + 2;
+                xmlEditor.getAttributeValueFontMetrics().getAscent()});
+
+        int baseline = startV + (titleHeight / 2) + (textHeight / 2);
 
         // draw the element name
         gr.setFont(xmlEditor.getElementNameFont());
