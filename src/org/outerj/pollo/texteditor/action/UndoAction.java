@@ -1,6 +1,7 @@
 package org.outerj.pollo.texteditor.action;
 
 import org.outerj.pollo.texteditor.XmlTextDocument;
+import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
@@ -11,7 +12,7 @@ public class UndoAction extends AbstractAction
 
 	public UndoAction(XmlTextDocument xmlTextDocument)
 	{
-		super("Undo");
+		super("Undo", EmptyIcon.getInstance());
 		this.xmlTextDocument = xmlTextDocument;
 	}
 

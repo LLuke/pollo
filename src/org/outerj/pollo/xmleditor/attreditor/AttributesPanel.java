@@ -1,6 +1,9 @@
 package org.outerj.pollo.xmleditor.attreditor;
 
 import org.outerj.pollo.DomConnected;
+import org.outerj.pollo.gui.SomeLinesBorder;
+import org.outerj.pollo.gui.FocusHighlightComponent;
+import org.outerj.pollo.plaf.PolloTheme;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
@@ -46,6 +49,8 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 		// construct the interface components
 		attributesTableModel = new AttributesTableModel(schema, xmlModel);
 		attributesTable = new AttributesTable(attributesTableModel, schema);
+		attributesTable.setBorder(BorderFactory.createEmptyBorder());
+		attributesTable.addFocusListener(new FocusHighlightComponent(attributesTable.getTableHeader()));
 
 		attributesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -56,7 +61,7 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 		column.setPreferredWidth(300);
 
 		JScrollPane scrollPane = new JScrollPane(attributesTable);
-		attributesTable.addFocusListener(new FocusBorder(scrollPane));
+		scrollPane.setBorder(new SomeLinesBorder(false, false, false, true));
 
 		setLayout(new BorderLayout());
 		add(scrollPane, BorderLayout.CENTER);

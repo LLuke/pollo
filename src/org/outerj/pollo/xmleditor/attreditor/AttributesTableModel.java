@@ -105,7 +105,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 	{
 		TempAttrEditInfo taei = (TempAttrEditInfo)attributes.get(row);
 
-		if (taei.value == null && value == null || value.equals(""))
+		if (taei.value == null && (value == null || value.equals("")))
 			return;
 
 		if (value == null)

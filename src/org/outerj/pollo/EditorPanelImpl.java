@@ -5,10 +5,7 @@ import org.outerj.pollo.action.SaveAction;
 import org.outerj.pollo.action.SaveAsAction;
 import org.outerj.pollo.action.CloseViewAction;
 import org.outerj.pollo.config.ViewTypeConf;
-import org.outerj.pollo.gui.ErrorDialog;
-import org.outerj.pollo.gui.ToolButton;
-import org.outerj.pollo.gui.PopupToolButton;
-import org.outerj.pollo.gui.RecentlyOpenedFilesMenu;
+import org.outerj.pollo.gui.*;
 import org.outerj.pollo.plugin.IActionPlugin;
 import org.outerj.pollo.texteditor.XmlTextEditorPanel;
 import org.outerj.pollo.texteditor.XmlTextEditor;
@@ -62,7 +59,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 
 		IDisplaySpecification idisplayspecification = viewTypeConf.createDisplaySpecChain();
 		ISchema ischema = viewTypeConf.createSchemaChain();
-		IAttributeEditorPlugin iattributeeditorplugin = viewTypeConf.createAttrEditorPluginChain(xmlModel, ischema);
+		IAttributeEditorPlugin iattributeeditorplugin = viewTypeConf.createAttrEditorPluginChain(xmlModel, ischema, polloFrame);
 		actionPlugin = viewTypeConf.createActionPlugins(this, polloFrame);
 
 		xmlEditorPanel = new XmlEditorPanel(xmlModel, null, idisplayspecification, ischema, iattributeeditorplugin);
@@ -70,9 +67,9 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 
 
 		// no borders
-		xmlTextEditorPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-		xmlEditorPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-		this.setBorder(new EmptyBorder(0, 0, 0, 0));
+		xmlTextEditorPanel.setBorder(BorderFactory.createEmptyBorder());
+		xmlEditorPanel.setBorder(BorderFactory.createEmptyBorder());
+		this.setBorder(new EmptyBorder(3, 3, 3, 3));
 
 		// determine the start mode
 		if (xmlModel.isInTextMode())
@@ -94,7 +91,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 
 		xmlModel.addListener(this);
 
-		title = xmlModel.getFileName();
+		title = xmlModel.getShortTitle();
 		if (xmlModel.isModified())
 			title = "*" + title;
 
@@ -112,16 +109,24 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		JMenu textFileMenu = new JMenu("File");
 		domFileMenu.add(polloFrame.getFileNewAction());
 		textFileMenu.add(polloFrame.getFileNewAction());
+		domFileMenu.addSeparator();
+		textFileMenu.addSeparator();
 		domFileMenu.add(polloFrame.getFileOpenAction());
 		textFileMenu.add(polloFrame.getFileOpenAction());
 		domFileMenu.add(new RecentlyOpenedFilesMenu(polloFrame));
 		textFileMenu.add(new RecentlyOpenedFilesMenu(polloFrame));
+		domFileMenu.addSeparator();
+		textFileMenu.addSeparator();
+		domFileMenu.add(closeAction);
+		textFileMenu.add(closeAction);
+		domFileMenu.addSeparator();
+		textFileMenu.addSeparator();
 		domFileMenu.add(saveAction);
 		textFileMenu.add(saveAction);
 		domFileMenu.add(saveAsAction);
 		textFileMenu.add(saveAsAction);
-		domFileMenu.add(closeAction);
-		textFileMenu.add(closeAction);
+		domFileMenu.addSeparator();
+		textFileMenu.addSeparator();
 		domFileMenu.add(polloFrame.getExitAction());
 		textFileMenu.add(polloFrame.getExitAction());
 
@@ -138,6 +143,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		domEditMenu.add(new JMenuItem(xmleditor.getCopyAction()));
 		domEditMenu.add(new JMenuItem(xmleditor.getCutAction()));
 		JMenu domEditPasteMenu = new JMenu("Paste");
+		domEditPasteMenu.setIcon(EmptyIcon.getInstance());
 		domEditPasteMenu.add(new JMenuItem(xmleditor.getPasteBeforeAction()));
 		domEditPasteMenu.add(new JMenuItem(xmleditor.getPasteAfterAction()));
 		domEditPasteMenu.add(xmleditor.getPasteInsideAction());
@@ -151,21 +157,25 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		// Insert menu for the dom menu bar
 		JMenu domInsertMenu = new JMenu("Insert");
 		JMenu domTextMenu = new JMenu("Text Node");
+		domTextMenu.setIcon(EmptyIcon.getInstance());
 		domTextMenu.add(xmleditor.getInsertTextBeforeAction());
 		domTextMenu.add(xmleditor.getInsertTextAfterAction());
 		domTextMenu.add(xmleditor.getInsertTextInsideAction());
 		domInsertMenu.add(domTextMenu);
 		JMenu domCommentMenu = new JMenu("Comment Node");
+		domCommentMenu.setIcon(EmptyIcon.getInstance());
 		domCommentMenu.add(xmleditor.getInsertCommentBeforeAction());
 		domCommentMenu.add(xmleditor.getInsertCommentAfterAction());
 		domCommentMenu.add(xmleditor.getInsertCommentInsideAction());
 		domInsertMenu.add(domCommentMenu);
 		JMenu domCDataMenu = new JMenu("CDATA section");
+		domCDataMenu.setIcon(EmptyIcon.getInstance());
 		domCDataMenu.add(xmleditor.getInsertCDataBeforeAction());
 		domCDataMenu.add(xmleditor.getInsertCDataAfterAction());
 		domCDataMenu.add(xmleditor.getInsertCDataInsideAction());
 		domInsertMenu.add(domCDataMenu);
 		JMenu domPiMenu = new JMenu("Processing Instruction");
+		domPiMenu.setIcon(EmptyIcon.getInstance());
 		domPiMenu.add(xmleditor.getInsertPIBeforeAction());
 		domPiMenu.add(xmleditor.getInsertPIAfterAction());
 		domPiMenu.add(xmleditor.getInsertPIInsideAction());
@@ -184,7 +194,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		// schema menu for the dom menu bar
 		JMenu schemaMenu = new JMenu("Schema");
 		schemaMenu.add(xmlEditorPanel.getValidateAction());
-		schemaMenu.add(new org.outerj.pollo.xmleditor.action.DisplayContentModelAction(xmleditor));
+		schemaMenu.add(new org.outerj.pollo.xmleditor.action.ShowContentModelAction(xmleditor));
 		domModeMenuBar.add(schemaMenu);
 
 		// edit menu for the text menu bar
@@ -245,20 +255,20 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		domModeToolBar.add(new ToolButton(xmlEditor.getCutAction()));
 		domModeToolBar.add(new ToolButton(xmlEditor.getCopyAction()));
 
-		PopupToolButton domPasteButton = new PopupToolButton("Paste:", "Paste", IconManager.getIcon("org/outerj/pollo/resource/stock_paste-16.png"));
+		PopupToolButton domPasteButton = new PopupToolButton("Paste:", "Paste", IconManager.getIcon("org/outerj/pollo/resource/paste.gif"));
 		domPasteButton.addAction(xmlEditor.getPasteBeforeAction());
 		domPasteButton.addAction(xmlEditor.getPasteInsideAction());
 		domPasteButton.addAction(xmlEditor.getPasteAfterAction());
 		domModeToolBar.add(domPasteButton);
 
 		domModeToolBar.addSeparator();
-		PopupToolButton domTextButton = new PopupToolButton("Insert text:", "Insert Text Node", IconManager.getIcon("org/outerj/pollo/resource/stock_font-16.png"));
+		PopupToolButton domTextButton = new PopupToolButton("Insert text:", "Insert Text Node", IconManager.getIcon("org/outerj/pollo/resource/font.gif"));
 		domTextButton.addAction(xmlEditor.getInsertTextBeforeAction());
 		domTextButton.addAction(xmlEditor.getInsertTextInsideAction());
 		domTextButton.addAction(xmlEditor.getInsertTextAfterAction());
 		domModeToolBar.add(domTextButton);
 
-		PopupToolButton domCommentButton = new PopupToolButton("Insert comment:", "Insert Comment Node", IconManager.getIcon("org/outerj/pollo/resource/comment-16.png"));
+		PopupToolButton domCommentButton = new PopupToolButton("Insert comment:", "Insert Comment Node", IconManager.getIcon("org/outerj/pollo/resource/comment.gif"));
 		domCommentButton.addAction(xmlEditor.getInsertCommentBeforeAction());
 		domCommentButton.addAction(xmlEditor.getInsertCommentInsideAction());
 		domCommentButton.addAction(xmlEditor.getInsertCommentAfterAction());
@@ -397,7 +407,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 
 	public void fileNameChanged(XmlModel sourceXmlModel)
 	{
-		title = xmlModel.getFileName();
+		title = xmlModel.getShortTitle();
 		fireTitleChangedEvent();
 	}
 
@@ -410,7 +420,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 
 	public void fileSaved(XmlModel sourceXmlModel)
 	{
-		title = xmlModel.getFileName();
+		title = xmlModel.getShortTitle();
 		fireTitleChangedEvent();
 		saveAction.setEnabled(false);
 	}

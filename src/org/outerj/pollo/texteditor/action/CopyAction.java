@@ -12,7 +12,7 @@ public class CopyAction extends AbstractAction
 
 	public CopyAction(XmlTextEditor xmlTextEditor)
 	{
-		super("Copy", IconManager.getIcon("org/outerj/pollo/resource/stock_copy-16.png"));
+		super("Copy", IconManager.getIcon("org/outerj/pollo/resource/copy.gif"));
 		this.xmlTextEditor = xmlTextEditor;
 	}
 

@@ -2,6 +2,7 @@ package org.outerj.pollo;
 
 import org.outerj.pollo.action.*;
 import org.outerj.pollo.gui.RecentlyOpenedFilesMenu;
+import org.outerj.pollo.xmleditor.IconManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -46,6 +47,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 	public PolloFrame()
 	{
 		super("Pollo");
+        setIconImage(IconManager.getIcon("org/outerj/pollo/resource/pollo_icon.gif").getImage());
 
 		editorPanelTabs = new JTabbedPane();
 		editorPanelTabs.addChangeListener(this);
@@ -80,7 +82,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 			}
 		});
 
-		setSize(800, 600);
+		setSize(pollo.getConfiguration().getWindowWidth(), pollo.getConfiguration().getWindowHeight());
 	}
 
 	/**
@@ -94,8 +96,10 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 		JMenu fileMenu = new JMenu("File");
 		noEditorPanelsMenuBar.add(fileMenu);
 		fileMenu.add(getFileNewAction());
+		fileMenu.addSeparator();
 		fileMenu.add(getFileOpenAction());
 		fileMenu.add(new RecentlyOpenedFilesMenu(this));
+		fileMenu.addSeparator();
 		fileMenu.add(getExitAction());
 
 		// view menu
@@ -235,8 +239,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 		if (currentEditorPanel != null)
 		{
 			String modifiedStar = currentEditorPanel.getXmlModel().isModified() ? "*" : "";
-			File file = currentEditorPanel.getXmlModel().getFile();
-			setTitle("Pollo - " + modifiedStar + (file != null ? file.getAbsolutePath() : "Untitled"));
+			setTitle("Pollo - " + modifiedStar + currentEditorPanel.getXmlModel().getLongTitle());
 		}
 		else
 		{

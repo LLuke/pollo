@@ -12,7 +12,7 @@ public class PasteAction extends AbstractAction
 
 	public PasteAction(XmlTextEditor xmlTextEditor)
 	{
-		super("Paste", IconManager.getIcon("org/outerj/pollo/resource/stock_paste-16.png"));
+		super("Paste", IconManager.getIcon("org/outerj/pollo/resource/paste.gif"));
 		this.xmlTextEditor = xmlTextEditor;
 	}
 

@@ -3,9 +3,9 @@ version 0.3.3
  - Added support for various schema languages through Sun's Multi Schema
    Validator (XML Schema, RELAX-NG, and others are supported). The boxes
    for selecting elements just show all elements allowed as child of their
-   parent elements, they are not content-model sensitive (might come in
-   a later version).
-   You can view the allowed content model though using the menu option
+   parent elements, they don't take in account all features of the content
+   model (might come in a later version).
+   You can view the precise allowed content model though using the menu option
    Schema -> Show Content Model. It is of course also possible to validate
    the document against the schema in use (menu: Schema -> Validate).
    A lot of credit for this work goes to Al Byers, who got me started on
@@ -13,7 +13,8 @@ version 0.3.3
  - The dialog box for selecting the view type is extended so that
    you can choose the schema to use etc. These settings cannot be saved
    yet however.
-   Making a user interface to manage the view types is a high priority.
+   I added some info in the online help about how to add new view types
+   in pollo's configuration file.
  - The welcome dialog box has been dropped, it is now possible to open
    multiple files in one window with a tabbed interface. It is still
    possible to create multiple windows and mulitple views on the same
@@ -26,6 +27,22 @@ version 0.3.3
    dissappaerd under the main frame (especially in Windows). A lot of these
    situations should now be fixed.
  - Added some initial online help.
+ - Added menu with recently opened files (the list is stored in the .pollorc
+   in your home directory)
+ - It is not longer possible to open the same file more than one time.
+ - Added a toolbar, moved the text/tree mode switch over there, because
+   otherwise there would be tabs inside tabs.
+ - JDK 1.4 compatible (wheelmouse!) I noticed though that on Windows, the
+   cursor is sometimes not visible in text mode.
+ - position of split panes and window size are stored in user configuration
+ - untitled files are now numbered so that it's possible to distinguish them
+ - new Cocoon stuff: attribute editor plugin with support for browsing files
+   and inserting references to patterns in wildcard URI matchers. Plugin
+   actions (see 'Plugin Actions' menu) to quickly go to a matcher pattern,
+   to go to a component declaration, and to open the file referenced by a
+   src attribute.
+ - updated Ant schema to Ant 1.4.1
+ - some GUI tweaking (split panes made nicer, text aligned in menus).
 
 version 0.3.2
 =============

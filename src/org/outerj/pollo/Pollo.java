@@ -10,6 +10,7 @@ import org.outerj.pollo.gui.ViewTypesDialog;
 import org.outerj.pollo.template.ITemplate;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.model.XmlModelListener;
+import org.outerj.pollo.plaf.PolloLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,10 +60,7 @@ public class Pollo implements XmlModelListener
 		// initialize actions
 		newPolloFrameAction = new NewPolloFrameAction();
 
-		// set some better swing defaults
-        System.setProperty("swing.plaf.metal.controlFont", "Dialog-PLAIN-12");
-		System.setProperty("swing.plaf.metal.systemFont", "Dialog-PLAIN-12");
-		System.setProperty("swing.plaf.metal.userFont", "Dialog-PLAIN-12");
+		UIManager.setLookAndFeel(new PolloLookAndFeel());
 
 		// show a PolloFrame
 		PolloFrame polloFrame = new PolloFrame();

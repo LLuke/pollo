@@ -1,6 +1,7 @@
 package org.outerj.pollo;
 
 import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,6 +21,7 @@ public class NewEditorPanelMenu extends JMenu
 	public NewEditorPanelMenu(PolloFrame polloFrame)
 	{
 		super ("Create new view on file");
+		setIcon(EmptyIcon.getInstance());
 		this.polloFrame = polloFrame;
 	}
 
@@ -49,11 +51,7 @@ public class NewEditorPanelMenu extends JMenu
 			this.xmlModel = xmlModel;
 
 			// set the action name
-			File file = xmlModel.getFile();
-			if (file != null)
-				putValue(Action.NAME, file.getAbsolutePath());
-			else
-				putValue(Action.NAME, "Untitled");
+			putValue(Action.NAME, xmlModel.getLongTitle());
 		}
 
 		public void actionPerformed(ActionEvent e)

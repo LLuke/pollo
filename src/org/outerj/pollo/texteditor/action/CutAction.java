@@ -12,7 +12,7 @@ public class CutAction extends AbstractAction
 
 	public CutAction(XmlTextEditor xmlTextEditor)
 	{
-		super("Cut", IconManager.getIcon("org/outerj/pollo/resource/stock_cut-16.png"));
+		super("Cut", IconManager.getIcon("org/outerj/pollo/resource/cut.gif"));
 		this.xmlTextEditor = xmlTextEditor;
 	}
 

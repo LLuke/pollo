@@ -1,9 +1,9 @@
 package org.outerj.pollo.xmleditor.chardataeditor;
 
 import org.outerj.pollo.DomConnected;
+import org.outerj.pollo.gui.SomeLinesBorder;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.util.FocusBorder;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
@@ -39,11 +39,11 @@ public class CharDataPanel extends JPanel implements SelectionListener, EventLis
 
 		charDataTextArea = new JTextArea();
 		charDataTextArea.setFont(new Font("Monospaced", 0, 12));
+		charDataTextArea.setBorder(BorderFactory.createEmptyBorder());
 
 		scrollPane = new JScrollPane(charDataTextArea);
+		scrollPane.setBorder(new SomeLinesBorder(false, false, true, false));
 		this.add(scrollPane, BorderLayout.CENTER);
-
-		charDataTextArea.addFocusListener(new FocusBorder(scrollPane));
 
 		JButton applyButton = new JButton("Apply changes");
 		applyButton.addActionListener(new ActionListener()
