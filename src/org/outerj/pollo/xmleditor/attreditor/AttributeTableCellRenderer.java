@@ -3,6 +3,8 @@ package org.outerj.pollo.xmleditor.attreditor;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.outerj.pollo.xmleditor.attreditor.AttributesTableModel.TempAttrEditInfo;
+import org.outerj.pollo.xmleditor.IconManager;
+
 import java.awt.*;
 
 /**
@@ -16,6 +18,7 @@ public class AttributeTableCellRenderer extends DefaultTableCellRenderer
 {
     protected TempAttrEditInfo taei = null;
     protected int column = 0;
+    protected Icon requiredAttributeIcon = IconManager.getIcon("org/outerj/pollo/xmleditor/attreditor/required_attribute.gif");
 
     public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int row, int column)
@@ -25,6 +28,7 @@ public class AttributeTableCellRenderer extends DefaultTableCellRenderer
         AttributesTableModel tableModel = (AttributesTableModel)table.getModel();
         taei = tableModel.getTempAttrEditInfo(row);
         this.column = column;
+        setIcon(null);
 
         switch (column)
         {
@@ -34,6 +38,10 @@ public class AttributeTableCellRenderer extends DefaultTableCellRenderer
                     setEnabled(false);
                 else
                     setEnabled(true);
+
+                if (taei.attrSchema.required)
+                    setIcon(requiredAttributeIcon);
+
                 break;
             case 1:
                 if (taei.value == null)
@@ -64,7 +72,6 @@ public class AttributeTableCellRenderer extends DefaultTableCellRenderer
             g.setColor(UIManager.getColor("Label.disabledForeground"));
 
             int arrowWidth = 10;
-            int arrowHeight = 5;
             int x = getWidth() - arrowWidth - 2;
             int y = (getHeight() / 2) - 2;
 
