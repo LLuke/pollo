@@ -3,7 +3,6 @@
 		<viewtype>
 			<name>generic</name>
 			<description>Generic (for any XML file)</description>
-			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
 
 			<schemas>
 				<schema>
@@ -25,7 +24,6 @@
 		<viewtype>
 			<name>generic-white</name>
 			<description>Generic B/W (for any XML file)</description>
-			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
 
 			<schemas>
 				<schema>
@@ -47,7 +45,6 @@
 		<viewtype>
 			<name>ant</name>
 			<description>Ant 1.3</description>
-			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
 
 			<schemas>
 				<schema>
@@ -90,47 +87,6 @@
 		<viewtype>
 			<name>sitemap</name>
 			<description>Cocoon 2 Sitemap</description>
-			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
-
-			<schemas>
-				<schema>
-					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
-					<init-param>
-						<param-name>source</param-name>
-						<param-value>sitemapschema.xml</param-value>
-					</init-param>
-				</schema>
-			</schemas>
-
-			<display-specifications>
-				<display-specification>
-					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
-					<init-param>
-						<param-name>source</param-name>
-						<param-value>sitemapspec.xml</param-value>
-					</init-param>
-				</display-specification>
-				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
-				<display-specification>
-					<factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
-					<init-param>
-						<param-name>use-colors</param-name>
-						<param-value>false</param-value>
-					</init-param>
-				</display-specification>
-			</display-specifications>
-
-			<attribute-editor-plugins>
-				<attribute-editor-plugin>
-					<factory-class>org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPluginFactory</factory-class>
-				</attribute-editor-plugin>
-			</attribute-editor-plugins>
-		</viewtype>
-
-		<viewtype>
-			<name>sitemap2</name>
-			<description>Cocoon 2 Sitemap Special</description>
-			<class-name>org.outerj.pollo.engine.cocoon.SitemapEngine</class-name>
 
 			<schemas>
 				<schema>
@@ -170,7 +126,6 @@
 		<viewtype>
 			<name>xmlschema</name>
 			<description>W3C XML Schema</description>
-			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
 
 			<schemas>
 				<schema>
@@ -210,7 +165,6 @@
 		<viewtype>
 			<name>xslfo</name>
 			<description>W3C XSL FO</description>
-			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
 
 			<schemas>
 				<schema>
