@@ -13,9 +13,13 @@ import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
@@ -44,6 +48,24 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 		this.xmlEditor = xmlEditor;
 		this.attributesPanel = attributesPanel;
 
+		// add actions to xmleditor
+		ActionMap actionMap = xmlEditor.getActionMap();
+		actionMap.put("next-xpath-result", new AbstractAction()
+				{
+					public void actionPerformed(ActionEvent event)
+					{
+						jump(true);
+					}
+				});
+		actionMap.put("prev-xpath-result", new AbstractAction()
+				{
+					public void actionPerformed(ActionEvent event)
+					{
+						jump(false);
+					}
+				});
+
+		// construct the gui
 		setLayout(new BorderLayout());
 
 		Box box = new Box(BoxLayout.X_AXIS);
@@ -57,16 +79,29 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 		xpathTextField.setMaximumSize(dimension);
 		box.add(xpathTextField);
 
-		JButton insertExampleButton = new JButton("?");
-		insertExampleButton.setToolTipText("Insert example query");
-		insertExampleButton.setActionCommand("insert-example");
-		insertExampleButton.addActionListener(this);
-		box.add(insertExampleButton);
+		// the query should be executed when the user presses enter, and it is only
+		// possible to put actions in keymaps, so quickly define an action here
+		xpathTextField.getKeymap().addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+				new AbstractAction()
+				{
+					public void actionPerformed(ActionEvent event)
+					{
+						ActionEvent e = new ActionEvent(xpathTextField, 0, "execute");
+						QueryByXPathPanel.this.actionPerformed(e);
+					}
+				}
+				);
 
 		JButton executeButton = new JButton("Execute");
 		executeButton.setActionCommand("execute");
 		executeButton.addActionListener(this);
 		box.add(executeButton);
+
+		JButton insertExampleButton = new JButton("?");
+		insertExampleButton.setToolTipText("Insert example query");
+		insertExampleButton.setActionCommand("insert-example");
+		insertExampleButton.addActionListener(this);
+		box.add(insertExampleButton);
 
 		prevButton = new JButton("<");
 		prevButton.setActionCommand("prevResult");
@@ -100,6 +135,10 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 				JOptionPane.showMessageDialog(getTopLevelAncestor()
 						, "Could not parse XPath expression: " + e.getMessage()
 						, "Error", JOptionPane.ERROR_MESSAGE);
+				prevButton.setEnabled(false);
+				nextButton.setEnabled(false);
+				progress.setText("");
+				resultList = null;
 				return;
 			}
 
@@ -121,6 +160,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 				prevButton.setEnabled(false);
 				nextButton.setEnabled(false);
 				progress.setText("");
+				resultList = null;
 				return;
 			}
 
@@ -132,6 +172,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 				prevButton.setEnabled(false);
 				nextButton.setEnabled(false);
 				progress.setText("");
+				resultList = null;
 				return;
 			}
 
@@ -143,6 +184,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 				prevButton.setEnabled(false);
 				nextButton.setEnabled(false);
 				progress.setText("");
+				resultList = null;
 				return;
 			}
 
@@ -150,14 +192,17 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 			prevButton.setEnabled(true);
 			nextButton.setEnabled(true);
 			jump(true);
+			xmlEditor.requestFocus();
 		}
 		else if (event.getActionCommand().equals("prevResult"))
 		{
 			jump(false);
+			xmlEditor.requestFocus();
 		}
 		else if (event.getActionCommand().equals("nextResult"))
 		{
 			jump(true);
+			xmlEditor.requestFocus();
 		}
 		else if (event.getActionCommand().equals("insert-example"))
 		{
@@ -171,6 +216,9 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 	 */
 	public void jump(boolean next)
 	{
+		if (resultList == null)
+			return;
+
 		if (next)
 		{
 			if (currentResult < resultList.size() - 1)
