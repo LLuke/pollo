@@ -35,6 +35,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
     DragGestureListener, DragSourceListener, DropTargetListener, Autoscroll, DomConnected
 {
     protected View mainView;
+    protected boolean relayout;
     protected SelectionInfo selectionInfo = new SelectionInfo();
 
     // fields for managing drag-and-drop    c
@@ -284,16 +285,23 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
             try
             {
                 rebuildView();
-                mainView.layout(this.getWidth() - MARGIN_RIGHT);
-                oldWidth = this.getWidth();
-                setSize(new Dimension(getWidth(), mainView.getHeight()));
-                g.setClip(this.getVisibleRect());
+                relayout = true;
             }
             catch (Exception e)
             {
                 e.printStackTrace();
             }
         }
+
+        if (relayout)
+        {
+            mainView.layout(this.getWidth() - MARGIN_RIGHT);
+            oldWidth = this.getWidth();
+            setSize(new Dimension(getWidth(), mainView.getHeight()));
+            g.setClip(this.getVisibleRect());
+            relayout = false;
+        }
+
         if (mainView != null)
         {
             // paint background
@@ -354,9 +362,9 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
     /**
      * This will cause the view to be relayouted the next time it is painted.
      */
-    public void invalidateView()
+    public void relayout()
     {
-        mainView = null;
+        relayout = true;
     }
 
     /**
