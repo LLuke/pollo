@@ -1,5 +1,7 @@
 package org.outerj.pollo.xmleditor.displayspec;
 
+import org.w3c.dom.Element;
+
 import java.awt.*;
 
 /**
@@ -21,8 +23,12 @@ public interface IDisplaySpecification
 	 * Gets the element specification, this is an object
 	 * containing attributes for how this element should be
 	 * rendered.
+	 *
+	 * @param parent can be null
 	 */
-	public ElementSpec getElementSpec(String namespaceURI, String localName);
+	public ElementSpec getElementSpec(String namespaceURI, String localName, Element parent);
+
+	public ElementSpec getElementSpec(Element element);
 
 	/**
 	 * Get the font to be used for attribute names.

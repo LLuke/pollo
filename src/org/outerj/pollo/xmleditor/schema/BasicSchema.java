@@ -3,7 +3,7 @@ package org.outerj.pollo.xmleditor.schema;
 import org.jaxen.SimpleNamespaceContext;
 import org.outerj.pollo.util.URLFactory;
 import org.outerj.pollo.xmleditor.exception.PolloException;
-import org.outerj.pollo.xmleditor.util.NodeMap;
+import org.outerj.pollo.xmleditor.util.NestedNodeMap;
 import org.outerj.pollo.xmleditor.schema.ElementSchema.SubElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,14 +34,14 @@ import java.util.*;
 public class BasicSchema implements ISchema
 {
 	protected SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
-	protected NodeMap elementSchemas;
+	protected NestedNodeMap elementSchemas;
 
 	/**
 	 * Returns the list of attributes an element can have.
 	 */
 	public Collection getAttributesFor(Element element)
 	{
-		ElementSchema elementSchema = getElementSchema(element.getNamespaceURI(), element.getLocalName());
+		ElementSchema elementSchema = (ElementSchema)elementSchemas.get(element);
 
 		if (elementSchema == null)
 			return new LinkedList();
@@ -55,7 +55,7 @@ public class BasicSchema implements ISchema
 	 */
 	public boolean isChildAllowed(Element parent, Element child)
 	{
-		ElementSchema elementSchema = getElementSchema(parent.getNamespaceURI(), parent.getLocalName());
+		ElementSchema elementSchema = (ElementSchema)elementSchemas.get(parent);
 		if (elementSchema != null)
 		{
 			return elementSchema.isAllowedAsSubElement(child);
@@ -83,7 +83,7 @@ public class BasicSchema implements ISchema
 
 	public Collection getAllowedSubElements(Element element)
 	{
-		ElementSchema elementSchema = getElementSchema(element.getNamespaceURI(), element.getLocalName());
+		ElementSchema elementSchema = (ElementSchema)elementSchemas.get(element);
 		if (elementSchema != null)
 		{
 			return elementSchema.subelements.values();
@@ -96,7 +96,7 @@ public class BasicSchema implements ISchema
 
 	public Collection getAllowedSubTexts(Element element)
 	{
-		ElementSchema elementSchema = getElementSchema(element.getNamespaceURI(), element.getLocalName());
+		ElementSchema elementSchema = (ElementSchema)elementSchemas.get(element);
 		if (elementSchema != null)
 		{
 			return elementSchema.subtexts;
@@ -120,7 +120,7 @@ public class BasicSchema implements ISchema
 		}
 
 		SchemaHandler schemaHandler = new SchemaHandler();
-		elementSchemas = new NodeMap();
+		elementSchemas = new NestedNodeMap();
 
 		SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 		parserFactory.setNamespaceAware(true);
@@ -136,24 +136,19 @@ public class BasicSchema implements ISchema
 		}
 	}
 
-	protected void addElementSchema(ElementSchema elementSchema)
+	protected void addElementSchema(String elementPath, ElementSchema elementSchema, NamespaceSupport namespaceSupport)
 	{
-		elementSchemas.put(elementSchema.namespaceURI, elementSchema.localName, elementSchema);
+		elementSchemas.put(elementPath, elementSchema, namespaceSupport);
 	}
 
 	protected AttributeSchema getAttributeSchema(Element element, String namespaceURI, String localName)
 	{
-		ElementSchema elementSchema = getElementSchema(element.getNamespaceURI(), element.getLocalName());
+		ElementSchema elementSchema = (ElementSchema)elementSchemas.get(element);
 
 		if (elementSchema == null)
 			return null;
 		else
 			return elementSchema.getAttributeSchema(namespaceURI, localName);
-	}
-
-	protected ElementSchema getElementSchema(String namespaceURI, String localName)
-	{
-		return (ElementSchema)elementSchemas.get(namespaceURI, localName);
 	}
 
 	public Collection validate(Document document)
@@ -170,9 +165,10 @@ public class BasicSchema implements ISchema
 	{
 		protected boolean inElement;
 		protected boolean inAttribute;
-		protected String elementName, attributeName;
+		protected String elementPath, elementName, attributeName;
+        protected int slashPos;
 
-		protected ElementSchema currentElementSchema;
+        protected ElementSchema currentElementSchema;
 		protected AttributeSchema currentAttributeSchema;
 		protected NamespaceSupport nsSupport = new NamespaceSupport();
 		protected String[] nameParts = new String[3];
@@ -197,8 +193,13 @@ public class BasicSchema implements ISchema
 			if (localName.equals("element"))
 			{
 				inElement = true;
-				elementName = atts.getValue("name");
+				elementPath = atts.getValue("name");
 				currentElementSchema = new ElementSchema();
+                slashPos = elementPath.lastIndexOf('/');
+                if (slashPos != -1)
+                    elementName = elementPath.substring(slashPos + 1);
+                else
+                    elementName = elementPath;
 				nameParts = nsSupport.processName(elementName, nameParts, false);
 				currentElementSchema.namespaceURI = nameParts[0].equals("") ? null : nameParts[0];
 				currentElementSchema.localName = nameParts[1];
@@ -272,7 +273,7 @@ public class BasicSchema implements ISchema
 			if (localName.equals("element"))
 			{
 				inElement = false;
-				addElementSchema(currentElementSchema);
+				addElementSchema(elementPath, currentElementSchema, nsSupport);
 				currentElementSchema = null;
 			}
 			else if (localName.equals("attribute"))

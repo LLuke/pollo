@@ -3,12 +3,13 @@ package org.outerj.pollo.xmleditor.displayspec;
 import org.outerj.pollo.util.URLFactory;
 import org.outerj.pollo.xmleditor.ElementColorIcon;
 import org.outerj.pollo.xmleditor.exception.PolloException;
-import org.outerj.pollo.xmleditor.util.NodeMap;
+import org.outerj.pollo.xmleditor.util.NestedNodeMap;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.NamespaceSupport;
+import org.w3c.dom.Element;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -27,7 +28,7 @@ import java.util.StringTokenizer;
 public class BasicDisplaySpecification implements IDisplaySpecification
 {
 	/** Contains the instances of the ElementSpec class */
-	protected NodeMap elementSpecs = new NodeMap();
+	protected NestedNodeMap elementSpecs = new NestedNodeMap();
 
 	/** Font to use for element names. */
 	protected Font elementNameFont;
@@ -76,17 +77,23 @@ public class BasicDisplaySpecification implements IDisplaySpecification
 		return backgroundColor;
 	}
 
-	public void addElementSpec(ElementSpec elementSpec)
+	public void addElementSpec(String elementPath, ElementSpec elementSpec, NamespaceSupport namespaceSupport)
 	{
-		elementSpecs.put(elementSpec.nsUri, elementSpec.localName, elementSpec);
+		elementSpecs.put(elementPath, elementSpec, namespaceSupport);
 	}
 
-	public ElementSpec getElementSpec(String uri, String localName)
+	public ElementSpec getElementSpec(String uri, String localName, Element parent)
 	{
-		ElementSpec elementSpec = (ElementSpec)elementSpecs.get(uri, localName);
+		ElementSpec elementSpec = (ElementSpec)elementSpecs.get(uri, localName, parent);
 		return elementSpec;
 	}
-	
+
+	public ElementSpec getElementSpec(Element element)
+	{
+		ElementSpec elementSpec = (ElementSpec)elementSpecs.get(element);
+		return elementSpec;
+	}
+
 	public Font getAttributeNameFont()
 	{
 		return attributeNameFont;
@@ -110,11 +117,13 @@ public class BasicDisplaySpecification implements IDisplaySpecification
 	public class DisplaySpecHandler extends DefaultHandler
 	{
 		protected boolean inElement = false;
+		protected String elementPath, elementName;
 		protected ElementSpec elementSpec; // the elementSpec that we're currently constructing
 		protected NamespaceSupport nsSupport = new NamespaceSupport();
 		protected String[] nameParts = new String[3];
+		protected int slashPos;
 
-		
+
 		public void startPrefixMapping(String prefix, String uri)
 			throws SAXException
 		{
@@ -130,8 +139,15 @@ public class BasicDisplaySpecification implements IDisplaySpecification
 			{
 				inElement = true;
 				elementSpec = new ElementSpec();
-				nameParts = nsSupport.processName(atts.getValue("name"), nameParts, false);
-				elementSpec.nsUri = nameParts[0];
+
+				elementPath = atts.getValue("name");
+                slashPos = elementPath.lastIndexOf('/');
+                if (slashPos != -1)
+                    elementName = elementPath.substring(slashPos + 1);
+                else
+                    elementName = elementPath;
+				nameParts = nsSupport.processName(elementName, nameParts, false);
+				elementSpec.nsUri = nameParts[0].equals("") ? null : nameParts[0];
 				elementSpec.localName = nameParts[1];
 			}
 			else if (localName.equals("display"))
@@ -180,7 +196,7 @@ public class BasicDisplaySpecification implements IDisplaySpecification
 			{
 				inElement = false;
 
-				addElementSpec(elementSpec);
+				addElementSpec(elementPath, elementSpec, nsSupport);
 			}
 			nsSupport.popContext();
 		}

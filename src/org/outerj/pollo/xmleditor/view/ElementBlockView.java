@@ -59,9 +59,7 @@ public class ElementBlockView extends ChildrenBlockView
 
 		// get the ElementSpec from the DisplaySpec
 		displaySpec = xmlEditor.getDisplaySpec();
-		String uri = element.getNamespaceURI();
-		String name = element.getLocalName();
-		this.elementSpec = displaySpec.getElementSpec(uri, name);
+		this.elementSpec = displaySpec.getElementSpec(element);
 
 		// create instances of AttrViewInfo for all the attributes we need to show
 		int numberOfAttrs = elementSpec.attributesToShow.size();

@@ -203,7 +203,8 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 						}
 						else
 						{
-							Collection subElementsList = schema.getAllowedSubElements((Element)node.getParentNode());
+							Element parentElement = (Element)node.getParentNode();
+							Collection subElementsList = schema.getAllowedSubElements(parentElement);
 							Collection subtexts = schema.getAllowedSubTexts((Element)node.getParentNode());
 							Iterator subElementsIt = subElementsList.iterator();
 							Object [] data = new Object[subElementsList.size() + subtexts.size() + 1];
@@ -211,7 +212,7 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 							while (subElementsIt.hasNext())
 							{
 								ElementSchema.SubElement subElement = (ElementSchema.SubElement)subElementsIt.next();
-								data[i] = displaySpec.getElementSpec(subElement.namespaceURI, subElement.localName);
+								data[i] = displaySpec.getElementSpec(subElement.namespaceURI, subElement.localName, parentElement);
 								i++;
 							}
 							if (subtexts.size() > 0)
@@ -241,7 +242,7 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 							while (subElementsIt.hasNext())
 							{
 								ElementSchema.SubElement subElement = (ElementSchema.SubElement)subElementsIt.next();
-								data[i] = displaySpec.getElementSpec(subElement.namespaceURI, subElement.localName);
+								data[i] = displaySpec.getElementSpec(subElement.namespaceURI, subElement.localName, (Element)node);
 								i++;
 							}
 							if (subtexts.size() > 0)

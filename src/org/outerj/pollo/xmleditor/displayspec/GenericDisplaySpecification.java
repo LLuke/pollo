@@ -2,7 +2,8 @@ package org.outerj.pollo.xmleditor.displayspec;
 
 import org.outerj.pollo.xmleditor.ElementColorIcon;
 import org.outerj.pollo.xmleditor.exception.PolloException;
-import org.outerj.pollo.xmleditor.util.NodeMap;
+import org.outerj.pollo.xmleditor.util.NestedNodeMap;
+import org.w3c.dom.Element;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class GenericDisplaySpecification implements IDisplaySpecification
 	/** Color to use as the background of the XmlEditor. */
 	protected Color backgroundColor = new Color(235, 235, 235); // light grey
 	/** Contains the instances of the ElementSpec class */
-	protected NodeMap elementSpecs = new NodeMap();
+	protected NestedNodeMap elementSpecs = new NestedNodeMap();
 	/** Indicates if this implementation should randomly assign colors. */
 	protected boolean useRandomColors = false;
 
@@ -170,7 +171,7 @@ public class GenericDisplaySpecification implements IDisplaySpecification
 		elementSpecs.put(elementSpec.nsUri, elementSpec.localName, elementSpec);
 	}
 
-	public ElementSpec getElementSpec(String uri, String localName)
+	public ElementSpec getElementSpec(String uri, String localName, Element parent)
 	{
 		ElementSpec elementSpec = (ElementSpec)elementSpecs.get(uri, localName);
 		if (elementSpec == null)
@@ -193,6 +194,11 @@ public class GenericDisplaySpecification implements IDisplaySpecification
 			addElementSpec(elementSpec);
 		}
 		return elementSpec;
+	}
+
+	public ElementSpec getElementSpec(Element element)
+	{
+		return getElementSpec(element.getNamespaceURI(), element.getLocalName(), null);
 	}
 
 	public Font getAttributeNameFont()
