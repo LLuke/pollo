@@ -73,7 +73,7 @@ public class CocoonAttrEditorPlugin implements IAttributeEditorPlugin
 		relativePathCheckBox = new JCheckBox("Insert path relative to location of the sitemap.");
 		fileChooserOptions.add(relativePathCheckBox, BorderLayout.CENTER);
 		// FIXME this line of code if *very* dependent on the underlying JFileChooser implementation
-		((JComponent)fileChooser.getComponent(2)).add(fileChooserOptions);
+		//((JComponent)fileChooser.getComponent(2)).add(fileChooserOptions);
 
 		// create the button for inserting a file name
 		browseForFileButton = new JButton(IconManager.getIcon("org/outerj/pollo/engine/cocoon/browse.png"));
