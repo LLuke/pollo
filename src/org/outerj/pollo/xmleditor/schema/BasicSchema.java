@@ -233,13 +233,26 @@ public class BasicSchema implements ISchema
 				String names = atts.getValue("names");
 				StringTokenizer tokenizer = new StringTokenizer(names, ",");
 
-				int i = 0;
 				while (tokenizer.hasMoreTokens())
 				{
 					nameParts = nsSupport.processName(tokenizer.nextToken(), nameParts, false);
 					SubElement subelement = currentElementSchema.createSubElement(nameParts[0], nameParts[1]);
 					currentElementSchema.subelements.put(subelement.namespaceURI, subelement.localName, subelement);
-					i++;
+				}
+			}
+			else if (localName.equals("allowedsubtexts"))
+			{
+				if (!inElement) throw new SAXException("SchemaHandler: 'allowedsubtexts' element only allowed inside an 'element' element.");
+				String values = atts.getValue("texts");
+				StringTokenizer tokenizer = new StringTokenizer(values, ",");
+
+				while (tokenizer.hasMoreTokens())
+				{
+					String token = tokenizer.nextToken();
+					if (token.equals("#any"))
+						currentElementSchema.subtexts.add("");
+					else
+						currentElementSchema.subtexts.add(token);
 				}
 			}
 			else if (localName.equals("xpath-ns-prefixes"))

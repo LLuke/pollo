@@ -4,6 +4,9 @@ import org.outerj.pollo.xmleditor.action.ValidateAction;
 import org.outerj.pollo.xmleditor.attreditor.AttributesPanel;
 import org.outerj.pollo.xmleditor.schema.ValidationErrorInfo;
 import org.outerj.pollo.xmleditor.view.View;
+import org.outerj.pollo.gui.FocusHighlightComponent;
+import org.outerj.pollo.gui.SemiBevelBorder;
+import org.outerj.pollo.gui.SmallButton;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
@@ -29,31 +32,37 @@ public class ValidationErrorsPanel extends JPanel implements ActionListener
 
 		// construct the gui
 		setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder());
 
-		Box box = new Box(BoxLayout.X_AXIS);
+		JPanel titlePanel = new JPanel();
+		titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
+		titlePanel.setBorder(SemiBevelBorder.getInstance());
+		titlePanel.setOpaque(true);
 
 		JLabel title = new JLabel("Validation Errors (double click to go to affected node)");
-		box.add(title);
-		box.add(Box.createHorizontalGlue());
+		titlePanel.add(title);
+		titlePanel.add(Box.createHorizontalGlue());
 
-		JButton revalidateButton = new JButton(IconManager.getIcon("org/outerj/pollo/resource/stock_refresh-16.png"));
+		JButton revalidateButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/refresh.gif"));
 		revalidateButton.setToolTipText("Revalidate document");
 		revalidateButton.setActionCommand("revalidate");
 		revalidateButton.addActionListener(this);
-		revalidateButton.setBorderPainted(false);
-		box.add(revalidateButton);
+		revalidateButton.setOpaque(false);
+		titlePanel.add(revalidateButton);
 
-		JButton hideButton = new JButton(IconManager.getIcon("org/outerj/pollo/resource/stock_cancel.png"));
+		JButton hideButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/close.gif"));
 		hideButton.setToolTipText("Hide validation errors panel");
 		hideButton.setActionCommand("hide-panel");
 		hideButton.addActionListener(this);
-		hideButton.setBorderPainted(false);
-		box.add(hideButton);
+		hideButton.setOpaque(false);
+		titlePanel.add(hideButton);
 
 
-		this.add(box, BorderLayout.NORTH);
+		this.add(titlePanel, BorderLayout.NORTH);
 
 		errorsList = new JList();
+		errorsList.addFocusListener(new FocusHighlightComponent(titlePanel));
+		errorsList.setBorder(BorderFactory.createEmptyBorder());
 		MouseListener mouseListener = new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent e)
@@ -101,10 +110,11 @@ public class ValidationErrorsPanel extends JPanel implements ActionListener
 			}
 		};
 		errorsList.addMouseListener(mouseListener);
+		JScrollPane errorsListScrollPane = new JScrollPane(errorsList);
+		errorsListScrollPane.setBorder(BorderFactory.createEmptyBorder());
 
 
-
-		this.add(new JScrollPane(errorsList), BorderLayout.CENTER);
+		this.add(errorsListScrollPane, BorderLayout.CENTER);
 	}
 
 	/**

@@ -2,6 +2,7 @@ package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.view.View;
+import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -18,7 +19,7 @@ public class SelectPreviousNodeAction extends AbstractAction
 
 	public SelectPreviousNodeAction(XmlEditor xmlEditor)
 	{
-		super("Select previous node");
+		super("Select previous node", EmptyIcon.getInstance());
 		this.xmlEditor = xmlEditor;
 	}
 

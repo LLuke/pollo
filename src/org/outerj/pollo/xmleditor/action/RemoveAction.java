@@ -3,6 +3,7 @@ package org.outerj.pollo.xmleditor.action;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.view.View;
+import org.outerj.pollo.gui.EmptyIcon;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
@@ -14,7 +15,7 @@ public class RemoveAction extends AbstractAction implements SelectionListener
 
 	public RemoveAction(XmlEditor xmlEditor)
 	{
-		super("Delete");
+		super("Delete", EmptyIcon.getInstance());
 		this.xmlEditor = xmlEditor;
 		xmlEditor.getSelectionInfo().addListener(this);
 		setEnabled(false);

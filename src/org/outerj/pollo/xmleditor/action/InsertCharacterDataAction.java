@@ -2,6 +2,7 @@ package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.gui.EmptyIcon;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -29,7 +30,7 @@ public class InsertCharacterDataAction extends AbstractAction implements Selecti
 
 	public InsertCharacterDataAction(XmlEditor xmlEditor, int behaviour, int type)
 	{
-		super(getDisplayName(behaviour));
+		super(getDisplayName(behaviour), EmptyIcon.getInstance());
 
 		this.xmlEditor = xmlEditor;
 		this.behaviour = behaviour;

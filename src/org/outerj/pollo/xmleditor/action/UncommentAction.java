@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.gui.ErrorDialog;
+import org.outerj.pollo.gui.EmptyIcon;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.model.PolloDOMParser;
@@ -23,7 +24,7 @@ public class UncommentAction extends AbstractAction implements SelectionListener
 
 	public UncommentAction(XmlEditor xmlEditor)
 	{
-		super("Uncomment");
+		super("Uncomment", EmptyIcon.getInstance());
 		this.xmlEditor = xmlEditor;
 
 		xmlEditor.getSelectionInfo().addListener(this);

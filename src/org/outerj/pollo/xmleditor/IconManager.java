@@ -26,7 +26,7 @@ public class IconManager
 	 *
 	 * FIXME: we should return a dummy icon if it could not be loaded.
 	 */
-	public static Icon getIcon(String iconpath)
+	public static ImageIcon getIcon(String iconpath)
 	{
 		if (!icons.containsKey(iconpath))
 		{
@@ -43,6 +43,6 @@ public class IconManager
 			}
 		}
 
-		return (Icon)icons.get(iconpath);
+		return (ImageIcon)icons.get(iconpath);
 	}
 }

@@ -1,13 +1,14 @@
 package org.outerj.pollo.xmleditor;
 
 import org.outerj.pollo.DomConnected;
+import org.outerj.pollo.gui.FocusHighlightComponent;
+import org.outerj.pollo.gui.SemiBevelBorder;
 import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.schema.ElementSchema;
 import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.util.DomUtils;
-import org.outerj.pollo.xmleditor.util.FocusBorder;
 import org.outerj.pollo.xmleditor.util.QuickSort;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,11 +32,13 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 	protected Object [] emptyArray = new Object[0];
 	protected InsertUnlistedElement insertUnlistedElement = new InsertUnlistedElement();
 	protected QuickSort quickSort = new QuickSort();
-	private final static Icon textIcon = IconManager.getIcon("org/outerj/pollo/resource/stock_font-16.png");
+	private final static Icon textIcon = IconManager.getIcon("org/outerj/pollo/resource/font.gif");
 
 	protected NodeInsertionList insertBeforeList;
 	protected NodeInsertionList insertAfterList;
 	protected NodeInsertionList insertInsideList;
+
+	private static Font labelFont = new Font("Dialog", 0, 10);
 
 	public NodeInsertionPanel(XmlEditorPanel xmlEditorPanel)
 	{
@@ -49,52 +52,66 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 		Box box = new Box(BoxLayout.Y_AXIS);
 		Dimension dimension;
 
-		JLabel label;
-		Font labelFont = new Font("Default", 0, 10);
-
-		label = new JLabel("Insert before:");
-		label.setFont(labelFont);
-		box.add(label);
+		JComponent title = createTitleLabel("Insert before:");
+		box.add(title);
 
 		insertBeforeList = new NodeInsertionList(NodeInsertionList.MODE_INSERT_BEFORE);
 		xmlEditor.getSelectionInfo().addListener(insertBeforeList);
 		insertBeforeList.setCellRenderer(new ElementSpecCellRenderer());
+		insertBeforeList.addFocusListener(new FocusHighlightComponent(title));
 		JScrollPane scrollPane1 = new JScrollPane(insertBeforeList);
-		insertBeforeList.addFocusListener(new FocusBorder(scrollPane1));
+		scrollPane1.setBorder(BorderFactory.createEmptyBorder());
 		dimension = insertBeforeList.getPreferredSize();
 		dimension.width = Integer.MAX_VALUE;
 		insertBeforeList.setMaximumSize(dimension);
 		box.add(scrollPane1);
 
-		label = new JLabel("Insert after:");
-		label.setFont(labelFont);
-		box.add(label);
+		title = createTitleLabel("Insert after:");
+		box.add(title);
 
 		insertAfterList = new NodeInsertionList(NodeInsertionList.MODE_INSERT_AFTER);
 		xmlEditor.getSelectionInfo().addListener(insertAfterList);
 		insertAfterList.setCellRenderer(new ElementSpecCellRenderer());
+		insertAfterList.addFocusListener(new FocusHighlightComponent(title));
 		JScrollPane scrollPane2 = new JScrollPane(insertAfterList);
-		insertAfterList.addFocusListener(new FocusBorder(scrollPane2));
+		scrollPane2.setBorder(BorderFactory.createEmptyBorder());
 		dimension = insertAfterList.getPreferredSize();
 		dimension.width = Integer.MAX_VALUE;
 		insertAfterList.setMaximumSize(dimension);
 		box.add(scrollPane2);
 
-		label = new JLabel("Append child:");
-		label.setFont(labelFont);
-		box.add(label);
+		title = createTitleLabel("Append child:");
+		box.add(title);
 
 		insertInsideList = new NodeInsertionList(NodeInsertionList.MODE_INSERT_INSIDE);
 		xmlEditor.getSelectionInfo().addListener(insertInsideList);
 		insertInsideList.setCellRenderer(new ElementSpecCellRenderer());
+		insertInsideList.addFocusListener(new FocusHighlightComponent(title));
 		JScrollPane scrollPane3 = new JScrollPane(insertInsideList);
-		insertInsideList.addFocusListener(new FocusBorder(scrollPane3));
+		scrollPane3.setBorder(BorderFactory.createEmptyBorder());
 		dimension = insertInsideList.getPreferredSize();
 		dimension.width = Integer.MAX_VALUE;
 		insertInsideList.setMaximumSize(dimension);
 		box.add(scrollPane3);
 
 		add(box, BorderLayout.CENTER);
+	}
+
+	private final JComponent createTitleLabel(String text)
+	{
+		JLabel label = new JLabel(text);
+		label.setFont(labelFont);
+
+		JPanel panel = new JPanel();
+		Dimension dimension = panel.getPreferredSize();
+		dimension.width = Integer.MAX_VALUE;
+		panel.setMaximumSize(dimension);
+		panel.setBorder(SemiBevelBorder.getInstance());
+		panel.setLayout(new BorderLayout(0, 0));
+		panel.add(label, BorderLayout.CENTER);
+		panel.setOpaque(true);
+
+		return panel;
 	}
 
 	public void activateInsertBefore()
@@ -437,8 +454,6 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 			{
 				setText(value.toString());
 				setIcon(null);
-				Font font = list.getFont().deriveFont(Font.ITALIC);
-				setFont(font);
 			}
 			else if (value instanceof String)
 			{

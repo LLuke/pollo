@@ -3,6 +3,7 @@ package org.outerj.pollo.xmleditor.action;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.outerj.pollo.gui.ErrorDialog;
+import org.outerj.pollo.gui.EmptyIcon;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.model.Undo;
@@ -28,7 +29,7 @@ public class CommentOutAction extends AbstractAction implements SelectionListene
 
 	public CommentOutAction(XmlEditor xmlEditor)
 	{
-		super("Comment out");
+		super("Comment out", EmptyIcon.getInstance());
 
 		this.xmlEditor = xmlEditor;
 

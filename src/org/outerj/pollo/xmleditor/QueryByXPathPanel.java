@@ -3,6 +3,7 @@ package org.outerj.pollo.xmleditor;
 import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.dom.XPath;
 import org.outerj.pollo.Pollo;
+import org.outerj.pollo.gui.SmallButton;
 import org.outerj.pollo.config.PolloConfiguration;
 import org.outerj.pollo.config.XPathQuery;
 import org.outerj.pollo.xmleditor.attreditor.AttributesPanel;
@@ -11,10 +12,12 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.List;
 
 public class QueryByXPathPanel extends JPanel implements ActionListener
@@ -61,56 +64,67 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 
 		xpathCombo = new JComboBox(Pollo.getInstance().getConfiguration().getRecentlyUsedXPathsModel());
 		xpathCombo.setEditable(true);
-		xpathCombo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
+		xpathCombo.getEditor().getEditorComponent().addKeyListener(new KeyListener()
+		{
+			public void keyTyped(KeyEvent e)
 			{
-                JComboBox comboBox = (JComboBox)e.getSource();
-                String newSelection = (String)comboBox.getSelectedItem();
-				if (xpathCombo.getEditor().getItem().equals(newSelection))
+			}
+
+			public void keyPressed(KeyEvent e)
+			{
+			}
+
+			public void keyReleased(KeyEvent e)
+			{
+				if (e.getKeyCode() == KeyEvent.VK_ENTER)
 				{
-					ActionEvent actionEvent = new ActionEvent(e.getSource(), 0, "execute");
-					QueryByXPathPanel.this.actionPerformed(actionEvent);
-				}
-				else
-				{
-					xpathCombo.getEditor().setItem(newSelection);
+					String newSelection = (String)xpathCombo.getSelectedItem();
+					if (xpathCombo.getEditor().getItem().equals(newSelection))
+					{
+						ActionEvent actionEvent = new ActionEvent(e.getSource(), 0, "execute");
+						QueryByXPathPanel.this.actionPerformed(actionEvent);
+					}
+					else
+					{
+						xpathCombo.getEditor().setItem(newSelection);
+					}
 				}
 			}
 		});
 		Dimension dimension = xpathCombo.getPreferredSize();
 		dimension.width = Integer.MAX_VALUE;
+		dimension.height = dimension.height - 4;
 		xpathCombo.setMaximumSize(dimension);
 		box.add(xpathCombo);
 
+		/*
 		JButton executeButton = new JButton("Execute");
 		executeButton.setActionCommand("execute");
 		executeButton.addActionListener(this);
 		executeButton.setRequestFocusEnabled(false);
 		box.add(executeButton);
+		*/
 
-		JButton insertExampleButton = new JButton("?");
-		insertExampleButton.setToolTipText("Insert example query");
-		insertExampleButton.setActionCommand("insert-example");
-		insertExampleButton.addActionListener(this);
-		insertExampleButton.setRequestFocusEnabled(false);
-		box.add(insertExampleButton);
-
-		prevButton = new JButton("<");
+		prevButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/backward.gif"));
 		prevButton.setActionCommand("prevResult");
 		prevButton.addActionListener(this);
 		prevButton.setEnabled(false);
-		prevButton.setRequestFocusEnabled(false);
 		box.add(prevButton);
 
 		progress = new JLabel("");
 		box.add(progress);
 
-		nextButton = new JButton(">");
+		nextButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/forward.gif"));
 		nextButton.setActionCommand("nextResult");
 		nextButton.addActionListener(this);
 		nextButton.setEnabled(false);
-		nextButton.setRequestFocusEnabled(false);
 		box.add(nextButton);
+
+		JButton insertExampleButton = new SmallButton("?");
+		insertExampleButton.setToolTipText("Insert example query");
+		insertExampleButton.setActionCommand("insert-example");
+		insertExampleButton.addActionListener(this);
+		box.add(insertExampleButton);
 
 		this.add(box, BorderLayout.CENTER);
 	}

@@ -2,6 +2,7 @@ package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.gui.EmptyIcon;
 import org.w3c.dom.*;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ public class PasteAction extends AbstractAction implements SelectionListener
 
 	public PasteAction(XmlEditor xmlEditor, int behaviour)
 	{
-		super(getDisplayName(behaviour));
+		super(getDisplayName(behaviour), EmptyIcon.getInstance());
 
 		this.xmlEditor = xmlEditor;
 		this.behaviour = behaviour;

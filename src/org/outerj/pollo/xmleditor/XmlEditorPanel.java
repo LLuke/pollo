@@ -1,6 +1,9 @@
 package org.outerj.pollo.xmleditor;
 
 import org.outerj.pollo.DomConnected;
+import org.outerj.pollo.Pollo;
+import org.outerj.pollo.config.PolloConfiguration;
+import org.outerj.pollo.gui.ShadowBorder;
 import org.outerj.pollo.xmleditor.action.ValidateAction;
 import org.outerj.pollo.xmleditor.attreditor.AttributesPanel;
 import org.outerj.pollo.xmleditor.chardataeditor.CharDataPanel;
@@ -12,11 +15,14 @@ import org.outerj.pollo.xmleditor.util.FocusBorder;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Collection;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Collection;
 
 
 /**
@@ -36,6 +42,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 	protected NodeDetailsPanel nodeDetailsPanel;
 	protected JSplitPane xmlEditorAndNodeInsertPanelSplit;
 	protected JSplitPane xmlEditorAndValidationErrorsSplit;
+	protected JSplitPane splitPane1AndAttributesPanelSplit;
 	protected Container xpathAndXmlEditorContainer;
 	protected ValidationErrorsPanel validationErrorsPanel;
 	protected AttributesPanel attrPanel;
@@ -55,11 +62,12 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		JScrollPane scrollPane = new JScrollPane(xmlEditor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
-		xmlEditor.addFocusListener(new FocusBorder(scrollPane));
+		scrollPane.setBorder(ShadowBorder.getInstance());
 
 		// create the details pane
 		nodeDetailsPanel = new NodeDetailsPanel();
 		xmlEditor.getSelectionInfo().addListener(nodeDetailsPanel);
+		nodeDetailsPanel.setBorder(ShadowBorder.getInstance());
 
 		attrPanel = new AttributesPanel(model, schema, attrEditorPlugin);
 		xmlEditor.getSelectionInfo().addListener(attrPanel);
@@ -83,6 +91,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 
 		// create the panel from which the user can select new nodes to insert
 		nodeInsertionPanel = new NodeInsertionPanel(this);
+		nodeInsertionPanel.setBorder(ShadowBorder.getInstance());
 
 		// bind some keyevents of the xml editor
 		ActionMap editorActionMap = xmlEditor.getActionMap();
@@ -118,26 +127,53 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		// Create the container containing the QueryByXPath panel and the XmlEditor component
 		xpathAndXmlEditorContainer = new Container();
 		xpathAndXmlEditorContainer.setLayout(new BorderLayout());
-		xpathAndXmlEditorContainer.add(new QueryByXPathPanel(xmlEditor, attrPanel), BorderLayout.NORTH);
+		QueryByXPathPanel queryByXPathPanel = new QueryByXPathPanel(xmlEditor, attrPanel);
+		queryByXPathPanel.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 3, 0), ShadowBorder.getInstance()));
+		xpathAndXmlEditorContainer.add(queryByXPathPanel, BorderLayout.NORTH);
 		xpathAndXmlEditorContainer.add(scrollPane, BorderLayout.CENTER);
 
 		// create first split pane (xmlEditor - nodeInsertionPanel)
 		xmlEditorAndNodeInsertPanelSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, xpathAndXmlEditorContainer, nodeInsertionPanel);
 		xmlEditorAndNodeInsertPanelSplit.setResizeWeight(1); // xml content editor gets extra space
-		xmlEditorAndNodeInsertPanelSplit.setDividerLocation(620);
-		xmlEditorAndNodeInsertPanelSplit.setOneTouchExpandable(true);
+		xmlEditorAndNodeInsertPanelSplit.setDividerLocation(Pollo.getInstance().getConfiguration().getSplitPane1Pos());
+		xmlEditorAndNodeInsertPanelSplit.addPropertyChangeListener(new SplitPaneDividerListener());
+		xmlEditorAndNodeInsertPanelSplit.setDividerSize(3);
+		xmlEditorAndNodeInsertPanelSplit.setBorder(BorderFactory.createEmptyBorder());
 
 		// create second splitpane (first split pane - attributesPanel)
-		JSplitPane splitPane2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, xmlEditorAndNodeInsertPanelSplit, nodeDetailsPanel);
-		splitPane2.setResizeWeight(1); // xml content editor gets extra space
-		splitPane2.setDividerLocation(370);
-		splitPane2.setOneTouchExpandable(true);
-		add(splitPane2, BorderLayout.CENTER);
+		splitPane1AndAttributesPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, xmlEditorAndNodeInsertPanelSplit, nodeDetailsPanel);
+		splitPane1AndAttributesPanelSplit.setResizeWeight(1); // xml content editor gets extra space
+		splitPane1AndAttributesPanelSplit.setDividerLocation(Pollo.getInstance().getConfiguration().getSplitPane2Pos());
+		splitPane1AndAttributesPanelSplit.addPropertyChangeListener(new SplitPaneDividerListener());
+		splitPane1AndAttributesPanelSplit.setDividerSize(3);
+		splitPane1AndAttributesPanelSplit.setBorder(BorderFactory.createEmptyBorder());
+		add(splitPane1AndAttributesPanelSplit, BorderLayout.CENTER);
 
 		NodePathBar nodePathBar = new NodePathBar(xmlEditor, attrPanel);
+		nodePathBar.setBorder(new CompoundBorder(new EmptyBorder(3, 0, 0, 0), BorderFactory.createBevelBorder(BevelBorder.LOWERED)));
 		add(nodePathBar, BorderLayout.SOUTH);
 
 		setXmlModel(model);
+	}
+
+	public class SplitPaneDividerListener implements PropertyChangeListener
+	{
+		public void propertyChange(PropertyChangeEvent evt)
+		{
+			if (evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY))
+			{
+				PolloConfiguration conf = Pollo.getInstance().getConfiguration();
+
+				conf.setSplitPane1Pos(xmlEditorAndNodeInsertPanelSplit.getDividerLocation());
+				conf.setSplitPane2Pos(splitPane1AndAttributesPanelSplit.getDividerLocation());
+
+				// also change the default window size, since the position of the divider is dependent on the
+				// size of the current window
+				JFrame frame = (JFrame)XmlEditorPanel.this.getTopLevelAncestor();
+				conf.setWindowHeight(frame.getHeight());
+				conf.setWindowWidth(frame.getWidth());
+			}
+		}
 	}
 
 	public void setXmlModel(XmlModel xmlModel)
@@ -166,6 +202,8 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		if (xmlEditorAndValidationErrorsSplit == null)
 		{
 			xmlEditorAndValidationErrorsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+			xmlEditorAndValidationErrorsSplit.setDividerSize(3);
+			xmlEditorAndValidationErrorsSplit.setBorder(BorderFactory.createEmptyBorder());
 			xmlEditorAndValidationErrorsSplit.setResizeWeight(1); // xml content editor gets extra space
 			xmlEditorAndValidationErrorsSplit.setDividerLocation(0.7);
 		}
@@ -199,6 +237,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		if (validationErrorsPanel == null)
 		{
 			validationErrorsPanel = new ValidationErrorsPanel(this, attrPanel);
+			validationErrorsPanel.setBorder(ShadowBorder.getInstance());
 		}
 		return validationErrorsPanel;
 	}

@@ -5,6 +5,7 @@ import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.view.View;
+import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +29,7 @@ public class RenderViewToFileAction extends AbstractAction
 
 	public RenderViewToFileAction(XmlEditor xmlEditor)
 	{
-		super("Store as image (jpeg)...");
+		super("Store as image (jpeg)...", EmptyIcon.getInstance());
 		this.xmlEditor = xmlEditor;
 	}
 

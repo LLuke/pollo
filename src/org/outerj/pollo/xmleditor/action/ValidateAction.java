@@ -3,6 +3,7 @@ package org.outerj.pollo.xmleditor.action;
 import com.sun.msv.verifier.ValidationUnrecoverableException;
 import org.outerj.pollo.xmleditor.XmlEditorPanel;
 import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,7 +21,7 @@ public class ValidateAction extends AbstractAction
 
 	public ValidateAction(XmlEditorPanel xmlEditorPanel)
 	{
-		super("Validate document");
+		super("Validate document", EmptyIcon.getInstance());
 		this.xmlEditorPanel = xmlEditorPanel;
 		setEnabled(true);
 	}

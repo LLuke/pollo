@@ -3,6 +3,7 @@ package org.outerj.pollo.xmleditor;
 import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.dom.XPath;
 import org.outerj.pollo.DomConnected;
+import org.outerj.pollo.gui.EmptyIcon;
 import org.outerj.pollo.xmleditor.action.*;
 import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
@@ -393,9 +394,9 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		for (int i = 0; i < children.getLength(); i++)
 		{
 			Node node = (Node)children.item(i);
-			if ((node.getNodeType() == Node.ELEMENT_NODE) && 
+			if ((node.getNodeType() == Node.ELEMENT_NODE) /*&&
 					displaySpec.getElementSpec(node.getNamespaceURI(),
-						node.getLocalName()).viewType == ElementSpec.BLOCK_VIEW)
+						node.getLocalName()).viewType == ElementSpec.BLOCK_VIEW*/)
 			{
 				View childView = createView((Element)node, parentView);
 				parentView.addChildView(childView);
@@ -469,6 +470,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		popupMenu.add(getRemoveAction());
 
 		JMenu pasteMenu = new JMenu("Paste");
+		pasteMenu.setIcon(EmptyIcon.getInstance());
 		pasteMenu.add(getPasteBeforeAction());
 		pasteMenu.add(getPasteAfterAction());
 		if (node instanceof Element)
@@ -477,6 +479,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		popupMenu.addSeparator();
 
 		JMenu commentMenu = new JMenu("Insert Comment");
+		commentMenu.setIcon(EmptyIcon.getInstance());
 		commentMenu.add(getInsertCommentBeforeAction());
 		commentMenu.add(getInsertCommentAfterAction());
 		if (node instanceof Element)
@@ -484,6 +487,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		popupMenu.add(commentMenu);
 
 		JMenu textMenu = new JMenu("Insert Text");
+		textMenu.setIcon(EmptyIcon.getInstance());
 		textMenu.add(getInsertTextBeforeAction());
 		textMenu.add(getInsertTextAfterAction());
 		if (node instanceof Element)
@@ -491,6 +495,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		popupMenu.add(textMenu);
 
 		JMenu cdataMenu = new JMenu("Insert CDATA");
+		cdataMenu.setIcon(EmptyIcon.getInstance());
 		cdataMenu.add(getInsertCDataBeforeAction());
 		cdataMenu.add(getInsertCDataAfterAction());
 		if (node instanceof Element)
@@ -498,6 +503,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		popupMenu.add(cdataMenu);
 
 		JMenu piMenu = new JMenu("Insert PI");
+		piMenu.setIcon(EmptyIcon.getInstance());
 		piMenu.add(getInsertPIBeforeAction());
 		piMenu.add(getInsertPIAfterAction());
 		if (node instanceof Element)
@@ -680,11 +686,12 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 						if (parent instanceof Document && ((Document)parent).getDocumentElement() != null
 								&& !(newNode instanceof Comment || newNode instanceof ProcessingInstruction))
 						{
-							JOptionPane.showMessageDialog(getTopLevelAncestor(), "An XML document can have only one root element.");
 							event.rejectDrop();
+							JOptionPane.showMessageDialog(getTopLevelAncestor(), "An XML document can have only one root element.");
 							return;
 						}
 
+						/* Blocks GUI with jdk 1.4 - windows
 						if (newNode.getNodeType() == Node.ELEMENT_NODE && !schema.isChildAllowed((Element)parent, (Element)newNode))
 						{
 							// schema tells it is not allowed here, but let the user decide
@@ -693,7 +700,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 								event.rejectDrop();
 								return;
 							}
-						}
+						}*/
 
 						if (draggingNode != null)
 							xmlModel.getUndo().startUndoTransaction("Drag-and-drop");
@@ -706,11 +713,12 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 						if (dropNode instanceof Document && ((Document)dropNode).getDocumentElement() != null
 								&& !(newNode instanceof Comment || newNode instanceof ProcessingInstruction))
 						{
-							JOptionPane.showMessageDialog(getTopLevelAncestor(), "An XML document can have only one root element.");
 							event.rejectDrop();
+							JOptionPane.showMessageDialog(getTopLevelAncestor(), "An XML document can have only one root element.");
 							return;
 						}
 
+						/* Blocks GUI with jdk 1.4 - windows
 						if (newNode.getNodeType() == Node.ELEMENT_NODE && !schema.isChildAllowed((Element)dropNode, (Element)newNode))
 						{
 							if (JOptionPane.showConfirmDialog(getTopLevelAncestor(), ((Element)newNode).getLocalName() + " is not allowed here. Insert it anyway?", "Let me ask you something...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION)
@@ -718,7 +726,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 								event.rejectDrop();
 								return;
 							}
-						}
+						}*/
 
 						if (draggingNode != null)
 							xmlModel.getUndo().startUndoTransaction("Drag-and-drop");

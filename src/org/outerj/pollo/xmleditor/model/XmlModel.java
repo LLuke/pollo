@@ -52,6 +52,9 @@ public class XmlModel
 	protected boolean modifiedWhileInTextMode;
 	protected TextDocumentModifiedListener textModifiedListener;
 
+	protected static int untitledCount = 0;
+	protected int untitledNumber = -1;
+
 	public static final int FILENAME_CHANGED = 1;
 	public static final int LAST_VIEW_CLOSED = 2;
 	public static final int FILE_CHANGED     = 3;
@@ -503,15 +506,33 @@ public class XmlModel
 		return file;
 	}
 
-	public String getFileName()
+	public String getShortTitle()
 	{
-		if (file != null)
+		if (file == null)
 		{
-			return file.getName();
+			if (untitledNumber == -1)
+			{
+				untitledCount++;
+				untitledNumber = untitledCount;
+			}
+
+			return "Untitled" + untitledNumber;
 		}
 		else
 		{
-			return "Untitled";
+			return file.getName();
+		}
+	}
+
+	public String getLongTitle()
+	{
+		if (file == null)
+		{
+			return getShortTitle();
+		}
+		else
+		{
+			return file.getAbsolutePath();
 		}
 	}
 
