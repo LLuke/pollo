@@ -25,7 +25,7 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 	protected JRadioButton customViewTypeButton;
 
 	protected JPanel schemaPanel;
-	protected JTextField fileNameField;
+	protected JComboBox schemaFileCombo;
 	protected JButton browseForFileButton;
 	protected JRadioButton xmlSchemaButton;
 	protected JRadioButton relaxNgButton;
@@ -131,15 +131,23 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		verticalBox.add(spacerBox1);
 
 		// field + button to choose schema file name
-		fileNameField = new JTextField("");
-		Dimension fnfDimension = fileNameField.getPreferredSize();
+		schemaFileCombo = new JComboBox(pollo.getConfiguration().getRecentlyUsedSchemasModel());
+		schemaFileCombo.setEditable(true);
+		schemaFileCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				JComboBox source = (JComboBox)e.getSource();
+				source.getEditor().setItem(source.getSelectedItem());
+			}
+		});
+		Dimension fnfDimension = schemaFileCombo.getPreferredSize();
 		fnfDimension.width = Integer.MAX_VALUE;
-		fileNameField.setMaximumSize(fnfDimension);
+		schemaFileCombo.setMaximumSize(fnfDimension);
 		browseForFileButton = new JButton("Browse...");
 		browseForFileButton.setActionCommand("browse-for-schema");
 		browseForFileButton.addActionListener(this);
 		Box box4 = new Box(BoxLayout.X_AXIS);
-		box4.add(fileNameField);
+		box4.add(schemaFileCombo);
 		box4.add(browseForFileButton);
 		schemaBox.add(box4);
 
@@ -282,7 +290,7 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 	{
 		if (event.getActionCommand().equals("ok"))
 		{
-			if (customViewTypeButton.isSelected() && fileNameField.getText().trim().equals(""))
+			if (customViewTypeButton.isSelected() && ((String)schemaFileCombo.getEditor().getItem()).trim().equals(""))
 			{
 				JOptionPane.showMessageDialog(this, "Please enter the schema file name to use.");
 				return;
@@ -325,7 +333,7 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 			{
 				String path = schemaChooser.getSelectedFile().getAbsolutePath();
-				fileNameField.setText(path);
+				schemaFileCombo.getEditor().setItem(path);
 				polloConfiguration.setSchemaOpenDialogPath(path);
 			}
 		}
@@ -369,7 +377,7 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 
 	protected void enableSelectCustom(boolean enabled)
 	{
-		fileNameField.setEnabled(enabled);
+		schemaFileCombo.setEnabled(enabled);
 		browseForFileButton.setEnabled(enabled);
 		relaxCoreButton.setEnabled(enabled);
 		relaxNgButton.setEnabled(enabled);
@@ -422,7 +430,9 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 
 			// create schema configuration
 			SchemaConfItem schemaConf = new SchemaConfItem();
-			schemaConf.addInitParam("source", fileNameField.getText());
+			String schemaFileName = (String)schemaFileCombo.getEditor().getItem();
+			schemaConf.addInitParam("source", schemaFileName);
+			Pollo.getInstance().getConfiguration().addRecentlyUsedSchema(schemaFileName);
 
 			if (polloButton.isSelected())
 			{
