@@ -23,6 +23,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * A dialog from which the user can select a viewtype.
@@ -54,6 +57,22 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		PolloConfiguration config = pollo.getConfiguration();
 
 		viewTypesList = new JList(config.getViewTypes().toArray());
+		viewTypesList.setSelectedIndex(0);
+		// make the list react on double clicks
+		MouseListener mouseListener = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int index = viewTypesList.locationToIndex(e.getPoint());
+					if (index != -1)
+					{
+						viewTypesList.setSelectedIndex(index);
+						ok = true;
+						hide();
+					}
+				}
+			}
+		};
+		viewTypesList.addMouseListener(mouseListener);
 		JScrollPane scrollPane = new JScrollPane(viewTypesList);
 		panel.add(scrollPane, BorderLayout.CENTER);
 
@@ -61,6 +80,8 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		JButton okButton = new JButton("Okay");
 		okButton.setActionCommand("ok");
 		okButton.addActionListener(this);
+		getRootPane().setDefaultButton(okButton);
+
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(this);
@@ -71,6 +92,7 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		buttons.add(Box.createHorizontalStrut(6));
 		buttons.add(cancelButton);
 		panel.add(buttons, BorderLayout.SOUTH);
+
 
 		pack();
 
