@@ -191,7 +191,7 @@ public abstract class CharacterDataBlockView extends BlockView
 			else
 				collapse();
 		}
-		else
+		else if (e.getX() > startH)
 		{
 			NodeClickedEvent nce = new NodeClickedEvent(characterData, e);
 			xmlEditor.fireNodeClickedEvent(nce);
