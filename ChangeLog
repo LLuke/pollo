@@ -1,3 +1,20 @@
+version 0.3.5
+=============
+FEATURES
+ - Some initial user preferences: you can now change the fonts
+   used in the treeview by selecting File | User Preferences.
+   I get good effects putting element and attribute names to a bold,
+   non-italic font.
+BUG FIXES
+ - pressing space in the text editor used for editing text nodes,
+   comment nodes, ... caused the ToggleExpandCollapseAction to
+   be executed. Apparently the space key isn't consumed by the
+   JTextArea? Fixed by checking that the XmlEditor must have focus.
+   Anyone who knows more about this behaviour, please let me know.
+ - when changing text view to tree view in the dropdown, and the switch
+   to tree view failed, then tree view stayed incorrectly selected
+   in the dropdown
+
 version 0.3.4
 =============
  - Fixed serious memory leaks (after closing  a file, the resources
