@@ -2,13 +2,11 @@ package org.outerj.pollo;
 
 import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.swing.*;
 import javax.swing.event.MenuListener;
 import javax.swing.event.MenuEvent;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
