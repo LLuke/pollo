@@ -2,7 +2,7 @@
 <project default="compile" name="pollo">
   <path id="classpath">
     <pathelement location="build"/>
-    <pathelement location="lib/xerces.jar"/>
+	<pathelement location="lib/endorsed/xerces.jar"/>
     <pathelement location="lib/kunststoff.jar"/>
     <pathelement location="lib/commons-digester.jar"/>
     <pathelement location="lib/commons-collections.jar"/>
@@ -25,7 +25,7 @@
 </target>-->
   <target name="compile">
     <mkdir dir="build"/>
-    <javac destdir="build" srcdir="src" debug="true">
+	<javac destdir="build" srcdir="src" debug="true" bootclasspath="lib/endorsed/xerces.jar" includeJavaRuntime="true">
       <classpath refid="classpath"/>
     </javac>
     <copy todir="build">
@@ -35,34 +35,18 @@
     </copy>
 	<copy file="ChangeLog" tofile="build/org/outerj/pollo/resource/ChangeLog"/>
   </target>
-  <target depends="compile" name="run">
-	  <java classname="org.outerj.pollo.Pollo" fork="true">
-      <classpath refid="classpath"/>
-    </java>
-  </target>
-  <target depends="compile" name="msvtest">
-    <java classname="org.outerj.pollo.xmleditor.schema.XsdSchema" fork="true">
-      <classpath refid="classpath"/>
-    </java>
-  </target>
-  <target depends="compile" name="msvtest2">
-    <java classname="org.outerj.pollo.xmleditor.schema.MsvSchema" fork="true">
-      <classpath refid="classpath"/>
-    </java>
-  </target>
-  <target depends="compile" name="msvtest3">
-    <java classname="org.outerj.pollo.xmleditor.schema.msv.MsvTest" fork="true">
-      <classpath refid="classpath"/>
-    </java>
-  </target>
   <target name="clean">
     <delete dir="build"/>
     <delete file="pollo.jar"/>
   </target>
   <target name="zip" depends="jar">
-    <zip zipfile="pollo-${version}-bin.zip">
-		<zipfileset dir="lib" excludes="versions.txt" defaultexcludes="true"/>
-		<zipfileset dir="." includes="pollo.jar,README"/>
+    <property name="buildname" value="pollo-${version}-bin"/>
+	<zip zipfile="${buildname}.zip">
+		<zipfileset dir="lib" excludes="versions.txt" defaultexcludes="true" prefix="${buildname}/lib"/>
+		<zipfileset dir="." includes="pollo.jar" prefix="${buildname}/lib"/>
+		<zipfileset dir="." includes="${buildname}/README"/>
+		<zipfileset dir="bin" defaultexcludes="true" prefix="${buildname}/bin"/>
+		<zipfileset dir="conf" defaultexcludes="true" prefix="${buildname}/conf"/>
     </zip>
   </target>
   <target name="apidoc">
@@ -78,10 +62,8 @@
     <antstructure output="ant.dtd"/>
   </target>
   <target name="jar" depends="clean,compile">
-    <jar jarfile="pollo.jar" manifest="misc/MANIFEST.MF" compress="false">
+    <jar jarfile="pollo.jar" compress="false">
       <zipfileset dir="build"/>
-      <zipfileset dir="conf"/>
-      <zipfileset dir="templates" prefix="templates"/>
     </jar>
   </target>
 </project>
