@@ -176,7 +176,6 @@ public class XmlTextDocument extends SyntaxDocument
 		}
 
 		return null;
-
 	}
 
 	private boolean isXmlSpace(char c)

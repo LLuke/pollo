@@ -242,6 +242,8 @@ public class XmlModel
 			else if (mode == TEXT_MODE)
 			{
 				String encoding = textDocument.getEncoding();
+                if (encoding == null)
+                    encoding = "UTF-8";
 				Writer writer = null;
 				if (encoding != null)
 					writer = new OutputStreamWriter(output, encoding);
