@@ -174,6 +174,8 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 			attributesTableModel.setElement(null);
 			setEnabled(false);
 		}
+
+		attributesTable.clearSelection();
 	}
 
 	/**
@@ -183,6 +185,7 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 	{
 		setEnabled(false);
 		attributesTableModel.setElement(null);
+		attributesTable.clearSelection();
 	}
 
 

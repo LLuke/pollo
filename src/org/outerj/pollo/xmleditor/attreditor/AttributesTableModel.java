@@ -221,6 +221,8 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 		// add an event listener
 		((EventTarget)element).addEventListener("DOMAttrModified", this, false);
 		fireTableChanged(new TableModelEvent(this));
+
+
 	}
 
 

@@ -17,6 +17,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Pollo implements XmlModelListener
 {
@@ -73,6 +74,19 @@ public class Pollo implements XmlModelListener
 	 */
 	public void openFile(final File file, final PolloFrame polloFrame)
 	{
+		// check if the file isn't open yet
+		Iterator openFileIt = openFiles.iterator();
+		while (openFileIt.hasNext())
+		{
+			File openFile = ((XmlModel)openFileIt.next()).getFile();
+			if (openFile != null && openFile.getAbsolutePath().equals(file.getAbsolutePath()))
+			{
+				JOptionPane.showMessageDialog(polloFrame, "You have this file already open.", "Pollo", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+		}
+
+		// create the XmlModel
 		XmlModel xmlModel;
 
 		try
@@ -93,6 +107,7 @@ public class Pollo implements XmlModelListener
 			xmlModel.addListener(this);
 			openFiles.add(xmlModel);
 			polloFrame.addEditorPanel(editorPanel);
+			getConfiguration().addRecenltyOpenedFile(file.getAbsolutePath());
 		}
 	}
 
@@ -140,7 +155,10 @@ public class Pollo implements XmlModelListener
 				Window window = e.getWindow();
 				openFrames.remove(window);
 				if (openFrames.isEmpty())
+				{
+					storeConfiguration();
 					System.exit(0);
+				}
 			}
 		});
 	}
@@ -180,6 +198,12 @@ public class Pollo implements XmlModelListener
 		}
 		while (true);
 
+		storeConfiguration();
+		System.exit(0);
+	}
+
+	protected void storeConfiguration()
+	{
 		try
 		{
 			configuration.store();
@@ -189,8 +213,6 @@ public class Pollo implements XmlModelListener
 			ErrorDialog errorDialog = new ErrorDialog(null, "Could not store the user preferences.", e);
 			errorDialog.show();
 		}
-
-		System.exit(0);
 	}
 
 	/** Callback function from XmlModelListener. */

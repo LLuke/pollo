@@ -8,6 +8,7 @@ import org.outerj.pollo.config.ViewTypeConf;
 import org.outerj.pollo.gui.ErrorDialog;
 import org.outerj.pollo.gui.ToolButton;
 import org.outerj.pollo.gui.PopupToolButton;
+import org.outerj.pollo.gui.RecentlyOpenedFilesMenu;
 import org.outerj.pollo.plugin.IActionPlugin;
 import org.outerj.pollo.texteditor.XmlTextEditorPanel;
 import org.outerj.pollo.texteditor.XmlTextEditor;
@@ -113,6 +114,8 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		textFileMenu.add(polloFrame.getFileNewAction());
 		domFileMenu.add(polloFrame.getFileOpenAction());
 		textFileMenu.add(polloFrame.getFileOpenAction());
+		domFileMenu.add(new RecentlyOpenedFilesMenu(polloFrame));
+		textFileMenu.add(new RecentlyOpenedFilesMenu(polloFrame));
 		domFileMenu.add(saveAction);
 		textFileMenu.add(saveAction);
 		domFileMenu.add(saveAsAction);

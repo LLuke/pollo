@@ -1,6 +1,7 @@
 package org.outerj.pollo;
 
 import org.outerj.pollo.action.*;
+import org.outerj.pollo.gui.RecentlyOpenedFilesMenu;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -94,6 +95,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 		noEditorPanelsMenuBar.add(fileMenu);
 		fileMenu.add(getFileNewAction());
 		fileMenu.add(getFileOpenAction());
+		fileMenu.add(new RecentlyOpenedFilesMenu(this));
 		fileMenu.add(getExitAction());
 
 		// view menu
