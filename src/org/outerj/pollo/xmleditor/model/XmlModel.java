@@ -66,14 +66,14 @@ public class XmlModel
     /**
      * Constructor. By default, this will create an empty file in text mode.
      */
-    public XmlModel()
+    public XmlModel(int undoLevels)
     {
         textDocument = new XmlTextDocument();
         textDocument.setTokenMarker(new XMLTokenMarker());
         textModifiedListener = new TextDocumentModifiedListener();
         textDocument.addDocumentListener(textModifiedListener);
         mode = TEXT_MODE;
-        undo = new Undo(this);
+        undo = new Undo(this, undoLevels);
     }
 
     /**

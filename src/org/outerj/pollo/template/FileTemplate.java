@@ -7,7 +7,6 @@ import org.outerj.pollo.util.URLFactory;
 import java.util.HashMap;
 import java.io.InputStream;
 import org.xml.sax.InputSource;
-import org.w3c.dom.Document;
 
 public class FileTemplate implements ITemplate
 {
@@ -23,7 +22,7 @@ public class FileTemplate implements ITemplate
         }
     }
 
-    public XmlModel createNewDocument()
+    public XmlModel createNewDocument(int undoLevels)
         throws PolloException
     {
         XmlModel model = null;
@@ -31,7 +30,7 @@ public class FileTemplate implements ITemplate
         try
         {
             is = URLFactory.createUrl(source).openStream();
-            model = new XmlModel();
+            model = new XmlModel(undoLevels);
             model.readFromResource(new InputSource(is), null);
         }
         catch (Exception e)

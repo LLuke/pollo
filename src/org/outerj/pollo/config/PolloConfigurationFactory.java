@@ -104,6 +104,7 @@ public class PolloConfigurationFactory
         polloConfiguration.setTextFontSize(textFontConf.getAttributeAsInteger("size", 12));
 
         polloConfiguration.setTextAntialiasing(config.getChild("text-antialiasing").getValueAsBoolean(false));
+        polloConfiguration.setUndoLevels(config.getChild("undo-levels").getValueAsInteger(50));
 
         return polloConfiguration;
     }

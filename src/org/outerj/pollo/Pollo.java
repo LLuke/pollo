@@ -106,7 +106,7 @@ public class Pollo implements XmlModelListener
 
         try
         {
-            xmlModel = new XmlModel();
+            xmlModel = new XmlModel(configuration.getUndoLevels());
             xmlModel.readFromResource(file);
         }
         catch (Exception e)
@@ -262,7 +262,7 @@ public class Pollo implements XmlModelListener
             try
             {
                 ITemplate template = templateConfItem.createTemplate();
-                xmlModel = template.createNewDocument();
+                xmlModel = template.createNewDocument(configuration.getUndoLevels());
             }
             catch (Exception e)
             {

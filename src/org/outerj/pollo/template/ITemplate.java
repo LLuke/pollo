@@ -6,6 +6,6 @@ import org.w3c.dom.Document;
 
 public interface ITemplate
 {
-    public XmlModel createNewDocument()
+    public XmlModel createNewDocument(int undoLevels)
         throws PolloException;
 }

@@ -53,6 +53,8 @@ public class PolloConfiguration
     protected int textFontSize;
     protected boolean textAntialiasing;
 
+    protected int undoLevels;
+
     public static final String USER_CONF_FILE_NAME = ".pollorc";
 
     // element tag names
@@ -75,6 +77,7 @@ public class PolloConfiguration
     private static final String ATTRIBUTE_VALUE_FONT = "attribute-value-font";
     private static final String TEXT_ANTIALIASING = "text-antialiasing";
     private static final String TEXT_FONT = "text-font";
+    private static final String UNDO_LEVELS = "undo-levels";
 
 
     public PolloConfiguration()
@@ -366,6 +369,16 @@ public class PolloConfiguration
         this.textAntialiasing = textAntialiasing;
     }
 
+    public int getUndoLevels()
+    {
+        return undoLevels;
+    }
+
+    public void setUndoLevels(int undoLevels)
+    {
+        this.undoLevels = undoLevels;
+    }
+
     public void store()
             throws PolloConfigurationException
     {
@@ -481,6 +494,11 @@ public class PolloConfiguration
         String textAntialiasingString = String.valueOf(textAntialiasing);
         handler.characters(textAntialiasingString.toCharArray(), 0, textAntialiasingString.length());
         handler.endElement("",TEXT_ANTIALIASING, TEXT_ANTIALIASING);
+
+        handler.startElement("", UNDO_LEVELS, UNDO_LEVELS, new AttributesImpl());
+        String undoLevelsString = String.valueOf(undoLevels);
+        handler.characters(undoLevelsString.toCharArray(), 0, undoLevelsString.length());
+        handler.endElement("",UNDO_LEVELS, UNDO_LEVELS);
     }
 
     protected void storeList(final String listelement, final String itemelement, final List list, ContentHandler handler)

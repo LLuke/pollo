@@ -1,7 +1,6 @@
 package org.outerj.pollo.xmleditor.model;
 
 import org.outerj.pollo.DomConnected;
-import org.outerj.pollo.xmleditor.util.DomUtils;
 import org.outerj.pollo.xmleditor.IconManager;
 import org.w3c.dom.*;
 import org.w3c.dom.events.Event;
@@ -41,10 +40,12 @@ public class Undo implements EventListener, DomConnected
     protected UndoAction undoAction;
     protected XmlModel xmlModel;
     protected UndoTransaction currentUndoTransaction = null;
+    protected int undoLevels;
 
-    public Undo(XmlModel xmlModel)
+    public Undo(XmlModel xmlModel, int undoLevels)
     {
         this.xmlModel = xmlModel;
+        this.undoLevels = undoLevels;
 
         undoAction = new UndoAction();
         undoAction.setEnabled(false);
@@ -62,7 +63,7 @@ public class Undo implements EventListener, DomConnected
 
         setUndoInfo(null);
 
-        undos = new Stack();
+        undos = new LimitedSizeStack(undoLevels);
     }
 
     public void handleEvent(Event event)
@@ -325,11 +326,6 @@ public class Undo implements EventListener, DomConnected
             else
             {
                 element.setAttributeNS(namespaceURI, localName, value);
-                if (namespaceURI != null && prefix != null)
-                {
-                    Attr attr = element.getAttributeNodeNS(namespaceURI,
-                            DomUtils.getQName(prefix, localName));
-                }
             }
         }
 
@@ -467,5 +463,27 @@ public class Undo implements EventListener, DomConnected
     {
         disconnectFromDom();
         init();
+    }
+
+    /**
+     * Extension of Java's stack class that enforces a limit to the number of items
+     * in the stack. Once the limit is reached, the oldest items are removed.
+     */
+    public class LimitedSizeStack extends Stack
+    {
+        private final int maxSize;
+
+        public LimitedSizeStack(int maxSize)
+        {
+            this.maxSize = maxSize;
+        }
+
+        public Object push(Object item)
+        {
+            if (size() == maxSize)
+                removeElementAt(0);
+
+            return super.push(item);
+        }
     }
 }
