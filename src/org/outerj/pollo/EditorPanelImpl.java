@@ -55,7 +55,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
     protected CloseAllExceptThisAction closeAllExceptThisAction;
     protected static ResourceManager resMgr = ResourceManager.getManager(EditorPanelImpl.class);
 
-    public EditorPanelImpl(XmlModel xmlModel, ViewTypeConf viewTypeConf, PolloFrame polloFrame)
+    public EditorPanelImpl(XmlModel xmlModel, ViewTypeConf viewTypeConf, PolloFrame polloFrame, int forcedTreeType)
         throws Exception
     {
         this.xmlModel = xmlModel;
@@ -66,7 +66,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         IAttributeEditorPlugin iattributeeditorplugin = viewTypeConf.createAttrEditorPluginChain(xmlModel, ischema, polloFrame);
         actionPlugin = viewTypeConf.createActionPlugins(this, polloFrame);
 
-        xmlEditorPanel = new XmlEditorPanel(xmlModel, null, idisplayspecification, ischema, iattributeeditorplugin);
+        xmlEditorPanel = new XmlEditorPanel(xmlModel, null, idisplayspecification, ischema, iattributeeditorplugin, forcedTreeType);
         xmlTextEditorPanel = new XmlTextEditorPanel(xmlModel, ischema);
 
         // no borders

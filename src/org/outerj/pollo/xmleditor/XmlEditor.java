@@ -139,7 +139,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
       @param xpathForRoot an xpath expression that selects the element to display as root element.
       @param displaySpec an instance of an IDisplaySpecification
      */
-    public XmlEditor(String xpathForRoot, IDisplaySpecification displaySpec)
+    public XmlEditor(String xpathForRoot, IDisplaySpecification displaySpec, int forcedTreeType)
         throws Exception
     {
         super();
@@ -149,8 +149,9 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
         addNodeClickedListener(this);
         setOpaque(true);
 
+        int treetype = forcedTreeType == - 1 ? displaySpec.getTreeType() : forcedTreeType;
         // init view factory
-        switch (displaySpec.getTreeType())
+        switch (treetype)
         {
             case IDisplaySpecification.POLLO_TREE:
                 this.viewFactory = new V1ViewFactory(this);

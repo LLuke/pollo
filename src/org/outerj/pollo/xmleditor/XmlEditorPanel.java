@@ -50,7 +50,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
     protected QueryByXPathPanel queryByXPathPanel;
 
     public XmlEditorPanel(XmlModel model, String xpathForRoot, IDisplaySpecification displaySpec,
-            ISchema schema, IAttributeEditorPlugin attrEditorPlugin)
+            ISchema schema, IAttributeEditorPlugin attrEditorPlugin, int forcedTreetype)
         throws Exception
     {
         this.xpathForRoot = xpathForRoot;
@@ -59,7 +59,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
         this.schema = schema;
 
         // create the xml content editor component
-        xmlEditor = new XmlEditor(xpathForRoot, displaySpec);
+        xmlEditor = new XmlEditor(xpathForRoot, displaySpec, forcedTreetype);
         JScrollPane scrollPane = new JScrollPane(xmlEditor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.getVerticalScrollBar().setUnitIncrement(10);

@@ -1,6 +1,7 @@
 package org.outerj.pollo.gui;
 
 import org.outerj.pollo.Pollo;
+import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.config.*;
 
 import javax.swing.*;
@@ -43,6 +44,10 @@ public class ViewTypesDialog extends JPanel implements ActionListener
     protected JRadioButton polloTree;
     protected JRadioButton classicTree;
 
+    protected JRadioButton useConfiguredTreetype;
+    protected JRadioButton forcePolloTreetype;
+    protected JRadioButton forceClassicTreetype;
+
     protected JFileChooser schemaChooser;
     protected JFileChooser displaySpecChooser;
 
@@ -80,6 +85,23 @@ public class ViewTypesDialog extends JPanel implements ActionListener
         box1.add(Box.createHorizontalGlue());
         verticalBox.add(box1);
 
+        // make a box containing the options for forcing the tree type
+        Box treetypeBox = new Box(BoxLayout.Y_AXIS);
+        useConfiguredTreetype = new JRadioButton("Specified in selected configuration.");
+        forcePolloTreetype = new JRadioButton("Pollo (colored bars)");
+        forceClassicTreetype = new JRadioButton("Classic");
+        ButtonGroup treetypeGroup = new ButtonGroup();
+        treetypeGroup.add(useConfiguredTreetype);
+        treetypeGroup.add(forcePolloTreetype);
+        treetypeGroup.add(forceClassicTreetype);
+        useConfiguredTreetype.setSelected(true);
+        treetypeBox.add(Box.createVerticalGlue());
+        treetypeBox.add(new JLabel("Use tree type:"));
+        treetypeBox.add(useConfiguredTreetype);
+        treetypeBox.add(forcePolloTreetype);
+        treetypeBox.add(forceClassicTreetype);
+        treetypeBox.add(Box.createVerticalStrut(12));
+
         // make the list with predefined configuration
         Pollo pollo = Pollo.getInstance();
         PolloConfiguration config = pollo.getConfiguration();
@@ -108,6 +130,8 @@ public class ViewTypesDialog extends JPanel implements ActionListener
         Box box2 = new Box(BoxLayout.X_AXIS);
         box2.add(Box.createHorizontalStrut(18));
         box2.add(viewTypesListScrollPane);
+        box2.add(Box.createHorizontalStrut(12));
+        box2.add(treetypeBox);
         box2.add(Box.createHorizontalGlue());
         verticalBox.add(box2);
 
@@ -384,6 +408,9 @@ public class ViewTypesDialog extends JPanel implements ActionListener
     protected void enableSelectPredefined(boolean enabled)
     {
         viewTypesList.setEnabled(enabled);
+        useConfiguredTreetype.setEnabled(enabled);
+        forcePolloTreetype.setEnabled(enabled);
+        forceClassicTreetype.setEnabled(enabled);
     }
 
     protected void enableSelectCustom(boolean enabled)
@@ -508,5 +535,15 @@ public class ViewTypesDialog extends JPanel implements ActionListener
 
             return viewTypeConf;
         }
+    }
+
+    public int getTreeType()
+    {
+        if (forcePolloTreetype.isSelected())
+            return IDisplaySpecification.POLLO_TREE;
+        else if (forceClassicTreetype.isSelected())
+            return IDisplaySpecification.CLASSIC_TREE;
+        else
+            return -1;
     }
 }

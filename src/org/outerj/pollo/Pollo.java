@@ -146,7 +146,7 @@ public class Pollo implements XmlModelListener
             EditorPanel editorPanel;
             try
             {
-                editorPanel = new EditorPanelImpl(xmlModel, viewTypeConf, polloFrame);
+                editorPanel = new EditorPanelImpl(xmlModel, viewTypeConf, polloFrame, viewTypesDialog.getTreeType());
             }
             catch (Exception e2)
             {
