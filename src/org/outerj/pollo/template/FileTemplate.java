@@ -2,6 +2,7 @@ package org.outerj.pollo.template;
 
 import org.outerj.pollo.xmleditor.exception.PolloException;
 import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.outerj.pollo.util.URLFactory;
 
 import java.util.HashMap;
 import java.io.InputStream;
@@ -26,9 +27,10 @@ public class FileTemplate implements ITemplate
 		throws PolloException
 	{
 		XmlModel model = null;
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream(source);
+		InputStream is = null;
 		try
 		{
+			is = URLFactory.createUrl(source).openStream();
 			model = new XmlModel();
 			model.readFromResource(new InputSource(is), null);
 		}
@@ -38,7 +40,7 @@ public class FileTemplate implements ITemplate
 		}
 		finally
 		{
-			try { is.close(); } catch (Exception e) {}
+			try { if (is != null) is.close(); } catch (Exception e) {}
 		}
 		return model;
 	}
