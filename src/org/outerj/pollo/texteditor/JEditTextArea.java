@@ -54,7 +54,7 @@ import java.util.Vector;
  *     + "}");</pre>
  *
  * @author Slava Pestov
- * @version $Id: JEditTextArea.java,v 1.1 2001/11/18 19:30:48 bdumon Exp $
+ * @version $Id: JEditTextArea.java,v 1.2 2002/01/27 19:15:16 bdumon Exp $
  */
 public class JEditTextArea extends JComponent
 {
@@ -1516,7 +1516,9 @@ public class JEditTextArea extends JComponent
 	{
 		super.removeNotify();
 		if(focusedComponent == this)
+		{
 			focusedComponent = null;
+		}
 	}
 
 	/**

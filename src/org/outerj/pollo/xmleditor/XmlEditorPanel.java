@@ -31,7 +31,7 @@ import java.util.Collection;
  *
  * @author Bruno Dumon
  */
-public class XmlEditorPanel extends JPanel implements DomConnected
+public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
 {
 	protected XmlEditor xmlEditor;
 	protected XmlModel xmlModel;
@@ -46,6 +46,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 	protected ValidationErrorsPanel validationErrorsPanel;
 	protected AttributesPanel attrPanel;
 	protected ValidateAction validateAction = new ValidateAction(this);
+	protected QueryByXPathPanel queryByXPathPanel;
 
 	public XmlEditorPanel(XmlModel model, String xpathForRoot, IDisplaySpecification displaySpec,
 			ISchema schema, IAttributeEditorPlugin attrEditorPlugin)
@@ -126,7 +127,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		// Create the container containing the QueryByXPath panel and the XmlEditor component
 		xpathAndXmlEditorContainer = new Container();
 		xpathAndXmlEditorContainer.setLayout(new BorderLayout());
-		QueryByXPathPanel queryByXPathPanel = new QueryByXPathPanel(xmlEditor, attrPanel);
+		queryByXPathPanel = new QueryByXPathPanel(xmlEditor, attrPanel);
 		queryByXPathPanel.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 3, 0), ShadowBorder.getInstance()));
 		xpathAndXmlEditorContainer.add(queryByXPathPanel, BorderLayout.NORTH);
 		xpathAndXmlEditorContainer.add(scrollPane, BorderLayout.CENTER);
@@ -257,5 +258,11 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		xmlEditor.reconnectToDom();
 		nodeInsertionPanel.reconnectToDom();
 		nodeDetailsPanel.reconnectToDom();
+	}
+
+	public void dispose()
+	{
+		queryByXPathPanel.dispose();
+		remove(xmlEditor);
 	}
 }

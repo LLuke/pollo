@@ -20,7 +20,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 
-public class QueryByXPathPanel extends JPanel implements ActionListener
+public class QueryByXPathPanel extends JPanel implements ActionListener, Disposable
 {
 	protected XmlEditor xmlEditor;
 	protected AttributesPanel attributesPanel;
@@ -315,6 +315,13 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 		{
 			xpathCombo.getEditor().setItem(query.getExpression());
 		}
+	}
+
+	public void dispose()
+	{
+		// the combobox should remove its event listeners from the model,
+		// otherwise we have a memory leak.
+		xpathCombo.setModel(new DefaultComboBoxModel());
 	}
 
 

@@ -9,9 +9,11 @@ import org.outerj.pollo.gui.*;
 import org.outerj.pollo.plugin.IActionPlugin;
 import org.outerj.pollo.texteditor.XmlTextEditorPanel;
 import org.outerj.pollo.texteditor.XmlTextEditor;
+import org.outerj.pollo.texteditor.SyntaxDocument;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.XmlEditorPanel;
 import org.outerj.pollo.xmleditor.IconManager;
+import org.outerj.pollo.xmleditor.Disposable;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.model.View;
 import org.outerj.pollo.xmleditor.model.XmlModel;
@@ -30,7 +32,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class EditorPanelImpl extends EditorPanel implements View, XmlModelListener
+public class EditorPanelImpl extends EditorPanel implements View, XmlModelListener, Disposable
 {
 	protected XmlModel xmlModel;
 	protected PolloFrame polloFrame;
@@ -336,7 +338,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 	public void stop()
 	{
 		fireClosingEvent();
-		xmlEditorPanel.disconnectFromDom();
+		dispose();
 	}
 
 	/**
@@ -349,7 +351,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		{
 			if (xmlModel.closeView(this))
 			{
-				xmlEditorPanel.disconnectFromDom();
+				dispose();
 				return true;
 			}
 			else
@@ -362,6 +364,36 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	/**
+	 * Removes actions from JMenuItems. This is necessary because JMenuItem's
+	 * add an event listener to the action, and if the action lives longer
+	 * then this EditorPanelImpl, we would have a memory leak.
+	 */
+	private void destructMenus(Component [] components)
+	{
+		for (int i = 0; i < components.length; i++)
+		{
+			if (components[i] instanceof JMenu)
+			{
+				destructMenus(((JMenu)components[i]).getMenuComponents());
+			}
+			else if (components[i] instanceof JPopupMenu)
+			{
+				destructMenus(((JPopupMenu)components[i]).getComponents());
+			}
+			else if (components[i] instanceof JMenuItem)
+			{
+				JMenuItem item = (JMenuItem)components[i];
+				item.setAction(null);
+			}
+			else if (components[i] instanceof JButton)
+			{
+				JButton item = (JButton)components[i];
+				item.setAction(null);
+			}
+		}
 	}
 
 	public void addListener(EditorPanelListener listener)
@@ -457,6 +489,26 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		return this.getTopLevelAncestor();
 	}
 
+	public void dispose()
+	{
+		xmlEditorPanel.disconnectFromDom();
+		xmlEditorPanel.dispose();
+		xmlModel.removeListener(this);
+
+		// disconnect actions from menu, this is important for action instances
+		// that are shared between all EditorPanel's, because Swing attaches
+		// event listener to those actions, which would cause memory leaks
+		destructMenus(domModeMenuBar.getComponents());
+		destructMenus(textModeMenuBar.getComponents());
+		destructMenus(domModeToolBar.getComponents());
+		destructMenus(textModeToolBar.getComponents());
+
+		// the texteditor should remove its event listener from the document, do
+		// this by setting a new document on it.
+		xmlTextEditorPanel.getEditor().setDocument(new SyntaxDocument());
+		xmlTextEditorPanel.dispose();
+	}
+
 	protected class ActionPluginMenu extends JMenu
 	{
 		public ActionPluginMenu(String name)
@@ -468,6 +520,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		{
 			if (visible)
 			{
+				destructMenus(getMenuComponents());
 				removeAll();
 				actionPlugin.addActionsToPluginMenu(this, xmlEditorPanel.getXmlEditor().getSelectedNode());
 				if (getMenuComponentCount() == 0)

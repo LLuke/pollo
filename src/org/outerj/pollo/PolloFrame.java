@@ -227,7 +227,10 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 		{
 			setJMenuBar(noEditorPanelsMenuBar);
 			if (currentToolBar != null)
+			{
 				getContentPane().remove(currentToolBar);
+				currentToolBar = null;
+			}
 		}
 		setFrameTitle();
 		getRootPane().revalidate(); // this is needed after changing the toolbar

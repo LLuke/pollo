@@ -602,6 +602,11 @@ public class XmlModel
 		xmlModelListeners.add(listener);
 	}
 
+	public void removeListener(XmlModelListener listener)
+	{
+		xmlModelListeners.remove(listener);
+	}
+
 	/**
 	  @return false if the user cancelled the operation
 	 */

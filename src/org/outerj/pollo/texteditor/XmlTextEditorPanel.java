@@ -2,12 +2,13 @@ package org.outerj.pollo.texteditor;
 
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.xmleditor.Disposable;
 import org.xml.sax.SAXParseException;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class XmlTextEditorPanel extends JPanel
+public class XmlTextEditorPanel extends JPanel implements Disposable
 {
 	protected XmlTextEditor xmlTextEditor;
 	protected CheckPanel checkPanel;
@@ -43,5 +44,14 @@ public class XmlTextEditorPanel extends JPanel
 	public XmlTextDocument getDocument()
 	{
 		return xmlTextEditor.getXmlTextDocument();
+	}
+
+	public void dispose()
+	{
+		// by removing xmlTextEditor, we are sure that it isn't any longer
+		// referenced by the static variable 'focusedComponent' in JEditTextArea
+		remove(xmlTextEditor);
+		// although apperently it isn't called, so I do it here manually
+		xmlTextEditor.removeNotify();
 	}
 }

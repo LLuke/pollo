@@ -16,8 +16,10 @@ import java.io.File;
  *
  * @author Bruno Dumon
  */
-public class ViewTypesDialog extends JDialog implements ActionListener
+public class ViewTypesDialog extends JPanel implements ActionListener
 {
+	protected static ViewTypesDialog instance;
+
 	protected boolean ok = false;
 	protected JList viewTypesList;
 
@@ -42,20 +44,24 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 	protected JFileChooser schemaChooser;
 	protected JFileChooser displaySpecChooser;
 
-	public ViewTypesDialog(Frame parent)
+	public static ViewTypesDialog getInstance()
 	{
-		super(parent, "Select view type");
-		setModal(true);
-		addWindowListener(new WindowAdapter() { public void windowClosing(WindowEvent evt) { ok = false; }});
+		if (instance == null)
+		{
+			instance = new ViewTypesDialog();
+		}
 
+		return instance;
+	}
+
+	public ViewTypesDialog()
+	{
 		// as an experiment, I did the layout of this dialog with a lot of Box'es
 		// instead of with a GridBagLayout. Seems to work faster.
 
-		JPanel panel = new JPanel();
-		panel.setBorder(new EmptyBorder(12, 12, 12, 12));
-		setContentPane(panel);
+		setBorder(new EmptyBorder(12, 12, 12, 12));
 
-		panel.setLayout(new BorderLayout(12, 12));
+		setLayout(new BorderLayout(12, 12));
 
 		Box verticalBox = new Box(BoxLayout.Y_AXIS);
 
@@ -237,13 +243,12 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		displaySpecPanel.setMaximumSize(displaySpecPanelDimension);
 
 
-		panel.add(verticalBox, BorderLayout.CENTER);
+		add(verticalBox, BorderLayout.CENTER);
 
 
 		JButton okButton = new JButton("Okay");
 		okButton.setActionCommand("ok");
 		okButton.addActionListener(this);
-		getRootPane().setDefaultButton(okButton);
 
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setActionCommand("cancel");
@@ -254,18 +259,11 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		buttons.add(okButton);
 		buttons.add(Box.createHorizontalStrut(6));
 		buttons.add(cancelButton);
-		panel.add(buttons, BorderLayout.SOUTH);
+		add(buttons, BorderLayout.SOUTH);
 
 		enableSelectCustom(false);
 		enableSelectPredefined(true);
 
-		pack();
-
-
-		// center on screen
-		Dimension dimension = getSize();
-		Dimension dimension2 = getToolkit().getScreenSize();
-		setLocation((dimension2.width - dimension.width) / 2, (dimension2.height - dimension.height) / 2);
 	}
 
 
@@ -275,16 +273,16 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		{
 			if (customViewTypeButton.isSelected() && ((String)schemaFileCombo.getEditor().getItem()).trim().equals(""))
 			{
-				JOptionPane.showMessageDialog(this, "Please enter the schema file name to use.");
+				JOptionPane.showMessageDialog(getTopLevelAncestor(), "Please enter the schema file name to use.");
 				return;
 			}
 			ok = true;
-			hide();
+			getTopLevelAncestor().hide();
 		}
 		else if (event.getActionCommand().equals("cancel"))
 		{
 			ok = false;
-			hide();
+			getTopLevelAncestor().hide();
 		}
 		else if (event.getActionCommand().equals("view-type-changed"))
 		{
@@ -312,7 +310,7 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 				schemaChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 			}
 
-			int returnVal = schemaChooser.showOpenDialog(this);
+			int returnVal = schemaChooser.showOpenDialog(getTopLevelAncestor());
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 			{
 				String path = schemaChooser.getSelectedFile().getAbsolutePath();
@@ -329,7 +327,7 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 				displaySpecChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 			}
 
-			int returnVal = displaySpecChooser.showOpenDialog(this);
+			int returnVal = displaySpecChooser.showOpenDialog(getTopLevelAncestor());
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 			{
 				String path = displaySpecChooser.getSelectedFile().getAbsolutePath();
@@ -339,7 +337,7 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		else if (event.getActionCommand().equals("select-color"))
 		{
 			Color newColor = JColorChooser.showDialog(
-								 this,
+								 getTopLevelAncestor(),
 								 "Choose Element Background Color",
 								 colorSelectButton.getBackground());
 			if (newColor != null)
@@ -394,9 +392,17 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 	/**
 	 * @return true if the user selected ok, otherwise false
 	 */
-	public boolean showDialog()
+	public boolean showDialog(Frame parent)
 	{
-		show();
+		JDialog dialog = new JDialog(parent, "Select View Type");
+		dialog.addWindowListener(new WindowAdapter() { public void windowClosing(WindowEvent evt) { ok = false; }});
+		dialog.setModal(true);
+		dialog.setContentPane(this);
+		dialog.pack();
+		dialog.setLocationRelativeTo(parent);
+		dialog.show();
+		System.out.println("na de show");
+		dialog.getLayeredPane().remove(this);
 		return ok;
 	}
 

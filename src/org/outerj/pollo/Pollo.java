@@ -125,8 +125,8 @@ public class Pollo implements XmlModelListener
 	public EditorPanel createEditorPanel(XmlModel xmlModel, PolloFrame polloFrame)
 	{
 		// let the user select the viewtype to create
-		ViewTypesDialog viewTypesDialog = new ViewTypesDialog(polloFrame);
-		if (viewTypesDialog.showDialog())
+		ViewTypesDialog viewTypesDialog = ViewTypesDialog.getInstance();
+		if (viewTypesDialog.showDialog(polloFrame))
 		{
 			ViewTypeConf viewTypeConf = viewTypesDialog.getSelectedViewTypeConf();
 			if (viewTypeConf == null)

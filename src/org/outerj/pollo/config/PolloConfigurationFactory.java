@@ -78,6 +78,10 @@ public class PolloConfigurationFactory
 			logcat.error("PolloConfiguration: exception parsing the configuration file", e);
 			throw new PolloConfigurationException("Exception parsing the configuration file.", e);
 		}
+		finally
+		{
+			digester.clear();
+		}
 
 		//
 		// load user configuration
@@ -86,7 +90,6 @@ public class PolloConfigurationFactory
 		File file = new File(System.getProperty("user.home"), PolloConfiguration.USER_CONF_FILE_NAME);
 		if (file.exists())
 		{
-			digester.clear();
 			digester.push(polloConfiguration);
 			digester.addCallMethod("pollo/file-open-dialog-path", "setFileOpenDialogPath", 0);
 			digester.addCallMethod("pollo/schema-open-dialog-path", "setSchemaOpenDialogPath", 0);
@@ -106,6 +109,10 @@ public class PolloConfigurationFactory
 			{
 				logcat.error("PolloConfiguration: exception parsing the user configuration file", e);
 				throw new PolloConfigurationException("Exception parsing the user configuration file.", e);
+			}
+			finally
+			{
+				digester.clear();
 			}
 
 		}

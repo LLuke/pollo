@@ -19,7 +19,6 @@ import java.awt.*;
  */
 public class TextAreaDefaults
 {
-	private static TextAreaDefaults DEFAULTS;
 
 	public InputHandler inputHandler;
 	public SyntaxDocument document;
@@ -51,32 +50,36 @@ public class TextAreaDefaults
 	 */
 	public static TextAreaDefaults getDefaults()
 	{
-		if(DEFAULTS == null)
-		{
-			DEFAULTS = new TextAreaDefaults();
+		//if(DEFAULTS == null)
+		//{
 
-			DEFAULTS.inputHandler = new DefaultInputHandler();
-			DEFAULTS.inputHandler.addDefaultKeyBindings();
-			DEFAULTS.document = new SyntaxDocument();
-			DEFAULTS.editable = true;
+		// Always return a new instance of the TextAreaDefaults, so that
+		// instances of e.g. the inputHandler are not shared between mulitple
+		// text editors
+		TextAreaDefaults DEFAULTS = new TextAreaDefaults();
 
-			DEFAULTS.caretVisible = true;
-			DEFAULTS.caretBlinks = true;
-			DEFAULTS.electricScroll = 3;
+		DEFAULTS.inputHandler = new DefaultInputHandler();
+		DEFAULTS.inputHandler.addDefaultKeyBindings();
+		DEFAULTS.document = new SyntaxDocument();
+		DEFAULTS.editable = true;
 
-			DEFAULTS.cols = 80;
-			DEFAULTS.rows = 25;
-			DEFAULTS.styles = SyntaxUtilities.getDefaultSyntaxStyles();
-			DEFAULTS.caretColor = Color.red;
-			DEFAULTS.selectionColor = new Color(0xccccff);
-			DEFAULTS.lineHighlightColor = new Color(0xe0e0e0);
-			DEFAULTS.lineHighlight = true;
-			DEFAULTS.bracketHighlightColor = Color.black;
-			DEFAULTS.bracketHighlight = true;
-			DEFAULTS.eolMarkerColor = new Color(0x009999);
-			DEFAULTS.eolMarkers = true;
-			DEFAULTS.paintInvalid = true;
-		}
+		DEFAULTS.caretVisible = true;
+		DEFAULTS.caretBlinks = true;
+		DEFAULTS.electricScroll = 3;
+
+		DEFAULTS.cols = 80;
+		DEFAULTS.rows = 25;
+		DEFAULTS.styles = SyntaxUtilities.getDefaultSyntaxStyles();
+		DEFAULTS.caretColor = Color.red;
+		DEFAULTS.selectionColor = new Color(0xccccff);
+		DEFAULTS.lineHighlightColor = new Color(0xe0e0e0);
+		DEFAULTS.lineHighlight = true;
+		DEFAULTS.bracketHighlightColor = Color.black;
+		DEFAULTS.bracketHighlight = true;
+		DEFAULTS.eolMarkerColor = new Color(0x009999);
+		DEFAULTS.eolMarkers = true;
+		DEFAULTS.paintInvalid = true;
+		//}
 
 		return DEFAULTS;
 	}
