@@ -54,7 +54,7 @@ import java.util.Vector;
  *     + "}");</pre>
  *
  * @author Slava Pestov
- * @version $Id: JEditTextArea.java,v 1.3 2002/03/12 20:18:07 bdumon Exp $
+ * @version $Id: JEditTextArea.java,v 1.4 2002/08/27 20:44:03 bdumon Exp $
  */
 public class JEditTextArea extends JComponent
 {
@@ -1508,6 +1508,38 @@ public class JEditTextArea extends JComponent
         }
     }
 
+    /**
+     * Finds the search string in the document and moves the cursor to it.
+     */
+    public void find(String searchString)
+    {
+        int caretLine=getCaretLine();
+        int caretPosition=getCaretPosition();
+        int lastLine=getLineCount();
+        boolean found=false;
+        int i = caretLine;
+        int indexOfSearch=0;
+        int indexIntoLine=caretPosition-getLineStartOffset(caretLine);
+        while(!found && i < lastLine)
+        {
+            if((indexOfSearch=getLineText(i).indexOf(searchString, indexIntoLine))>=0)
+            {
+                found=true;
+            }
+            else
+            {
+                indexIntoLine=0;
+                i++;
+            }
+        }
+        if(found)
+        {
+            caretPosition=getLineStartOffset(i)+indexOfSearch;
+            setSelectionEnd(caretPosition+searchString.length());
+            setSelectionStart(caretPosition);
+        }
+    }
+    
     /**
      * Called by the AWT when this component is removed from it's parent.
      * This stops clears the currently focused component.

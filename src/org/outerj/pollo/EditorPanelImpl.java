@@ -226,6 +226,8 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         editMenu.add(Utilities.createMenuItemFromAction(xmlTextEditorPanel.getEditor().getCutAction()));
         editMenu.add(Utilities.createMenuItemFromAction(xmlTextEditorPanel.getEditor().getCopyAction()));
         editMenu.add(Utilities.createMenuItemFromAction(xmlTextEditorPanel.getEditor().getPasteAction()));
+        editMenu.addSeparator();
+        editMenu.add(Utilities.createMenuItemFromAction(xmlTextEditorPanel.getEditor().getFindAction()));
         textModeMenuBar.add(editMenu);
 
         // create the action plugin menu (for dom mode)

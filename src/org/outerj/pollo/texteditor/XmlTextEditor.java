@@ -3,6 +3,7 @@ package org.outerj.pollo.texteditor;
 import org.outerj.pollo.texteditor.action.CopyAction;
 import org.outerj.pollo.texteditor.action.CutAction;
 import org.outerj.pollo.texteditor.action.PasteAction;
+import org.outerj.pollo.texteditor.action.FindAction;
 
 import java.awt.*;
 
@@ -11,6 +12,7 @@ public class XmlTextEditor extends JEditTextArea
     protected CopyAction copyAction;
     protected CutAction cutAction;
     protected PasteAction pasteAction;
+    protected FindAction findAction;
 
     public XmlTextEditor()
     {
@@ -19,6 +21,7 @@ public class XmlTextEditor extends JEditTextArea
         copyAction = new CopyAction(this);
         cutAction = new CutAction(this);
         pasteAction = new PasteAction(this);
+        findAction = new FindAction(this);
 
         setFont(new Font("Monospaced", 0, 12));
     }
@@ -33,6 +36,7 @@ public class XmlTextEditor extends JEditTextArea
         inputHandler.addKeyBinding("C+x", cutAction);
         inputHandler.addKeyBinding("C+v", pasteAction);
         inputHandler.addKeyBinding("C+z", getXmlTextDocument().getUndoAction());
+        inputHandler.addKeyBinding("C+f", findAction);
     }
 
     public XmlTextDocument getXmlTextDocument()
@@ -53,5 +57,10 @@ public class XmlTextEditor extends JEditTextArea
     public PasteAction getPasteAction()
     {
         return pasteAction;
+    }
+
+    public FindAction getFindAction()
+    {
+        return findAction;
     }
 }
