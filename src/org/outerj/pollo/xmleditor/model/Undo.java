@@ -366,7 +366,7 @@ public class Undo implements EventListener, DomConnected
 			characterData = (Node)me.getTarget();
 			oldValue = me.getPrevValue();
 		}
-		
+
 		public void undo()
 		{
 			if (characterData instanceof CharacterData)
