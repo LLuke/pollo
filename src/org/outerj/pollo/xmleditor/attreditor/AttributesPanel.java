@@ -205,6 +205,12 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 		{
 			super(model);
 			this.schema = schema;
+
+			// the following will automatically transfer the focus to the
+			// cell editor when one starts typing. It also helps to solve
+			// another issue I encountered: when tapping space (while in the
+			// cell editor), the 'toggle expand' action was also triggered
+			// (because it is bound to Space via the menu)
 			setSurrendersFocusOnKeystroke(true);
 		}
 
@@ -229,6 +235,7 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 
 		public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend)
 		{
+			// Only cells in the second column should be selectable
 			super.changeSelection(rowIndex, 1, toggle, extend);
 		}
 	}
