@@ -14,6 +14,7 @@ BUG FIXES
  - when changing text view to tree view in the dropdown, and the switch
    to tree view failed, then tree view stayed incorrectly selected
    in the dropdown
+ - The action 'Show Content Model' never worked.
 
 version 0.3.4
 =============
