@@ -2,6 +2,7 @@ package org.outerj.pollo;
 
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.model.View;
+import org.outerj.pollo.xmleditor.model.XmlModelListener;
 import org.outerj.pollo.dialog.AboutDialog;
 
 import javax.swing.JFrame;
@@ -22,7 +23,7 @@ import java.io.File;
 /**
   Puts a ViewEngine (which is a JPanel) into a JFrame and adds a menubar.
  */
-public class ViewFrame extends JFrame implements ActionListener, View
+public class ViewFrame extends JFrame implements ActionListener, View, XmlModelListener
 {
 	protected ViewEngine viewEngine;
 
@@ -35,17 +36,8 @@ public class ViewFrame extends JFrame implements ActionListener, View
 
 		addWindowListener(new WindowAdapter() { public void windowClosing(WindowEvent event) { close(); }});
 
-		// set window title
-		File file = viewEngine.getXmlModel().getFile();
-		if (file == null)
-		{
-			setTitle("Untitled");
-		}
-		else
-		{
-			setTitle(file.getName() + "  (" + file.getParentFile().getPath() + ")");
-		}
-
+		viewEngine.getXmlModel().addListener(this);
+		fileNameChanged(viewEngine.getXmlModel());
 
 		// create menu bar
 		JMenuBar menuBar = new JMenuBar();
@@ -127,6 +119,9 @@ public class ViewFrame extends JFrame implements ActionListener, View
 		{
 			if (viewEngine.getXmlModel().closeView(this))
 			{
+				System.out.println("Frame closes, will do cleanup");
+				viewEngine.cleanup();
+				System.out.println("cleanup done");
 				stop();
 			}
 		}
@@ -140,5 +135,29 @@ public class ViewFrame extends JFrame implements ActionListener, View
 	{
 		hide();
 		dispose();
+	}
+
+	/**
+	 * Implementation of the XmlModelListener interface.
+	 */
+	public void fileNameChanged(XmlModel xmlModel)
+	{
+		// set window title
+		File file = xmlModel.getFile();
+		if (file == null)
+		{
+			setTitle("Untitled");
+		}
+		else
+		{
+			setTitle(file.getName() + "  (" + file.getParentFile().getPath() + ")");
+		}
+	}
+
+	/**
+	 * Implementation of the XmlModelListener interface.
+	 */
+	public void lastViewClosed(XmlModel xmlModel)
+	{
 	}
 }

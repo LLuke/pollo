@@ -1,94 +1,65 @@
-<project name="pollo" default="compile">
-
-
-	<path id="classpath">
-		<pathelement location="build"/>
-		<pathelement location="lib/xerces.jar"/>
-		<pathelement location="lib/xalan.jar"/>
-		<pathelement location="lib/kunststoff.jar"/>
-	</path>
-
-	<property name="version" value="0.2"/>
-
-	<!--
-	<taskdef name="polloantstructure" classname="org.outerj.pollo.engine.ant.PolloAntStructure"/>
-	<target name="polloantstructure">
-		<polloantstructure output="antschema.xml"/>
-	</target>
-	-->
-
-	<target name="compile">
-		<javac srcdir="src" destdir="build">
-			<classpath refid="classpath"/>
-		</javac>
-
-		<copy todir="build" >
-			<fileset dir="src" defaultexcludes="true">
-				<exclude name="**/*.java"/>
-			</fileset>
-		</copy>
-
-	</target>
-
-	<target name="run" depends="compile">
-		<java classname="org.outerj.smeditor.SitemapEditor" fork="true">
-			<classpath refid="classpath"/>
-		</java>
-	</target>
-
-
-	<target name="dist">
-		<!-- recompile everything -->
-		<delete dir="build"/>
-		<mkdir dir="build"/>
-		<antcall target="compile"/>
-
-
-		<!-- remake dist -->
-		<delete dir="dist"/>
-		<mkdir dir="dist"/>
-
-		<!-- copy everything that we want in the distribution -->
-		<copy todir="dist/src">
-			<fileset dir="src" excludes="*~,*.swp"/>
-		</copy>
-		<copy todir="dist/conf">
-			<fileset dir="conf" excludes="*~"/>
-		</copy>
-		<copy todir="dist/build">
-			<fileset dir="build"/>
-		</copy>
-		<copy file="LICENSE" todir="dist"/>
-		<copy file="run.sh" todir="dist"/>
-		<copy file="run.bat" todir="dist"/>
-		<copy file="ChangeLog" todir="dist"/>
-		<copy file="INSTALL" todir="dist"/>
-		<copy todir="dist/lib">
-			<fileset dir="lib"/>
-		</copy>
-	</target>
-
-
-	<target name="zip" depends="dist">
-		<zip zipfile="pollo-${version}.zip">
-			<zipfileset dir="dist" prefix="pollo"/>
-		</zip>
-	</target>
-
-	<target name="apidoc">
-		<delete file="apidoc"/>
-		<mkdir dir="apidoc"/>
-		<javadoc packagenames="org.outerj.*" sourcepath="src" destdir="apidoc">
-			<link href="http://java.sun.com/products/jdk/1.3/docs/api"/>
-			<link href="http://xml.apache.org/xerces-j/apiDocs"/>
-			<link href="http://xml.apache.org/xalan-j/apidocs"/>
-
-			<classpath refid="classpath"/>
-		</javadoc>
-	</target>
-
-	<target name="dtd">
-		<antstructure output="ant.dtd"/>
-	</target>
-
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project default="compile" name="pollo">
+  <path id="classpath">
+    <pathelement location="build"/>
+    <pathelement location="lib/xerces.jar"/>
+    <pathelement location="lib/kunststoff.jar"/>
+    <pathelement location="lib/commons-digester.jar"/>
+    <pathelement location="lib/commons-collections.jar"/>
+    <pathelement location="lib/commons-beanutils.jar"/>
+    <pathelement location="lib/log4j-core.jar"/>
+    <pathelement location="lib/jaxen-core.jar"/>
+    <pathelement location="lib/jaxen-dom.jar"/>
+	<pathelement location="lib/saxpath.jar"/>
+  </path>
+  <property name="version" value="0.3"/>
+  <!--<taskdef name="polloantstructure" classname="org.outerj.pollo.engine.ant.PolloAntStructure"/>
+<target name="polloantstructure">
+   <polloantstructure output="antschema.xml"/>
+</target>-->
+  <target name="compile">
+    <mkdir dir="build"/>
+    <javac destdir="build" srcdir="src">
+      <classpath refid="classpath"/>
+    </javac>
+    <copy todir="build">
+      <fileset defaultexcludes="true" dir="src">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+	<copy file="ChangeLog" tofile="build/org/outerj/pollo/ChangeLog"/>
+  </target>
+  <target depends="compile" name="run">
+    <java classname="org.outerj.smeditor.SitemapEditor" fork="true">
+      <classpath refid="classpath"/>
+    </java>
+  </target>
+  <target name="clean">
+    <delete dir="build"/>
+    <delete file="pollo.jar"/>
+  </target>
+  <target name="zip" depends="jar">
+    <zip zipfile="pollo-${version}-bin.zip">
+		<zipfileset dir="lib"/>
+		<zipfileset dir="." includes="pollo.jar,README"/>
+    </zip>
+  </target>
+  <target name="apidoc">
+    <delete file="apidoc"/>
+    <mkdir dir="apidoc"/>
+    <javadoc destdir="apidoc" packagenames="org.outerj.*" sourcepath="src">
+      <link href="http://java.sun.com/products/jdk/1.3/docs/api"/>
+      <link href="http://xml.apache.org/xerces-j/apiDocs"/>
+      <classpath refid="classpath"/>
+    </javadoc>
+  </target>
+  <target name="dtd">
+    <antstructure output="ant.dtd"/>
+  </target>
+  <target name="jar" depends="clean,compile">
+    <jar jarfile="pollo.jar" manifest="misc/MANIFEST.MF" compress="false">
+      <zipfileset dir="build"/>
+      <zipfileset dir="conf"/>
+    </jar>
+  </target>
 </project>

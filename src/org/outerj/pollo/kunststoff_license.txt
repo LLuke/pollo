@@ -1,3 +1,10 @@
+Important Note: I disabled the use of Kunstoff in the current version
+of Pollo.  I will make this user-configurable in the next version.
+
+
+
+
+
 This program uses the Kunstoff Look and Feel to provide
 a nicer user interface.
 

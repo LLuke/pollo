@@ -20,4 +20,11 @@ public abstract class ViewEngine extends JPanel
 	{
 		return xmlModel;
 	}
+
+	/**
+	 * In this method viewengines should do any required cleanup
+	 * that is needed when the view is closed, such as removing
+	 * event listeners.
+	 */
+	public abstract void cleanup();
 }

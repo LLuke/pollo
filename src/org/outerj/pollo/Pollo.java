@@ -2,6 +2,11 @@ package org.outerj.pollo;
 
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.model.XmlModelListener;
+import org.outerj.pollo.config.PolloConfiguration;
+import org.outerj.pollo.config.PolloConfigurationFactory;
+import org.outerj.pollo.config.ViewTypeConf;
+import org.outerj.pollo.config.TemplateConfItem;
+import org.outerj.pollo.template.ITemplate;
 
 import org.outerj.pollo.dialog.WelcomeDialog;
 import org.outerj.pollo.dialog.ErrorDialog;
@@ -27,8 +32,10 @@ public class Pollo implements XmlModelListener
 	protected        Action fileNewAction  = null;
 	protected        Action exitAction     = null;
 
+	protected PolloConfiguration configuration;
 	protected Properties properties;
 	protected ArrayList openFiles = new ArrayList();
+	protected WelcomeDialog welcomeDialog;
 
 	public static void main(String [] args)
 		throws Exception
@@ -44,8 +51,18 @@ public class Pollo implements XmlModelListener
 	public void run()
 		throws Exception
 	{
-		UIManager.setLookAndFeel(new com.incors.plaf.kunststoff.KunststoffLookAndFeel());
-		WelcomeDialog welcomeDialog = new WelcomeDialog();
+		//UIManager.setLookAndFeel(new com.incors.plaf.kunststoff.KunststoffLookAndFeel());
+		try
+		{
+			configuration = PolloConfigurationFactory.createConfiguration();
+		}
+		catch (Exception e)
+		{
+			ErrorDialog errorDialog = new ErrorDialog(null, "Error while reading the configuration file.", e);
+			errorDialog.show();
+			System.exit(1);
+		}
+		welcomeDialog = new WelcomeDialog();
 		welcomeDialog.show();
 	}
 
@@ -83,13 +100,13 @@ public class Pollo implements XmlModelListener
 		ViewTypesDialog viewTypesDialog = new ViewTypesDialog();
 		if (viewTypesDialog.showDialog())
 		{
-			String engineName = viewTypesDialog.getSelectedViewTypeName();
-			if (engineName == null)
+			ViewTypeConf viewTypeConf = viewTypesDialog.getSelectedViewTypeConf();
+			if (viewTypeConf == null)
 				return false;
 			ViewFrame viewFrame;
 			try
 			{
-				viewFrame = ViewFactory.createViewFrame(xmlModel, engineName);
+				viewFrame = ViewFactory.createViewFrame(xmlModel, viewTypeConf);
 			}
 			catch (Exception e2)
 			{
@@ -151,12 +168,45 @@ public class Pollo implements XmlModelListener
 
 	public void newFileWizard()
 	{
-		JOptionPane.showMessageDialog(null, "Not yet implemented");
+		Object[] templates = configuration.getTemplates().toArray();
+		Object selected = templates.length > 0 ? templates[0] : null;
+		TemplateConfItem templateConfItem = (TemplateConfItem)JOptionPane.showInputDialog(welcomeDialog, 
+				"Choose a template", "New XML file",
+				JOptionPane.INFORMATION_MESSAGE, null,
+				templates, selected);
+
+		if (templateConfItem != null)
+		{
+			XmlModel xmlModel = null;
+			try
+			{
+				ITemplate template = templateConfItem.createTemplate();
+				xmlModel = template.createNewDocument();
+			}
+			catch (Exception e)
+			{
+				ErrorDialog errorDialog = new ErrorDialog(welcomeDialog, "Error during template creation.", e);
+				errorDialog.show();
+				return;
+			}
+
+			if (createView(xmlModel))
+			{
+				xmlModel.addListener(this);
+				openFiles.add(xmlModel);
+			}
+		}
+
 	}
 
 	public String getProperty(String name)
 	{
 		return properties.getProperty(name);
+	}
+
+	public PolloConfiguration getConfiguration()
+	{
+		return configuration;
 	}
 
 	public void loadProperties()
@@ -218,5 +268,9 @@ public class Pollo implements XmlModelListener
 			exitAction = new ExitAction();
 		}
 		return exitAction;
+	}
+
+	public void fileNameChanged(XmlModel xmlModel)
+	{
 	}
 }
