@@ -7,9 +7,9 @@
 
 		<h2>What is it?</h2>
 		<p>
-		Pollo lets you edit XML files. Right now it's best
+		Pollo lets you edit XML files. It's best
 		suited for files which can be represented in a tree
-		structure. It comes with out-of-the-download support
+		structure. It comes with built-in support
 		for <a href="http://xml.apache.org/cocoon2/index.html">Cocoon</a> sitemap files,
 		<a href="http://jakarta.apache.org/ant/index.html">Ant</a> build files and XML Schemas.
 		</p>
@@ -18,13 +18,67 @@
 		drag-and-drop support, unlimmited undo, model-view design (open
 		multiple views on the same file), ...
 		</p>
-		<p>Screenshots: <a href="sitemap.png">editing sitemap file</a>
+		<p><b>Screenshots</b>: <a href="ant.png">editing an Ant buildfile</a>, <a href="sitemap.png">editing sitemap file</a>
 		, <a href="schema.png">editing an xml schema</a>.</p>
+
+		<h2>Feature list</h2>
+		<ul>
+			<li>Cross-platform: Pollo is based on Java 1.3, which is available
+			for most Windows variants, Linux, and other operating systems.
+			</li>
+			<li>In contrast to many other Java-based tree XML editors, it uses
+			its own <b>custom-implemented widget</b> to display XML files.</li>
+			<li>Supports <b>drag-and-drop</b> of nodes.</li>
+			<li>Is internally completely based on an <b>MVC-design</b>, the model
+			is a standard-compliant DOM tree (Apache's Xerces implementation)
+			that is connected to the view using standard DOM mutation events.
+			As a consequence, if the DOM is changed by any code, the corresponding
+			view(s) update automatically.</li>
+			<li><font color="red">NEW</font> Editing of <b>any well-formed XML file</b>:
+			Pollo can open any well-formed XML file and display it, without
+			needing a schema or style sheet.</li>
+			<li><font color="red">NEW</font> Use XPath expressions to find nodes. Pollo
+			can execute any XPath expression, making it usefull as an XPath experimenting
+			and learning tool.</li>
+			<li>Pollo can be <b>customised</b> for a particular XML file type by
+			using schemas, display specifications (also known as 'style sheets'),
+			and plugins. Pollo comes with examples for Cocoon Sitemaps, Ant buildfiles
+			and W3C XML Schemas. For the (or a) next release, documentation will
+			be provided on how you can add your own.</li>
+			<li><b>Schemas</b>: the editing of a certain type of XML file is guided
+			by a schema. A schema knows about which attributes and which
+			subelements an element can have. It can also define picklists
+			for attributes. <font color="red">NEW</font> A powerfull feature of
+			schema's in Pollo is that they can be chained: this way, multiple
+			schema's can be combined as they were one big schema. This is for example
+			usefull for combining a WSDL schema with an XML Schemas schema. The schema
+			implementation classes and factories are defined in a configuration
+			file, which allows for
+			easy future extension.</li>
+			<li><b>Display specifications</b> ('style sheets'): these tell Pollo what colors to use,
+			and in what order the attributes must be shown on the element.
+			Just like schemas, display specifications can be chained. The
+			implementation classes and factories are also defined in a
+			configuration file.</li>
+			<li><font color="red">NEW</font> Attribute editor <b>plugins</b>: it is possible
+			to define plugins that provide the component to be used for editing
+			an attribute value. As an example, Pollo includes a plugin for Ant
+			that adds a button for quick access to properties. Note: in the future,
+			other types of plugins will also be provided.</li>
+			<li><font color="red">NEW</font> <b>Templates</b>: new files can be made based on templates. In Pollo,
+			a template is defined by a Java class, meaning that any Java code
+			that can generate a DOM-tree can be used to generate templates on
+			the fly (eg by a wizard that asks questions, or by reading something
+			from a database, ...). Currently, Pollo comes with an implementation
+			that parses a template file. Documentation on how to make your own
+			is planned for the near future.</li>
+			<li>It is licensed under the terms of the MIT license, which
+			means it is completely <b>free for personal and comerical use</b>.</li>
+		</ul>
 
 		<h2>What's the status?</h2>
 		<p>
-		Usable but experimental, and lacking some very usefull
-		features (keyboard support, plugins, recent files menu, ...).
+		Usable but not finished.
 		</p>
 
 		<h2>Platforms?</h2>
@@ -37,13 +91,15 @@
 		<h2>How do I get it?</h2>
 		<p>
 		Download the zip at the sourceforge <a href="http://www.sf.net/projects/pollo">project site</a>.
-		If you have problems extracting it, use jar: <tt>jar xvf pollo-0.2.zip</tt>
+		Unzip the file (if you don't have a zip tool you can do this with java's jar command: <tt>java xvf pollo-0.3-bin.zip</tt>)<br/>
+		Pollo can then be started by executing the following command: <tt>java -jar pollo.jar</tt><br/>
+		See the included README for more details.
 		</p>
 
 		<h2>Author</h2>
 		<p>
-		Author is Bruno Dumon. Send him your comments, bugs, patches,
-		job offers at <a href="mailto:bruno.dumon@advalvas.be">bruno.dumon@advalvas.be</a>
+		The author is Bruno Dumon. Send him your comments, bugs, patches,
+		job offers at <a href="mailto:bdumon@users.sourceforge.net">bdumon@users.sourceforge.net</a>
 		</p>
 
 		<hr width="100%" size="2" align="Left">This project is hosted by <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=30952" width="88" height="31" border="0" alt="SourceForge Logo">
