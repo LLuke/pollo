@@ -23,6 +23,9 @@ public interface ISchema
 
 	public Collection getAllowedSubElements(Element element);
 
+	public Collection getAllowedSubTexts(Element element);
+
 	public Collection validate(Document document)
 		throws ValidationNotSupportedException, Exception;
+
 }

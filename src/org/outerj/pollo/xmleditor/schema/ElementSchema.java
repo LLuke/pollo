@@ -5,10 +5,11 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.HashSet;
 
 /**
  * This class represents the definition of an element
- * in a Schema
+ * in a Schema.
  *
  * @author Bruno Dumon
  */
@@ -19,6 +20,7 @@ public final class ElementSchema
 
 	public final ArrayList attributes = new ArrayList();
 	public final NodeMap subelements = new NodeMap();
+	public final HashSet subtexts = new HashSet();
 
 	public final boolean isAllowedAsSubElement(Element element)
 	{
@@ -44,6 +46,11 @@ public final class ElementSchema
 		{
 			return true;
 		}
+	}
+
+	public final boolean containsSubText(String text)
+	{
+		return subtexts.contains(text);
 	}
 
 	public AttributeSchema getAttributeSchema(String namespaceURI, String localName)

@@ -87,6 +87,20 @@ public class ChainedSchema implements ISchema
 		return completeCollection;
 	}
 
+	public Collection getAllowedSubTexts(Element element)
+	{
+		Collection completeCollection = null;
+		for (int i = 0; i < schemas.size(); i++)
+		{
+			Collection result = ((ISchema)schemas.get(i)).getAllowedSubTexts(element);
+			if (i == 0)
+				completeCollection = result;
+			else
+				completeCollection.add(result);
+		}
+		return completeCollection;
+	}
+
 
 	public Collection validate(Document document)
 		throws ValidationNotSupportedException, Exception

@@ -40,6 +40,11 @@ public class GenericSchema implements ISchema
 		return Collections.EMPTY_LIST;
 	}
 
+	public Collection getAllowedSubTexts(Element element)
+	{
+		return Collections.EMPTY_LIST;
+	}
+
 	public Collection validate(Document doc)
 		throws ValidationNotSupportedException
 	{

@@ -94,6 +94,19 @@ public class BasicSchema implements ISchema
 		}
 	}
 
+	public Collection getAllowedSubTexts(Element element)
+	{
+		ElementSchema elementSchema = getElementSchema(element.getNamespaceURI(), element.getLocalName());
+		if (elementSchema != null)
+		{
+			return elementSchema.subtexts;
+		}
+		else
+		{
+			return Collections.EMPTY_LIST;
+		}
+	}
+
 
 	// The rest is not part of the public interface
 

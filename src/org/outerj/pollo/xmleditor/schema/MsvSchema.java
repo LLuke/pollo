@@ -10,6 +10,9 @@ import com.sun.msv.verifier.ErrorInfo;
 import com.sun.msv.verifier.ValidityViolation;
 import com.sun.msv.verifier.regexp.ExpressionAcceptor;
 import com.sun.msv.verifier.regexp.REDocumentDeclaration;
+import com.sun.msv.datatype.xsd.ListValueType;
+import com.sun.msv.datatype.xsd.EnumerationFacet;
+import com.sun.msv.datatype.xsd.StringType;
 import org.jaxen.SimpleNamespaceContext;
 import org.outerj.pollo.util.URLFactory;
 import org.outerj.pollo.xmleditor.exception.PolloException;
@@ -186,6 +189,33 @@ public class MsvSchema implements ISchema
 				}
 			}
 
+			public void onValue(ValueExp exp)
+			{
+				elementSchema.subtexts.add(exp.value);
+			}
+
+			public void onData(DataExp exp)
+			{
+				if (exp.getType() instanceof EnumerationFacet)
+				{
+					Iterator it = ((EnumerationFacet)exp.getType()).values.iterator();
+					while (it.hasNext())
+					{
+						String value = (String)it.next();
+						elementSchema.subtexts.add(value);
+					}
+				}
+				else if (exp.getType() instanceof StringType)
+				{
+					elementSchema.subtexts.add("");
+				}
+			}
+
+			public void onAnyString()
+			{
+				elementSchema.subtexts.add("");
+			}
+
 			/**
 			 * AttributeWalker finds values an attribute may have. Note that this does
 			 * not work for e.g. DTD's because there the possible attribute values are
@@ -201,6 +231,18 @@ public class MsvSchema implements ISchema
 				public void onValue(ValueExp exp)
 				{
 					attrValues.add(exp.value);
+				}
+
+				public void onData(DataExp exp)
+				{
+					if (exp.getType() instanceof EnumerationFacet)
+					{
+						Iterator it = ((EnumerationFacet)exp.getType()).values.iterator();
+						while (it.hasNext())
+						{
+							attrValues.add(it.next());
+						}
+					}
 				}
 			}
 		}
@@ -300,6 +342,19 @@ public class MsvSchema implements ISchema
 		}
 	}
 
+	public Collection getAllowedSubTexts(Element element)
+	{
+		ElementSchema elementSchema = getElementSchema(element.getNamespaceURI(), element.getLocalName());
+		if (elementSchema != null)
+		{
+			return elementSchema.subtexts;
+		}
+		else
+		{
+			return Collections.EMPTY_LIST;
+		}
+	}
+
 	protected ElementSchema getElementSchema(String namespaceURI, String localName)
 	{
 		return (ElementSchema) elementSchemas.get(namespaceURI, localName);
@@ -320,7 +375,7 @@ public class MsvSchema implements ISchema
 	{
 		initializeVerifier();
 
-		SAXEventGenerator generator = new SAXEventGenerator(document.getDocumentElement());
+		SAXEventGenerator generator = new SAXEventGenerator(document);
 		errorHandler.errorCollection = new ArrayList();
 		errorHandler.generator = generator;
 		verifier.setStopNow(false);
@@ -345,7 +400,7 @@ public class MsvSchema implements ISchema
 	{
 		initializeVerifier();
 
-		SAXEventGenerator generator = new SAXEventGenerator(document.getDocumentElement());
+		SAXEventGenerator generator = new SAXEventGenerator(document);
 		generator.stopAtNode(element);
 		errorHandler.errorCollection = new ArrayList();
 		errorHandler.generator = generator;
@@ -376,12 +431,14 @@ public class MsvSchema implements ISchema
 
 	protected void initializeVerifier()
 	{
-		if (verifier == null)
-		{
+		// normally verifiers should be reusable but i noticed some problems that dissappeard
+		// with not reusing them
+		//if (verifier == null)
+		//{
 			DocumentDeclaration documentDeclaration = new REDocumentDeclaration(grammar);
 			this.errorHandler = new MsvSchemaErrorHandler();
 			this.verifier = new PolloMsvVerifier(documentDeclaration, errorHandler);
-		}
+		//}
 	}
 
 	public class MsvSchemaErrorHandler implements ErrorHandler
