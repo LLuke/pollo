@@ -5,7 +5,6 @@ import org.jaxen.XPath;
 import org.jaxen.dom.DOMXPath;
 import org.outerj.pollo.DomConnected;
 import org.outerj.pollo.gui.EmptyIcon;
-import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.xmleditor.action.*;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.model.InvalidXmlException;
@@ -131,14 +130,12 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
       @param xpathForRoot an xpath expression that selects the element to display as root element.
       @param displaySpec an instance of an IDisplaySpecification
-      @param schema the schema to use, see the interface ISchema for more details.
      */
-    public XmlEditor(String xpathForRoot, IDisplaySpecification displaySpec, ISchema schema)
+    public XmlEditor(String xpathForRoot, IDisplaySpecification displaySpec)
         throws Exception
     {
         super();
         this.displaySpec = displaySpec;
-        this.schema = schema;
         this.xpathForRoot = xpathForRoot;
         addMouseListener(this);
         addNodeClickedListener(this);
