@@ -1,3 +1,15 @@
+version 0.3.4
+=============
+ - Fixed serious memory leaks (after closing  a file, the resources
+   used up by the file were not released).
+ - Integrated a patch by Roger I Martin to allow copy during drag-and-drop
+   (press ctrl and then drag), and to automatically switch tabs when you
+   move over them while dragging.
+ - Because of a clipping bug in Java (most visible in version 1.4, see
+   the java bugparade nr. 4265778), the element shapes were drawed
+   incorrectly in (very) large files. This is fixed now by letting Pollo
+   clip the largest part of the shape itself.
+
 version 0.3.3
 =============
  - Added support for various schema languages through Sun's Multi Schema
