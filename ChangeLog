@@ -4,6 +4,33 @@ recent file list and serialization options) and render tabs correctly
 in text/coment nodes. Add more keyboard bindings based on user input.
 And of course a lot of bug fixes.
 
+version 0.3.1
+=============
+ - when a character data node (text, comment, cdata, pi) is collapsed,
+   draw the first line of text.
+ - Two new types of nodes supported:
+    - the document node: this allows that nodes before and after the
+      document element (comments and pi's) are now also visible/editable.
+    - processing instructions. This is actually a special case of character
+      data nodes.
+ - the view can now be rendered to a file: just right click on any node
+   and select the 'Store as image...' option. Only saving as jpeg is
+   supported, as this is the only format support by jdk 1.3 (jdk 1.4
+   will also support other formats such as png).
+ - wrote the basic code to manage a user-preferences file. The preferences
+   file is stored in the user home directory and is named ".pollorc".
+ - if a file is changed, a * is shown in front of its name in the
+   titlebar (thanks to Steven Noels for the suggestion).
+ - the last path used in the file-open dialog is now remembered,
+   and written to the user preferences file (thanks to Steven Noels for the
+   suggestion).
+ - changed the order of the of the Execute and '?' (examples) buttons next to
+   the xpath query field. Pressing enter executes the query. (suggestions
+   made by Steven Noels).
+ - added a schema and template for XSL:FO (in cooperation with Steven Noels).
+ - Added a 'View Source' feature (read only)
+ - Upgraded jaxen to a version I pulled out of the jaxen cvs repository.
+
 version 0.3
 ===========
  - Added keyboard support, see the Help->About for an overview

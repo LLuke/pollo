@@ -14,5 +14,9 @@ This file lists information about the jars
     source: jakarta.apache.org
 
 - jaxen, saxpath
-    version: 1.0 beta 7
+    version: cvs snapshot 18 nov 2001
     source: jaxen.org
+
+- dtdparser.jar:
+    version: 1.14
+    source: http://www.wutka.com/dtdparser.html

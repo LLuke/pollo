@@ -207,6 +207,48 @@
 			</attribute-editor-plugins>
 		</viewtype>
 
+		<viewtype>
+			<name>xslfo</name>
+			<description>W3C XSL FO</description>
+			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
+
+			<schemas>
+				<schema>
+					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>xslfo_schema.xml</param-value>
+					</init-param>
+				</schema>
+			</schemas>
+
+			<display-specifications>
+				<!--
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>xmlschema_spec.xml</param-value>
+					</init-param>
+				</display-specification>
+				-->
+				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>use-colors</param-name>
+						<param-value>false</param-value>
+					</init-param>
+				</display-specification>
+			</display-specifications>
+
+			<attribute-editor-plugins>
+				<attribute-editor-plugin>
+					<factory-class>org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPluginFactory</factory-class>
+				</attribute-editor-plugin>
+			</attribute-editor-plugins>
+		</viewtype>
+
 	</viewtypes>
 
 
@@ -241,6 +283,14 @@
 			<init-param>
 				<param-name>source</param-name>
 				<param-value>templates/po.xsd</param-value>
+			</init-param>
+		</template>
+		<template>
+			<description>XSL FO document</description>
+			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
+			<init-param>
+				<param-name>source</param-name>
+				<param-value>templates/template.fo</param-value>
 			</init-param>
 		</template>
 	</templates>
