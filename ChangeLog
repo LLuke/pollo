@@ -1,3 +1,38 @@
+version 0.2
+===========
+ - rendering/editing of comment nodes, text nodes, cdata nodes
+ - comment out / uncomment
+ - text clipping (append '...' if text doesn't fit on the screen)
+ - opening multiple files, multiple views on same file
+ - replacement of elementdragpanel with nodeinsertionpanel
+ - on parsing, all textnodes that only contain whitespace are removed.
+   (this is not conformant with the xml spec since only when a schema is
+   present, the application can really know what whitespace is ignorable).
+   On saving, the XML is indented again (todo: make this user-configurable).
+ - save as
+ - dropping on element onto itself or as a descendant of itself not allowed anymore
+ - initial support for ant files (added an antschema.xml and antspec.xml,
+   both files are automatically generated).
+ - better indication of the selected node (using thick black border)
+ - use mousePressed instead of mouseClicked event to select nodes (otherwise
+   some clicks seemed to get lost)
+ - a drag-and-drop can now be undone in one step (previously this required
+   chosing undo twice). This is done by adding the concept of
+   undo-transactions to the undo engine. Update: did the same for 'uncomment'
+   and 'comment out' actions.
+ - changes to attributes are applied directly to the DOM (no need to press
+   the 'Apply changes' button anymore). There's now a clear visible
+   distinction between an attribute with no value and one with has empty
+   string as value. Attributes are alfabetically sorted.
+ - collapse all/expand all
+ - eliminated the use of the 'java.text.TextLayout' class, which has resulted
+   in large speed improvements.
+ - added about dialog with license information.
+ - autoscroll when dragging
+ - xpath expressions in the schema now resolve namespace prefixes to
+   namespaces defined in the schema, rather than in the instance document.
+ - and much more...
+
 version 0.1
 ===========
  - save document in the same encodig as it's loaded (previsously this was always ISO-8859-1)
