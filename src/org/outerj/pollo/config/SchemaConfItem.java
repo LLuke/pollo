@@ -1,9 +1,9 @@
 package org.outerj.pollo.config;
 
-import org.outerj.pollo.xmleditor.schema.ISchema;
-import org.outerj.pollo.xmleditor.schema.ISchemaFactory;
 import org.outerj.pollo.xmleditor.ComponentManager;
 import org.outerj.pollo.xmleditor.exception.PolloException;
+import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.xmleditor.schema.ISchemaFactory;
 
 public class SchemaConfItem extends ConfItem
 {

@@ -14,7 +14,6 @@ public class TemplateConfItem extends ConfItem
 
 	public TemplateConfItem()
 	{
-		logcat.debug("New TemplateConfItem created");
 	}
 
 	public ITemplate createTemplate()

@@ -1,11 +1,11 @@
 package org.outerj.pollo.config;
 
+import org.outerj.pollo.xmleditor.ComponentManager;
+import org.outerj.pollo.xmleditor.exception.PolloException;
+import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPluginFactory;
 import org.outerj.pollo.xmleditor.schema.ISchema;
-import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.exception.PolloException;
-import org.outerj.pollo.xmleditor.ComponentManager;
 
 public class AttrEditorPluginConfItem extends ConfItem
 {

@@ -1,15 +1,17 @@
 package org.outerj.pollo.config;
 
-import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
+import org.outerj.pollo.plugin.ActionPluginChain;
+import org.outerj.pollo.plugin.IActionPlugin;
 import org.outerj.pollo.xmleditor.displayspec.ChainedDisplaySpecification;
-import org.outerj.pollo.xmleditor.schema.ISchema;
-import org.outerj.pollo.xmleditor.schema.ChainedSchema;
-import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
-import org.outerj.pollo.xmleditor.plugin.AttrEditorPluginChain;
-import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.exception.PolloException;
+import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.outerj.pollo.xmleditor.plugin.AttrEditorPluginChain;
+import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
+import org.outerj.pollo.xmleditor.schema.ChainedSchema;
+import org.outerj.pollo.xmleditor.schema.ISchema;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class ViewTypeConf
@@ -20,9 +22,10 @@ public class ViewTypeConf
 	protected String name;
 	protected String description;
 	protected String className;
-	protected LinkedList schemas = new LinkedList();
-	protected LinkedList displaySpecs = new LinkedList();
-	protected LinkedList attrEditorPlugins = new LinkedList();
+	protected ArrayList schemas = new ArrayList();
+	protected ArrayList displaySpecs = new ArrayList();
+	protected ArrayList attrEditorPlugins = new ArrayList();
+	protected ArrayList actionPlugins = new ArrayList();
 
 	public String getName()
 	{
@@ -72,6 +75,11 @@ public class ViewTypeConf
 		attrEditorPlugins.add(attrEditorPlugin);
 	}
 
+	public void addActionPlugin(ActionPluginConfItem actionPlugin)
+	{
+		actionPlugins.add(actionPlugin);
+	}
+
 	public ISchema createSchemaChain()
 		throws PolloException
 	{
@@ -115,6 +123,21 @@ public class ViewTypeConf
 		}
 
 		return attrEditorPluginChain;
+	}
+
+	public IActionPlugin createActionPlugins()
+		throws PolloException
+	{
+		ActionPluginChain actionPluginChain = new ActionPluginChain();
+
+		Iterator it = actionPlugins.iterator();
+		while (it.hasNext())
+		{
+			ActionPluginConfItem conf = (ActionPluginConfItem)it.next();
+			actionPluginChain.add(conf.createActionPlugin());
+		}
+
+		return actionPluginChain;
 	}
 
 	public String toString()

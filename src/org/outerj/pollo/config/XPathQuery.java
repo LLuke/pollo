@@ -1,8 +1,9 @@
 package org.outerj.pollo.config;
 
-import org.outerj.pollo.xmleditor.exception.PolloException;
 
-
+/**
+ * An example XPath query.
+ */
 public class XPathQuery
 {
 	protected String description;

@@ -1,36 +1,34 @@
 package org.outerj.pollo.config;
 
-import org.outerj.pollo.xmleditor.exception.PolloConfigurationException;
-
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.Collection;
-import java.io.FileOutputStream;
-import java.io.File;
-
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-import org.xml.sax.helpers.AttributesImpl;
+import org.outerj.pollo.xmleditor.exception.PolloConfigurationException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class PolloConfiguration
 {
 	public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
 			org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
 
-	protected LinkedList viewTypes = new LinkedList();
-	protected LinkedList templates = new LinkedList();
-	protected LinkedList xpathQueries = new LinkedList();
+	protected ArrayList viewTypes = new ArrayList();
+	protected ArrayList templates = new ArrayList();
+	protected ArrayList xpathQueries = new ArrayList()
 
 	protected String fileOpenDialogPath = null;
-	protected String lookAndFeel = null;
+	protected String schemaOpenDialogPath = null;
 
 	public static final String USER_CONF_FILE_NAME = ".pollorc";
 
 	public static final String EL_POLLO = "pollo";
 	public static final String EL_FILE_OPEN_DIALOG_PATH = "file-open-dialog-path";
-	public static final String EL_LOOK_AND_FEEL = "look-and-feel";
+	public static final String EL_SCHEMA_OPEN_DIALOG_PATH = "schema-open-dialog-path";
 
 
 	public void addViewType(ViewTypeConf viewType)
@@ -73,14 +71,14 @@ public class PolloConfiguration
 		fileOpenDialogPath = path;
 	}
 
-	public String getLookAndFeel()
+	public String getSchemaOpenDialogPath()
 	{
-		return lookAndFeel;
+		return schemaOpenDialogPath;
 	}
 
-	public void setLookAndFeel(String lookAndFeel)
+	public void setSchemaOpenDialogPath(String path)
 	{
-		this.lookAndFeel = lookAndFeel;
+		schemaOpenDialogPath = path;
 	}
 
 	public void store()
@@ -128,11 +126,12 @@ public class PolloConfiguration
 			handler.endElement(null, EL_FILE_OPEN_DIALOG_PATH, EL_FILE_OPEN_DIALOG_PATH);
 		}
 
-		if (lookAndFeel != null)
+		if (schemaOpenDialogPath != null)
 		{
-			handler.startElement(null, EL_LOOK_AND_FEEL, EL_LOOK_AND_FEEL, new AttributesImpl());
-			handler.characters(lookAndFeel.toCharArray(), 0, lookAndFeel.length());
-			handler.endElement(null, EL_LOOK_AND_FEEL, EL_LOOK_AND_FEEL);
+			handler.startElement(null, EL_SCHEMA_OPEN_DIALOG_PATH, EL_SCHEMA_OPEN_DIALOG_PATH, new AttributesImpl());
+			handler.characters(fileOpenDialogPath.toCharArray(), 0, fileOpenDialogPath.length());
+			handler.endElement(null, EL_SCHEMA_OPEN_DIALOG_PATH, EL_SCHEMA_OPEN_DIALOG_PATH);
 		}
+
 	}
 }

@@ -1,7 +1,8 @@
 package org.outerj.pollo.config;
 
-import org.outerj.pollo.xmleditor.exception.PolloConfigurationException;
 import org.apache.commons.digester.Digester;
+import org.outerj.pollo.xmleditor.exception.PolloConfigurationException;
+
 import java.io.File;
 
 /**
@@ -50,7 +51,12 @@ public class PolloConfigurationFactory
 		digester.addObjectCreate("pollo/viewtypes/viewtype/attribute-editor-plugins/attribute-editor-plugin",
 				"org.outerj.pollo.config.AttrEditorPluginConfItem");
 		digester.addSetNext("pollo/viewtypes/viewtype/attribute-editor-plugins/attribute-editor-plugin", "addAttrEditorPlugin");
-			
+
+		// action plugins
+		digester.addObjectCreate("pollo/viewtypes/viewtype/action-plugins/action-plugin",
+				"org.outerj.pollo.config.ActionPluginConfItem");
+		digester.addSetNext("pollo/viewtypes/viewtype/action-plugins/action-plugin", "addActionPlugin");
+
 		// templates
 		digester.addObjectCreate("pollo/templates/template", "org.outerj.pollo.config.TemplateConfItem");
 		digester.addCallMethod("pollo/templates/template/description", "setDescription", 0);
@@ -83,6 +89,7 @@ public class PolloConfigurationFactory
 			digester.clear();
 			digester.push(polloConfiguration);
 			digester.addCallMethod("pollo/file-open-dialog-path", "setFileOpenDialogPath", 0);
+			digester.addCallMethod("pollo/schema-open-dialog-path", "setSchemaOpenDialogPath", 0);
 
 			try
 			{
