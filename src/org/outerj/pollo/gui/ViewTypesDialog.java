@@ -93,7 +93,7 @@ public class ViewTypesDialog extends JPanel implements ActionListener
 					{
 						viewTypesList.setSelectedIndex(index);
 						ok = true;
-						hide();
+						getTopLevelAncestor().setVisible(false);
 					}
 				}
 			}
@@ -277,12 +277,12 @@ public class ViewTypesDialog extends JPanel implements ActionListener
 				return;
 			}
 			ok = true;
-			getTopLevelAncestor().hide();
+			getTopLevelAncestor().setVisible(false);
 		}
 		else if (event.getActionCommand().equals("cancel"))
 		{
 			ok = false;
-			getTopLevelAncestor().hide();
+			getTopLevelAncestor().setVisible(false);
 		}
 		else if (event.getActionCommand().equals("view-type-changed"))
 		{
@@ -400,7 +400,7 @@ public class ViewTypesDialog extends JPanel implements ActionListener
 		dialog.setContentPane(this);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
-		dialog.show();
+		dialog.setVisible(true);
 		//System.out.println("na de show");
 		dialog.getLayeredPane().remove(this);
 		return ok;
