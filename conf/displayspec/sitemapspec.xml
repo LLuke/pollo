@@ -1,233 +1,248 @@
-<?xml version="1.0"?>
-
-<!-- Display Specification for use with Cocoon Sitemap editor. 
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Display Specification for use with Pollo.
      This file specifies the colors to use, and which attributes
-	 to show on an element.
+  	 to show on an element.
 -->
-
-<!-- author: Bruno Dumon (bruno.dumon@advalvas.be)             -->
-
 <displayspec xmlns:map="http://apache.org/cocoon/sitemap/1.0">
-
-	<element name="map:pipelines">
-		<display type="block"/>
-		<background-color red="224" green="238" blue="224"/>
-	</element>
-	<element name="map:pipeline">
-		<display type="block"/>
-		<background-color red="115" green="230" blue="161"/>
-		<showattributes names="internal-only"/>
-	</element>
-	<element name="map:parameter">
-		<display type="block"/>
-		<background-color red="230" green="230" blue="230"/>
-		<showattributes names="name,value"/>
-	</element>
-	<element name="map:generate">
-		<display type="block"/>
-		<background-color red="195" green="207" blue="195"/>
-		<showattributes names="type,src,label"/>
-	</element>
-	<element name="map:transform">
-		<display type="block"/>
-		<background-color red="219" green="232" blue="219"/>
-		<showattributes names="type,src,label"/>
-	</element>
-	<element name="map:serialize">
-		<display type="block"/>
-		<background-color red="230" green="244" blue="230"/>
-		<showattributes names="type,status-code,mime-type,label"/>
-	</element>
-	<element name="map:match">
-		<display type="block"/>
-		<background-color red="151" green="161" blue="230"/>
-		<showattributes names="type,pattern"/>
-	</element>
-	<element name="map:redirect-to">
-		<display type="block"/>
-		<background-color red="214" green="214" blue="132"/>
-		<showattributes names="uri,session"/>
-	</element>
-	<element name="map:mount">
-		<display type="block"/>
-		<background-color red="195" green="207" blue="195"/>
-		<showattributes names="src,uri-prefix,language"/>
-	</element>
-	<element name="map:read">
-		<display type="block"/>
-		<background-color red="195" green="207" blue="195"/>
-		<showattributes names="type,src,mime-type"/>
-	</element>
-	<element name="map:aggregate">
-		<display type="block"/>
-		<background-color red="184" green="166" blue="188"/>
-		<showattributes names="element,prefix,ns,label"/>
-	</element>
-	<element name="map:part">
-		<display type="block"/>
-		<background-color red="220" green="198" blue="224"/>
-		<showattributes names="src,element,prefix,ns,strip-root,label"/>
-	</element>
-	<element name="map:act">
-		<display type="block"/>
-		<background-color red="237" green="180" blue="180"/>
-		<showattributes names="type,set,src"/>
-	</element>
-	<element name="map:action-set/map:act">
-		<display type="block"/>
-		<background-color red="237" green="180" blue="180"/>
-		<showattributes names="type,action,src"/>
-	</element>
-	<element name="map:select">
-		<display type="block"/>
-		<background-color red="156" green="209" blue="173"/>
-		<showattributes names="type"/>
-	</element>
-	<element name="map:when">
-		<display type="block"/>
-		<background-color red="156" green="209" blue="173"/>
-		<showattributes names="test"/>
-	</element>
-	<element name="map:otherwise">
-		<display type="block"/>
-		<background-color red="156" green="209" blue="173"/>
-	</element>
-	<element name="map:handle-errors">
-		<display type="block"/>
-		<background-color red="229" green="146" blue="146"/>
-		<showattributes names="type"/>
-	</element>
-
-	<element name="map:resources">
-		<display type="block"/>
-		<background-color red="132" green="168" blue="216"/>
-	</element>
-	<element name="map:resource">
-		<display type="block"/>
-		<background-color red="237" green="180" blue="180"/>
-		<showattributes names="name"/>
-	</element>
-
-	<element name="map:views">
-		<display type="block"/>
-		<background-color red="132" green="168" blue="216"/>
-	</element>
-	<element name="map:view">
-		<display type="block"/>
-		<background-color red="237" green="180" blue="180"/>
-		<showattributes names="name,from-label,form-position"/>
-	</element>
-
-	<element name="map:action-sets">
-		<display type="block"/>
-		<background-color red="132" green="168" blue="216"/>
-	</element>
-	<element name="map:action-set">
-		<display type="block"/>
-		<background-color red="230" green="184" blue="115"/>
-		<showattributes names="name"/>
-	</element>
-
-
-
-
-
-	<element name="map:sitemap">
-		<display type="block"/>
-		<background-color red="181" green="181" blue="204"/>
-	</element>
-
-	<element name="map:components">
-		<display type="block"/>
-		<background-color red="230" green="184" blue="115"/>
-	</element>
-
-	<element name="map:generators">
-		<display type="block"/>
-		<background-color red="192" green="204" blue="181"/>
-		<showattributes names="default"/>
-	</element>
-
-	<element name="map:transformers">
-		<display type="block"/>
-		<background-color red="192" green="204" blue="181"/>
-		<showattributes names="default"/>
-	</element>
-
-	<element name="map:readers">
-		<display type="block"/>
-		<background-color red="192" green="204" blue="181"/>
-		<showattributes names="default"/>
-	</element>
-
-	<element name="map:serializers">
-		<display type="block"/>
-		<background-color red="192" green="204" blue="181"/>
-		<showattributes names="default"/>
-	</element>
-
-	<element name="map:selectors">
-		<display type="block"/>
-		<background-color red="192" green="204" blue="181"/>
-		<showattributes names="default"/>
-	</element>
-
-	<element name="map:matchers">
-		<display type="block"/>
-		<background-color red="192" green="204" blue="181"/>
-		<showattributes names="default"/>
-	</element>
-
-	<element name="map:actions">
-		<display type="block"/>
-		<background-color red="192" green="204" blue="181"/>
-	</element>
-
-	<element name="map:generator">
-		<display type="block"/>
-		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src,label,pool-min,pool-max,pool-grow,logger"/>
-	</element>
-
-	<element name="map:transformer">
-		<display type="block"/>
-		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src,label,pool-min,pool-max,pool-grow,logger"/>
-	</element>
-
-	<element name="map:reader">
-		<display type="block"/>
-		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src,mime-type,pool-min,pool-max,pool-grow,logger"/>
-	</element>
-
-	<element name="map:serializer">
-		<display type="block"/>
-		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src,mime-type,label,pool-min,pool-max,pool-grow,logger"/>
-	</element>
-
-	<element name="map:selector">
-		<display type="block"/>
-		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src,pool-min,pool-max,pool-grow,logger"/>
-	</element>
-
-	<element name="map:matcher">
-		<display type="block"/>
-		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src,pool-min,pool-max,pool-grow,logger"/>
-	</element>
-
-	<element name="map:action">
-		<display type="block"/>
-		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src,pool-min,pool-max,pool-grow,logger"/>
-	</element>
-
-	<element name="map:call">
-		<display type="block"/>
-		<background-color red="243" green="226" blue="109"/>
-		<showattributes names="resource"/>
-	</element>
+  <element name="map:pipelines" background-color="e0eee0"/>
+  <element name="map:pipeline" background-color="73e6a1">
+    <attributes>
+      <attribute name="internal-only"/>
+    </attributes>
+  </element>
+  <element name="map:parameter" background-color="e6e6e6">
+    <attributes>
+      <attribute name="name"/>
+      <attribute name="value"/>
+    </attributes>
+  </element>
+  <element name="map:generate" background-color="c3cfc3">
+    <attributes>
+      <attribute name="type"/>
+      <attribute name="src"/>
+      <attribute name="label"/>
+    </attributes>
+  </element>
+  <element name="map:transform" background-color="dbe8db">
+    <attributes>
+      <attribute name="type"/>
+      <attribute name="src"/>
+      <attribute name="label"/>
+    </attributes>
+  </element>
+  <element name="map:serialize" background-color="e6f4e6">
+    <attributes>
+      <attribute name="type"/>
+      <attribute name="status-code"/>
+      <attribute name="mime-type"/>
+      <attribute name="label"/>
+    </attributes>
+  </element>
+  <element name="map:match" background-color="97a1e6">
+    <attributes>
+      <attribute name="type"/>
+      <attribute name="pattern"/>
+    </attributes>
+  </element>
+  <element name="map:redirect-to" background-color="d6d684">
+    <attributes>
+      <attribute name="uri"/>
+      <attribute name="session"/>
+    </attributes>
+  </element>
+  <element name="map:mount" background-color="c3cfc3">
+    <attributes>
+      <attribute name="src"/>
+      <attribute name="uri-prefix"/>
+      <attribute name="language"/>
+    </attributes>
+  </element>
+  <element name="map:read" background-color="c3cfc3">
+    <attributes>
+      <attribute name="type"/>
+      <attribute name="src"/>
+      <attribute name="mime-type"/>
+    </attributes>
+  </element>
+  <element name="map:aggregate" background-color="b8a6bc">
+    <attributes>
+      <attribute name="element"/>
+      <attribute name="prefix"/>
+      <attribute name="ns"/>
+      <attribute name="label"/>
+    </attributes>
+  </element>
+  <element name="map:part" background-color="dcc6e0">
+    <attributes>
+      <attribute name="src"/>
+      <attribute name="element"/>
+      <attribute name="prefix"/>
+      <attribute name="ns"/>
+      <attribute name="strip-root"/>
+      <attribute name="label"/>
+    </attributes>
+  </element>
+  <element name="map:act" background-color="edb4b4">
+    <attributes>
+      <attribute name="type"/>
+      <attribute name="set"/>
+      <attribute name="src"/>
+    </attributes>
+  </element>
+  <element name="map:action-set/map:act" background-color="edb4b4">
+    <attributes>
+      <attribute name="type"/>
+      <attribute name="action"/>
+      <attribute name="src"/>
+    </attributes>
+  </element>
+  <element name="map:select" background-color="9cd1ad">
+    <attributes>
+      <attribute name="type"/>
+    </attributes>
+  </element>
+  <element name="map:when" background-color="9cd1ad">
+    <attributes>
+      <attribute name="test"/>
+    </attributes>
+  </element>
+  <element name="map:otherwise" background-color="9cd1ad"/>
+  <element name="map:handle-errors" background-color="e59292">
+    <attributes>
+      <attribute name="type"/>
+    </attributes>
+  </element>
+  <element name="map:resources" background-color="84a8d8"/>
+  <element name="map:resource" background-color="edb4b4">
+    <attributes>
+      <attribute name="name"/>
+    </attributes>
+  </element>
+  <element name="map:views" background-color="84a8d8"/>
+  <element name="map:view" background-color="edb4b4">
+    <attributes>
+      <attribute name="name"/>
+      <attribute name="from-label"/>
+      <attribute name="form-position"/>
+    </attributes>
+  </element>
+  <element name="map:action-sets" background-color="84a8d8"/>
+  <element name="map:action-set" background-color="e6b873">
+    <attributes>
+      <attribute name="name"/>
+    </attributes>
+  </element>
+  <element name="map:sitemap" background-color="b5b5cc"/>
+  <element name="map:components" background-color="e6b873"/>
+  <element name="map:generators" background-color="c0ccb5">
+    <attributes>
+      <attribute name="default"/>
+    </attributes>
+  </element>
+  <element name="map:transformers" background-color="c0ccb5">
+    <attributes>
+      <attribute name="default"/>
+    </attributes>
+  </element>
+  <element name="map:readers" background-color="c0ccb5">
+    <attributes>
+      <attribute name="default"/>
+    </attributes>
+  </element>
+  <element name="map:serializers" background-color="c0ccb5">
+    <attributes>
+      <attribute name="default"/>
+    </attributes>
+  </element>
+  <element name="map:selectors" background-color="c0ccb5">
+    <attributes>
+      <attribute name="default"/>
+    </attributes>
+  </element>
+  <element name="map:matchers" background-color="c0ccb5">
+    <attributes>
+      <attribute name="default"/>
+    </attributes>
+  </element>
+  <element name="map:actions" background-color="c0ccb5"/>
+  <element name="map:generator" background-color="b5ccca">
+    <attributes>
+      <attribute name="name"/>
+      <attribute name="src"/>
+      <attribute name="label"/>
+      <attribute name="pool-min"/>
+      <attribute name="pool-max"/>
+      <attribute name="pool-grow"/>
+      <attribute name="logger"/>
+    </attributes>
+  </element>
+  <element name="map:transformer" background-color="b5ccca">
+    <attributes>
+      <attribute name="name"/>
+      <attribute name="src"/>
+      <attribute name="label"/>
+      <attribute name="pool-min"/>
+      <attribute name="pool-max"/>
+      <attribute name="pool-grow"/>
+      <attribute name="logger"/>
+    </attributes>
+  </element>
+  <element name="map:reader" background-color="b5ccca">
+    <attributes>
+      <attribute name="name"/>
+      <attribute name="src"/>
+      <attribute name="mime-type"/>
+      <attribute name="pool-min"/>
+      <attribute name="pool-max"/>
+      <attribute name="pool-grow"/>
+      <attribute name="logger"/>
+    </attributes>
+  </element>
+  <element name="map:serializer" background-color="b5ccca">
+    <attributes>
+      <attribute name="name"/>
+      <attribute name="src"/>
+      <attribute name="mime-type"/>
+      <attribute name="label"/>
+      <attribute name="pool-min"/>
+      <attribute name="pool-max"/>
+      <attribute name="pool-grow"/>
+      <attribute name="logger"/>
+    </attributes>
+  </element>
+  <element name="map:selector" background-color="b5ccca">
+    <attributes>
+      <attribute name="name"/>
+      <attribute name="src"/>
+      <attribute name="pool-min"/>
+      <attribute name="pool-max"/>
+      <attribute name="pool-grow"/>
+      <attribute name="logger"/>
+    </attributes>
+  </element>
+  <element name="map:matcher" background-color="b5ccca">
+    <attributes>
+      <attribute name="name"/>
+      <attribute name="src"/>
+      <attribute name="pool-min"/>
+      <attribute name="pool-max"/>
+      <attribute name="pool-grow"/>
+      <attribute name="logger"/>
+    </attributes>
+  </element>
+  <element name="map:action" background-color="b5ccca">
+    <attributes>
+      <attribute name="name"/>
+      <attribute name="src"/>
+      <attribute name="pool-min"/>
+      <attribute name="pool-max"/>
+      <attribute name="pool-grow"/>
+      <attribute name="logger"/>
+    </attributes>
+  </element>
+  <element name="map:call" background-color="f3e26d">
+    <attributes>
+      <attribute name="resource"/>
+    </attributes>
+  </element>
 </displayspec>

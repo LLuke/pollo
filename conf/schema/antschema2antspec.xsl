@@ -22,37 +22,31 @@
 
 <xsl:template match="element">
 	<element name="{@name}">
-		<showattributes>
-			<xsl:attribute name="names">
-				<xsl:for-each select="attributes/attribute">
-					<xsl:choose>
-						<xsl:when  test="position()=last()"><xsl:value-of select="@name"/></xsl:when>
-						<xsl:otherwise><xsl:value-of select="@name"/>,</xsl:otherwise>
-					</xsl:choose>
-				</xsl:for-each>
-			</xsl:attribute>
-		</showattributes>
-		<display type="block"/>
 		<xsl:choose>
 			<xsl:when test="@name='project'">
-				<background-color red="224" green="238" blue="224"/>
+        <xsl:attribute name="background-color">e0eee0</xsl:attribute>
 			</xsl:when>
 			<xsl:when test="@name='target'">
-				<background-color red="255" green="157" blue="112"/>
+        <xsl:attribute name="background-color">ff9d70</xsl:attribute>
 			</xsl:when>
 			<!-- if it is a deprecated task -->
 			<xsl:when test="@name='copydir' or @name='copyfile' or @name='rename' or @name='javadoc2' or @name='execon' or @name='deltree'">
-				<background-color red="255" green="96" blue="38"/>
+        <xsl:attribute name="background-color">ff6026</xsl:attribute>
 			</xsl:when>
 			<!-- if it is a task (why does ends-with() not exist?)-->
 			<xsl:when test="contains($tasks, concat(',',@name,',')) or contains($tasks, concat(@name,','))">
-				<background-color red="138" green="234" blue="218"/>
+        <xsl:attribute name="background-color">8aeada</xsl:attribute>
 			</xsl:when>
 			<!-- otherwise -->
 			<xsl:otherwise>
-				<background-color red="226" green="208" blue="208"/>
+        <xsl:attribute name="background-color">e2d0d0</xsl:attribute>
 			</xsl:otherwise>
 		</xsl:choose>
+    <attributes>
+      <xsl:for-each select="attributes/attribute">
+        <attribute name="{@name}"/>
+      </xsl:for-each>
+    </attributes>
 	</element>
 </xsl:template>
 
