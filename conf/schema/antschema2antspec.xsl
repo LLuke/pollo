@@ -41,7 +41,7 @@
 				<background-color red="255" green="157" blue="112"/>
 			</xsl:when>
 			<!-- if it is a deprecated task -->
-			<xsl:when test="@name='copydir' or @name='copyfile' or @name='rename' or @name='javadoc2'">
+			<xsl:when test="@name='copydir' or @name='copyfile' or @name='rename' or @name='javadoc2' or @name='execon' or @name='deltree'">
 				<background-color red="255" green="96" blue="38"/>
 			</xsl:when>
 			<!-- if it is a task (why does ends-with() not exist?)-->
