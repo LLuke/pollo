@@ -133,6 +133,31 @@
 			</action-plugins>
 		</viewtype>
 
+		<viewtype name="sitemap21" description="Cocoon 2.1 Sitemap">
+			<schemas>
+				<schema factory="org.outerj.pollo.xmleditor.schema.BasicSchemaFactory">
+          <parameter name="source" value="classpath:/schema/sitemap21schema.xml"/>
+				</schema>
+			</schemas>
+
+			<display-specifications>
+				<display-specification factory="org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory">
+          <parameter name="source" value="classpath:/displayspec/sitemap21spec.xml"/>
+				</display-specification>
+				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
+        <display-specification factory="org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory"/>
+			</display-specifications>
+
+			<attribute-editor-plugins>
+        <attribute-editor-plugin factory="org.outerj.pollo.engine.cocoon.CocoonAttrEditorPluginFactory"/>
+        <attribute-editor-plugin factory="org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPluginFactory"/>
+			</attribute-editor-plugins>
+
+			<action-plugins>
+        <action-plugin factory="org.outerj.pollo.engine.cocoon.CocoonActionPluginFactory"/>
+			</action-plugins>
+		</viewtype>
+
     <viewtype name="xmlschema" description="W3C XML Schema">
 			<schemas>
 				<schema factory="org.outerj.pollo.xmleditor.schema.BasicSchemaFactory">
