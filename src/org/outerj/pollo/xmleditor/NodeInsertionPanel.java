@@ -31,6 +31,7 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 	protected Object [] emptyArray = new Object[0];
 	protected InsertUnlistedElement insertUnlistedElement = new InsertUnlistedElement();
 	protected QuickSort quickSort = new QuickSort();
+	private final static Icon textIcon = IconManager.getIcon("org/outerj/pollo/resource/stock_font-16.png");
 
 	protected NodeInsertionList insertBeforeList;
 	protected NodeInsertionList insertAfterList;
@@ -186,14 +187,24 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 						else
 						{
 							Collection subElementsList = schema.getAllowedSubElements((Element)node.getParentNode());
+							Collection subtexts = schema.getAllowedSubTexts((Element)node.getParentNode());
 							Iterator subElementsIt = subElementsList.iterator();
-							Object [] data = new Object[subElementsList.size() + 1];
+							Object [] data = new Object[subElementsList.size() + subtexts.size() + 1];
 							int i = 1;
 							while (subElementsIt.hasNext())
 							{
 								ElementSchema.SubElement subElement = (ElementSchema.SubElement)subElementsIt.next();
 								data[i] = displaySpec.getElementSpec(subElement.namespaceURI, subElement.localName);
 								i++;
+							}
+							if (subtexts.size() > 0)
+							{
+								Iterator subTextIt = subtexts.iterator();
+								while (subTextIt.hasNext())
+								{
+									data[i] = subTextIt.next();
+									i++;
+								}
 							}
 							data[0] = insertUnlistedElement;
 							quickSort.sortPartial(data, 1);
@@ -206,14 +217,24 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 						if (node instanceof Element)
 						{
 							Collection subElementsList = schema.getAllowedSubElements((Element)node);
+							Collection subtexts = schema.getAllowedSubTexts((Element)node);
 							Iterator subElementsIt = subElementsList.iterator();
-							Object [] data = new Object[subElementsList.size() + 1];
+							Object [] data = new Object[subElementsList.size() + subtexts.size() + 1];
 							int i = 1;
 							while (subElementsIt.hasNext())
 							{
 								ElementSchema.SubElement subElement = (ElementSchema.SubElement)subElementsIt.next();
 								data[i] = displaySpec.getElementSpec(subElement.namespaceURI, subElement.localName);
 								i++;
+							}
+							if (subtexts.size() > 0)
+							{
+								Iterator subTextIt = subtexts.iterator();
+								while (subTextIt.hasNext())
+								{
+									data[i] = subTextIt.next();
+									i++;
+								}
 							}
 							data[0] = insertUnlistedElement;
 							quickSort.sortPartial(data, 1);
@@ -268,6 +289,7 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 				String localName = null;
 				String namespaceURI = null;
 				String prefix = null;
+				Node newNode = null;
 
 				if (selectedItem instanceof ElementSpec)
 				{
@@ -302,6 +324,10 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 						localName = elementName;
 					}
 				}
+				else if (selectedItem instanceof String)
+				{
+					newNode = xmlModel.getDocument().createTextNode((String)selectedItem);
+				}
 
 				// determine the element from which to start searching for namespace declarations
 				Element namespaceSearchNode = null;
@@ -318,7 +344,6 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 					}
 				}
 
-				Element newElement;
 				if (selectedItem instanceof ElementSpec && namespaceURI != null && namespaceURI.length() > 0)
 				{
 					// the user selected an element from the list, now search for a prefix
@@ -330,7 +355,7 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 								"No prefix declaration found for namespace '" + namespaceURI + "'");
 						return;
 					}
-					newElement = xmlModel.getDocument().createElementNS(namespaceURI,
+					newNode = xmlModel.getDocument().createElementNS(namespaceURI,
 							DomUtils.getQName(prefix, localName));
 				}
 				else if (selectedItem instanceof InsertUnlistedElement)
@@ -353,30 +378,34 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 					{
 						namespaceURI = xmlModel.findDefaultNamespace(namespaceSearchNode);
 					}
-					newElement = xmlModel.getDocument().createElementNS(namespaceURI,
+					newNode = xmlModel.getDocument().createElementNS(namespaceURI,
 							DomUtils.getQName(prefix, localName));
+				}
+				else if (selectedItem instanceof String)
+				{
+					// no need to search for namespace
 				}
 				else
 				{
 					// the user selected an element without a namespace
-					newElement = xmlModel.getDocument().createElementNS(null, localName);
+					newNode = xmlModel.getDocument().createElementNS(null, localName);
 				}
 
 				// insert the newly created node at the apropriate place
 				switch (mode)
 				{
 					case MODE_INSERT_BEFORE:
-						selectedNode.getParentNode().insertBefore(newElement, selectedNode);
+						selectedNode.getParentNode().insertBefore(newNode, selectedNode);
 						break;
 					case MODE_INSERT_AFTER:
 						Node nextSibling = selectedNode.getNextSibling();
 						if (nextSibling != null)
-							selectedNode.getParentNode().insertBefore(newElement, nextSibling);
+							selectedNode.getParentNode().insertBefore(newNode, nextSibling);
 						else
-							selectedNode.getParentNode().appendChild(newElement);
+							selectedNode.getParentNode().appendChild(newNode);
 						break;
 					case MODE_INSERT_INSIDE:
-						selectedNode.appendChild(newElement);
+						selectedNode.appendChild(newNode);
 						break;
 				}
 
@@ -389,6 +418,7 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 
 	public class ElementSpecCellRenderer extends JLabel implements ListCellRenderer
 	{
+
 		public Component getListCellRendererComponent(
 				JList list,
 				Object value,            // value to display
@@ -409,6 +439,21 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 				setIcon(null);
 				Font font = list.getFont().deriveFont(Font.ITALIC);
 				setFont(font);
+			}
+			else if (value instanceof String)
+			{
+				if (value.equals(""))
+				{
+					Font font = list.getFont().deriveFont(Font.ITALIC);
+					setFont(font);
+					setText("(text)");
+				}
+				else
+				{
+					setText((String)value);
+					setFont(list.getFont());
+				}
+				setIcon(textIcon);
 			}
 			else
 			{
