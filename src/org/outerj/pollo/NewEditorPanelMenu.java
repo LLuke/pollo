@@ -5,6 +5,8 @@ import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.swing.*;
+import javax.swing.event.MenuListener;
+import javax.swing.event.MenuEvent;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Iterator;
@@ -15,33 +17,37 @@ import java.util.List;
  *
  * @author Bruno Dumon
  */
-public class NewEditorPanelMenu extends JMenu
+public class NewEditorPanelMenu extends JMenu implements MenuListener
 {
 	PolloFrame polloFrame;
 
 	public NewEditorPanelMenu(PolloFrame polloFrame)
 	{
-		super ("Create new view on file");
 		ResourceManager resMgr = ResourceManager.getManager(NewEditorPanelMenu.class);
 		resMgr.configureMenu( this );
 		this.polloFrame = polloFrame;
+		addMenuListener(this);
 	}
 
-	public void setPopupMenuVisible(boolean visible)
+	public void menuSelected(MenuEvent e)
 	{
-		if (visible)
+		removeAll();
+		// create the items in the menu, one for each XmlModel
+		List openFiles = Pollo.getInstance().getOpenFiles();
+		Iterator it = openFiles.iterator();
+		while (it.hasNext())
 		{
-			removeAll();
-			// create the items in the menu, one for each XmlModel
-            List openFiles = Pollo.getInstance().getOpenFiles();
-			Iterator it = openFiles.iterator();
-			while (it.hasNext())
-			{
-				XmlModel xmlModel = (XmlModel)it.next();
-				add(new NewEditorPanelAction(xmlModel));
-			}
+			XmlModel xmlModel = (XmlModel)it.next();
+			add(new NewEditorPanelAction(xmlModel));
 		}
-		super.setPopupMenuVisible(visible);
+	}
+
+	public void menuDeselected(MenuEvent e)
+	{
+	}
+
+	public void menuCanceled(MenuEvent e)
+	{
 	}
 
 	public class NewEditorPanelAction extends AbstractAction

@@ -7,6 +7,8 @@ import org.outerj.pollo.Pollo;
 import org.outerj.pollo.EditorPanel;
 
 import javax.swing.*;
+import javax.swing.event.MenuListener;
+import javax.swing.event.MenuEvent;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Iterator;
@@ -17,31 +19,35 @@ import java.util.List;
  *
  * @author Bruno Dumon
  */
-public class RecentlyOpenedFilesMenu extends JMenu
+public class RecentlyOpenedFilesMenu extends JMenu implements MenuListener
 {
 	PolloFrame polloFrame;
 
 	public RecentlyOpenedFilesMenu(PolloFrame polloFrame)
 	{
-		super ("Open Recent File");
 		ResourceManager resMgr = ResourceManager.getManager(RecentlyOpenedFilesMenu.class);
 		resMgr.configureMenu( this );
 		this.polloFrame = polloFrame;
+		addMenuListener(this);
 	}
 
-	public void setPopupMenuVisible(boolean visible)
+	public void menuSelected(MenuEvent e)
 	{
-		if (visible)
+		removeAll();
+		// create the items in the menu, one for each XmlModel
+		List recentFiles = Pollo.getInstance().getConfiguration().getRecentlyOpenedFiles();
+		for (int i = recentFiles.size() - 1; i >= 0; i--)
 		{
-			removeAll();
-			// create the items in the menu, one for each XmlModel
-			List recentFiles = Pollo.getInstance().getConfiguration().getRecentlyOpenedFiles();
-			for (int i = recentFiles.size() - 1; i >= 0; i--)
-			{
-				add(new OpenRecentFileAction((String)recentFiles.get(i)));
-			}
+			add(new OpenRecentFileAction((String)recentFiles.get(i)));
 		}
-		super.setPopupMenuVisible(visible);
+	}
+
+	public void menuDeselected(MenuEvent e)
+	{
+	}
+
+	public void menuCanceled(MenuEvent e)
+	{
 	}
 
 	public class OpenRecentFileAction extends AbstractAction
