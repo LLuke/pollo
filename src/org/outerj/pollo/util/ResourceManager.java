@@ -71,8 +71,8 @@ public class ResourceManager {
 	private static Category _logger =
 		Category.getInstance(ResourceManager.class);
 
-	/** Map containing all loaded bundles. */
-	private static Map _resourceBundles = new HashMap();
+	/** Map containing all loaded ResourceManagers. */
+	private static Map _resourceManagers = new HashMap();
 
 	private Class _class;
 	private ResourceBundle _resourceBundle;
@@ -588,14 +588,14 @@ public class ResourceManager {
 
 		// Clear our cache of ResourceManagers if the locale has changed.
 		if (_locale != Locale.getDefault()) {
-			_resourceBundles.clear();
+			_resourceManagers.clear();
 		}
 
 		// See if ResourceManager is in our cache, if not create it
-		ResourceManager retval = (ResourceManager) _resourceBundles.get(clazz);
+		ResourceManager retval = (ResourceManager) _resourceManagers.get(clazz);
 		if (retval == null) {
 			retval = new ResourceManager(clazz);
-			_resourceBundles.put(clazz, retval);
+			_resourceManagers.put(clazz, retval);
 		}
 
 		// Returns the ResourceManager 
