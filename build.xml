@@ -40,7 +40,7 @@
   </target>
   <target name="zip" depends="jar">
     <zip zipfile="pollo-${version}-bin.zip">
-		<zipfileset dir="lib"/>
+		<zipfileset dir="lib" excludes="versions.txt" defaultexcludes="true"/>
 		<zipfileset dir="." includes="pollo.jar,README"/>
     </zip>
   </target>
@@ -60,6 +60,7 @@
     <jar jarfile="pollo.jar" manifest="misc/MANIFEST.MF" compress="false">
       <zipfileset dir="build"/>
       <zipfileset dir="conf"/>
+      <zipfileset dir="templates" prefix="templates"/>
     </jar>
   </target>
 </project>
