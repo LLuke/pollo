@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+   
+  <link rel="stylesheet" type="text/css" href="pollo.css">
+  <title>Pollo: design notes</title>
+  <meta name="author" content="Bruno Dumon">
+</head>
+ <body>
+<h1>Pollo: design notes</h1>
+<p>This document contains some rough notes on Pollo's internal design.<br>
+</p>
+<p>If you are only interested in extending Pollo with some special features
+for editing a certain kind of XML file, then you can probably achieve that
+by writing plugins, a schema and a display specification. Take a look at
+the <a href="cocoon.html">Cocoon view type</a> for an example of this.<br>
+</p>
+<p>This document assumes that you are to some extent familiar with Java,
+Swing, XML and the Java API's for XML. It will also help if you are familiar
+with design patterns (such as MVC). And of course you should be familiar
+with Pollo.<br>
+ </p>
+ 
+<h2>Pollo, PolloFrame and EditorPanel<br>
+</h2>
+<p>The execution of Pollo starts in the main method of the class Pollo. This
+class will:<br>
+</p>
+<ul>
+  <li>check command line parameters</li>
+  <li>initialise the configuration (this is acutally handled by the PolloConfiguration
+and PolloConfigurationFactory objects)</li>
+  <li>display an initial "PolloFrame"<br>
+  </li>
+</ul>
+A PolloFrame is a JFrame which manages a number of EditorPanel's. An EditorPanel
+is a JPanel providing an 'editor' for a certain file. The PolloFrame will
+display these EditorPanel's in different tabs, so that the user can switch
+between them.<br>
+<p>An EditorPanel itself is associated with one XmlModel (described further
+on) and provides (actually: can provide, I only describe here the behaviour
+of the default implementation called EditorPanelImpl) two possible views
+on it: a textview and a treeview. The EditorPanel also manages the toolbar
+and the menubar. As the user switches between EditorPanel's with the tabs,
+the PolloFrame will switch the menubar and toolbar of the frame to that of
+the current EditorPanel.<br>
+</p>
+<p>Multiple EditorPanel's can be associated with one XmlModel (= one file).
+When the last EditorPanel associated with a particular XmlModel is closed,
+the XmlModel itself will be closed, asking if the file represented by the
+XmlModel needs to be saved if it was modified.<br>
+</p>
+<h2>XmlModel</h2>
+<p>A document is at any time in one of two states:<br>
+</p>
+<ul>
+  <li>text mode = the document is represented by a subclass of Swing's PlainDocument
+(basically a character array)</li>
+  <li>parsed mode = the document is represented by a DOM tree</li>
+</ul>
+This two representations are managed by an enclosing class, XmlModel. XmlModel
+also manages loading and saving of the file. When a file is initially loaded,
+it will by default always be in parsed mode, except if it could not be parsed,
+in which case it will fall back to text mode.
+<h2></h2>
+<h2>The Tree View (XmlEditor)</h2>
+<p>Pollo's tree view is a component implemented from scratch, it extends
+JComponent. The class is called XmlEditor.<br>
+</p>
+<p>XmlEditor needs the following:<br>
+</p>
+<ul>
+  <li>an XmlModel, containing the data to be shown</li>
+  <li>an implementation of IDisplaySpecification: this interface can be queried
+about display attributes such as element colors and attribute orderning</li>
+  <li>optionally: an XPath expression pointing to the root node to be displayed
+in the view<br>
+  </li>
+</ul>
+<p>The basic design is as follows. Uppon initial display (when the component
+gets its first paint event), a so-called <em>view tree</em> is build. This
+is a tree of view objects, these are objects that contain layout information
+and can paint themselves on a java.awt.Graphics object. Each of this view
+objects corresponds to a node in the DOM tree. For different types of DOM
+nodes, different types of view objects are instantiated.<br>
+</p>
+<p>After building this tree, the layout() method of the root view object
+is called with as parameter the available width. The root view object will
+then call the layout method of all its children, passing the width they can
+occupy as parameter. These view objects will then call the layout method
+recursively on their children, and so on. After the layout method returns,
+the caller (which is the parent view object), can call getHeight on its child(ren)
+to know how much space they occupy, and can thereby finish calculating its
+own layout, so that control returns to the layout method of its parent, and
+so, until we're back at the root node and the layout process has finished.<br>
+</p>
+<p>Now the paint method can be called on the root view object, passing the
+top and left coordinates. The root View object will then paint itself and
+will then recursively cause the paint methods of all the children to be called,
+until the whole tree is painted. Actually, not the whole tree is painted
+on each paint event, but only those View objects which intersect with clipping
+area.<br>
+</p>
+<p>During the instantiation of the view objects, each view object also registers
+itself with its corresonding DOM-node to listen for Mutation Events. Mutation
+Events are a part of the <a
+ href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Events-20001113/events.html">DOM
+specification</a>.When a view object receives a Mutation Event from its corresponding
+DOM node, it will relayout and repaint itself. If nodes were inserted or
+removed, the parent view objects will also be (recursively) warned to grow
+or shrink their height.<br>
+</p>
+<p>When mouse-click events occur on the XmlEditor component, these are propagated
+through the view tree until they reach the view object containing the x/y
+location of the click event. This vew object will then fire NodeClicked-events
+to all registered listeners. For example, the status bar showing the currently
+selected node is such a listener, but there are many others. These listeners
+are actually registered on the XmlEditor, not on each individual view object.<br>
+</p>
+<h2>Undo (parsed mode)</h2>
+<p>The Undo is simply implemented by an object registered as MutationEvent-listener
+on the root node of the DOM-tree, which will catch all events happening in
+the tree, and record them so they can be undone later.<br>
+</p>
+<p>Sometimes multiple MutationEvents form one logical user action, therefore
+the concept of "UndoTransactions" was introduced. See the source code ;-)<br>
+</p>
+<h2>XmlEditorPanel</h2>
+<p>XmlEditorPanel is a panel that combines the XmlEditor tree widget with
+some other panels to provide full editor functionality:<br>
+</p>
+<ul>
+  <li>the NodeDetailsPanel shows either the attribute editor (if the selected
+node is an element node) or the "character data editor" for textnodes, comment
+nodes, ...</li>
+  <li>the NodeInsertionPanel contains the listboxes to select elements from</li>
+  <li>the QueryByXPathPanel contains the XPath functionality</li>
+  <li>the NodePathBar shows the path to the selected node</li>
+</ul>
+Apart from the XmlModel and the DisplaySpecification that the XmlEditor requires,
+the XmlEditorPanel also needs a reference to an object implementing ISchema.
+This interface can be queried about available elements and attributes, and
+can be asked to validate the document.<br>
+<h2>About IDisplaySpecification and ISchema</h2>
+<p>Both the schema and display specification implementations are abstracted
+by an interface, so that multiple implementations can be provided. The actual
+implementations to use are part of the so called ViewType. ViewTypes can
+be configured in Pollo's configuration file, pollo_conf.xml.<br>
+</p>
+<p>Both the schema and display specifications can be chained. By this I mean
+that you can put multiple implementations of them after each other. For example,
+for the display specification, first the first display specification is asked
+for the color to use for an element, if that one returns null, the next one
+will be asked for the color, etc. until there is a display specification
+that has the answer. For schemas there is something similar, but instead
+it merges the answers from the different schemas.<br>
+</p>
+<h2>View Types</h2>
+<p>A ViewType is the combination of:<br>
+</p>
+<ul>
+  <li>a series of displayspecifications</li>
+  <li>a series of schemas</li>
+  <li>a series of attribute editor plugins</li>
+  <li>a series of action plugins<br>
+  </li>
+</ul>
+<p>Action plugins are optional, for the rest default implementations will
+be used if none is specified.<br>
+</p>
+<h2>The text editor</h2>
+<p>The text-editor is based on the free jedit syntax package (which is an
+older version of the GPL <a href="http://www.jedit.org">jEdit</a> editor).
+The text view doesn't contain much feature besides well-formedness checking.
+Volunteers to tackle this are welcome.<br>
+</p>
+<h2>Packages</h2>
+<p>In case you would be confused about this: the schema and model packages
+which are currently a subpackage of the package xmleditor, should be moved
+one level up because they are not specific for the xmleditor, but are used
+or could be used by the texteditor also.<br>
+</p>
+<h2>Inversion of Control violations</h2>
+<p>At some places the Pollo-class singleton instance is accessed by using
+a static getInstance method. This violates the so-called "inversion of control"
+principle, and makes reusing some parts of Pollo difficult. More specific,
+XmlEditorPanel uses this to get access to get configuration information and
+can therefore not be reused in other Swing applications withouth some hacking.
+This will be fixed in a future Pollo release. The XmlEditor class itself
+should be reusable though.<br>
+</p>
+<h2>Questions</h2>
+<p>If you have questions or remarks about this text, feel free to contact
+me (contact information is on the home page).<br>
+</p>
+@footer@<br>
+<br>
+</body>
+</html>
