@@ -173,7 +173,10 @@ public class XmlModel
 		return textDocument;
 	}
 
-	protected void setTextDocumentText(String text)
+    /**
+     * Sets the text of the textdocument.
+     */
+	public void setTextDocumentText(String text)
 	{
 		try
 		{
@@ -194,6 +197,15 @@ public class XmlModel
 			textModifiedListener.start();
 		}
 	}
+
+    /**
+     * When set to true, the document will be reparsed when
+     * switching to parsed mode, otherwise not.
+     */
+    public void setModifiedWhileInTextMode(boolean modified)
+    {
+        modifiedWhileInTextMode = modified;
+    }
 
 	/**
 	 * Returns the contents of the text document as a String.
