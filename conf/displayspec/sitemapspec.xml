@@ -26,17 +26,17 @@
 	<element name="map:generate">
 		<display type="block"/>
 		<background-color red="195" green="207" blue="195"/>
-		<showattributes names="type,src"/>
+		<showattributes names="type,src,label"/>
 	</element>
 	<element name="map:transform">
 		<display type="block"/>
 		<background-color red="219" green="232" blue="219"/>
-		<showattributes names="type,src"/>
+		<showattributes names="type,src,label"/>
 	</element>
 	<element name="map:serialize">
 		<display type="block"/>
 		<background-color red="230" green="244" blue="230"/>
-		<showattributes names="type,status-code,mime-type"/>
+		<showattributes names="type,status-code,mime-type,label"/>
 	</element>
 	<element name="map:match">
 		<display type="block"/>
@@ -46,12 +46,12 @@
 	<element name="map:redirect-to">
 		<display type="block"/>
 		<background-color red="214" green="214" blue="132"/>
-		<showattributes names="uri,resource,session"/>
+		<showattributes names="uri,session"/>
 	</element>
 	<element name="map:mount">
 		<display type="block"/>
 		<background-color red="195" green="207" blue="195"/>
-		<showattributes names="src,uri-prefix,reload-method,check-reload"/>
+		<showattributes names="src,uri-prefix,language"/>
 	</element>
 	<element name="map:read">
 		<display type="block"/>
@@ -61,22 +61,22 @@
 	<element name="map:aggregate">
 		<display type="block"/>
 		<background-color red="184" green="166" blue="188"/>
-		<showattributes names="ns,prefix"/>
+		<showattributes names="element,prefix,ns,label"/>
 	</element>
 	<element name="map:part">
 		<display type="block"/>
 		<background-color red="220" green="198" blue="224"/>
-		<showattributes names="src,element,ns,prefix,strip-root"/>
+		<showattributes names="src,element,prefix,ns,strip-root,label"/>
 	</element>
 	<element name="map:act">
 		<display type="block"/>
 		<background-color red="237" green="180" blue="180"/>
-		<showattributes names="type,set,action"/>
+		<showattributes names="type,set,src"/>
 	</element>
-	<element name="map:label">
+	<element name="map:action-set/map:act">
 		<display type="block"/>
-		<background-color red="255" green="255" blue="255"/>
-		<showattributes names="name"/>
+		<background-color red="237" green="180" blue="180"/>
+		<showattributes names="type,action,src"/>
 	</element>
 	<element name="map:select">
 		<display type="block"/>
@@ -95,12 +95,12 @@
 	<element name="map:handle-errors">
 		<display type="block"/>
 		<background-color red="229" green="146" blue="146"/>
+		<showattributes names="type"/>
 	</element>
 
 	<element name="map:resources">
 		<display type="block"/>
 		<background-color red="132" green="168" blue="216"/>
-		<showattributes names="name"/>
 	</element>
 	<element name="map:resource">
 		<display type="block"/>
@@ -111,7 +111,6 @@
 	<element name="map:views">
 		<display type="block"/>
 		<background-color red="132" green="168" blue="216"/>
-		<showattributes names="name"/>
 	</element>
 	<element name="map:view">
 		<display type="block"/>
@@ -187,42 +186,48 @@
 	<element name="map:generator">
 		<display type="block"/>
 		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src"/>
+		<showattributes names="name,src,label,pool-min,pool-max,pool-grow,logger"/>
 	</element>
 
 	<element name="map:transformer">
 		<display type="block"/>
 		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src"/>
+		<showattributes names="name,src,label,pool-min,pool-max,pool-grow,logger"/>
 	</element>
 
 	<element name="map:reader">
 		<display type="block"/>
 		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src"/>
+		<showattributes names="name,src,mime-type,pool-min,pool-max,pool-grow,logger"/>
 	</element>
 
 	<element name="map:serializer">
 		<display type="block"/>
 		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src,mime-type"/>
+		<showattributes names="name,src,mime-type,label,pool-min,pool-max,pool-grow,logger"/>
 	</element>
 
 	<element name="map:selector">
 		<display type="block"/>
 		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src"/>
+		<showattributes names="name,src,pool-min,pool-max,pool-grow,logger"/>
 	</element>
 
 	<element name="map:matcher">
 		<display type="block"/>
 		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src"/>
+		<showattributes names="name,src,pool-min,pool-max,pool-grow,logger"/>
 	</element>
 
 	<element name="map:action">
 		<display type="block"/>
 		<background-color red="181" green="204" blue="202"/>
-		<showattributes names="name,src"/>
+		<showattributes names="name,src,pool-min,pool-max,pool-grow,logger"/>
+	</element>
+
+	<element name="map:call">
+		<display type="block"/>
+		<background-color red="243" green="226" blue="109"/>
+		<showattributes names="resource"/>
 	</element>
 </displayspec>
