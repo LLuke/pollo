@@ -26,4 +26,6 @@ public abstract class EditorPanel extends JPanel implements View
     public abstract String getTitle();
 
     public abstract void refreshUserPreferences();
+
+    public abstract Action getCloseAction();
 }
