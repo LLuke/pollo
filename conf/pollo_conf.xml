@@ -44,7 +44,7 @@
 
 		<viewtype>
 			<name>ant</name>
-			<description>Ant 1.3</description>
+			<description>Ant 1.4.1</description>
 
 			<schemas>
 				<schema>
@@ -86,7 +86,7 @@
 
 		<viewtype>
 			<name>sitemap</name>
-			<description>Cocoon 2 Sitemap</description>
+			<description>Cocoon 2.0 Sitemap</description>
 
 			<schemas>
 				<schema>
