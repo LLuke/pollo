@@ -1,22 +1,23 @@
 package org.outerj.pollo.action;
 
 import org.outerj.pollo.Pollo;
+import org.outerj.pollo.PolloFrame;
 import org.outerj.pollo.util.ExtensionFileFilter;
 
-import javax.swing.AbstractAction;
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
 public class FileOpenAction extends AbstractAction
 {
-	Pollo pollo;
+	Pollo pollo = Pollo.getInstance();
+	PolloFrame polloFrame;
 
-	public FileOpenAction(Pollo pollo)
+	public FileOpenAction(PolloFrame polloFrame)
 	{
-		super("Open file...");
-		this.pollo = pollo;
+		super("Open...");
+		this.polloFrame = polloFrame;
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -37,12 +38,12 @@ public class FileOpenAction extends AbstractAction
 
 		chooser.setFileFilter(defaultFilter);
 
-		int returnVal = chooser.showOpenDialog(null);
+		int returnVal = chooser.showOpenDialog(polloFrame);
 		if(returnVal == JFileChooser.APPROVE_OPTION)
 		{
 			File selectedFile = chooser.getSelectedFile();
 			pollo.getConfiguration().setFileOpenDialogPath(selectedFile.getPath());
-			pollo.openFile(selectedFile);
+			pollo.openFile(selectedFile, polloFrame);
 		}
 	}
 }
