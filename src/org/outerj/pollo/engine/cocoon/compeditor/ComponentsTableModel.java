@@ -1,6 +1,7 @@
 package org.outerj.pollo.engine.cocoon.compeditor;
 
 import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.outerj.pollo.xmleditor.Disposable;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.event.TableModelEvent;
@@ -15,7 +16,7 @@ import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.MutationEvent;
 
-public class ComponentsTableModel extends AbstractTableModel implements EventListener
+public class ComponentsTableModel extends AbstractTableModel implements EventListener, Disposable
 {
 	protected Element componentsEl;
 	protected String  prefix;
@@ -185,4 +186,10 @@ public class ComponentsTableModel extends AbstractTableModel implements EventLis
 		return (Element)componentElements.get(row);
 	}
 
+	public void dispose()
+	{
+		((EventTarget)componentsEl).removeEventListener("DOMAttrModified", this, false);
+		((EventTarget)componentsEl).removeEventListener("DOMNodeInserted", this, false);
+		((EventTarget)componentsEl).removeEventListener("DOMNodeRemoved", this, false);
+	}
 }

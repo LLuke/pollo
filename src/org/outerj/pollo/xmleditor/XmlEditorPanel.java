@@ -76,6 +76,10 @@ public class XmlEditorPanel extends JPanel
 		xmlEditor.getSelectionInfo().addListener(charDataPanel3);
 		nodeDetailsPanel.add(Node.COMMENT_NODE, charDataPanel3);
 
+		CharDataPanel charDataPanel4 = new CharDataPanel(model, Node.PROCESSING_INSTRUCTION_NODE);
+		xmlEditor.getSelectionInfo().addListener(charDataPanel4);
+		nodeDetailsPanel.add(Node.PROCESSING_INSTRUCTION_NODE, charDataPanel4);
+
 		// create the panel from which the user can select new nodes to insert
 		nodeInsertionPanel = new NodeInsertionPanel(this);
 
@@ -154,10 +158,10 @@ public class XmlEditorPanel extends JPanel
 	/**
 	 * Removes event listeners.
 	 */
-	public void cleanup()
+	public void dispose()
 	{
-		xmlEditor.cleanup();
-		nodeInsertionPanel.cleanup();
-		nodeDetailsPanel.cleanup();
+		xmlEditor.dispose();
+		nodeInsertionPanel.dispose();
+		nodeDetailsPanel.dispose();
 	}
 }

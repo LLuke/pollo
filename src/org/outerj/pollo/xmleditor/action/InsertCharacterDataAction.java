@@ -6,8 +6,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 
 /**
@@ -23,6 +23,7 @@ public class InsertCharacterDataAction extends AbstractAction
 	public static final int TYPE_TEXT      = 4;
 	public static final int TYPE_COMMENT   = 5;
 	public static final int TYPE_CDATA     = 6;
+	public static final int TYPE_PI        = 7;
 
 	protected XmlEditor xmlEditor;
 	protected int behaviour;
@@ -58,7 +59,16 @@ public class InsertCharacterDataAction extends AbstractAction
 	{
 		Node selectedNode = xmlEditor.getSelectedNode();
 
-		Element parent = (Element)selectedNode.getParentNode();
+		Node parent = selectedNode.getParentNode();
+
+		if (parent instanceof Document
+				&& (behaviour == INSERT_BEFORE || behaviour == INSERT_AFTER)
+				&& (type != TYPE_COMMENT && type != TYPE_PI))
+		{
+			JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
+					"That cannot be inserted at this place.");	
+			return;
+		}
 
 		Node newNode = null;
 		switch (type)
@@ -74,6 +84,23 @@ public class InsertCharacterDataAction extends AbstractAction
 			case TYPE_CDATA:
 				newNode = xmlEditor.getXmlModel().getDocument().
 					createCDATASection("I'm a new CDATA section.");
+				break;
+			case TYPE_PI:
+				String target = JOptionPane.showInputDialog(xmlEditor.getTopLevelAncestor(),
+						"Processing instruction target?", "Create Processing Instruction",
+						JOptionPane.QUESTION_MESSAGE);
+				if (target == null || target.trim().equals(""))
+					return;
+
+				if (!org.apache.xerces.dom.DocumentImpl.isXMLName(target))
+				{
+					JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
+							"That is not a valid XML target name.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				newNode = xmlEditor.getXmlModel().getDocument().createProcessingInstruction(target, "");
 				break;
 		}
 

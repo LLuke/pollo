@@ -336,7 +336,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 		}
 	}
 
-	public void cleanup()
+	public void dispose()
 	{
 		if (this.element != null)
 		{

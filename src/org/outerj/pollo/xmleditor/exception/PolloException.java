@@ -19,4 +19,12 @@ public class PolloException extends Exception
 		super(message);
 		this.nestedException = nestedException;
 	}
+
+	public String toString()
+	{
+		if (nestedException != null)
+			return nestedException + " Nested exception is: " + nestedException;
+		else
+			return super.toString();
+	}
 }

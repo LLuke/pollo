@@ -2,7 +2,7 @@ package org.outerj.pollo.config;
 
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecificationFactory;
-import org.outerj.pollo.xmleditor.FactoryFactory;
+import org.outerj.pollo.xmleditor.ComponentManager;
 import org.outerj.pollo.xmleditor.exception.PolloException;
 
 public class DisplaySpecConfItem extends ConfItem
@@ -22,7 +22,7 @@ public class DisplaySpecConfItem extends ConfItem
 		try
 		{
 			IDisplaySpecificationFactory displaySpecFactory = (IDisplaySpecificationFactory)
-				FactoryFactory.getInstance(getFactoryClass());
+				ComponentManager.getFactoryInstance(getFactoryClass());
 
 			displaySpec = displaySpecFactory.getDisplaySpecification(getInitParams());
 		}

@@ -15,7 +15,7 @@ public class PolloConfigurationFactory
 	public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
 			org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
 
-	public static PolloConfiguration createConfiguration()
+	public static PolloConfiguration loadConfiguration()
 		throws PolloConfigurationException
 	{
 		PolloConfiguration polloConfiguration = new PolloConfiguration();
@@ -71,6 +71,33 @@ public class PolloConfigurationFactory
 		{
 			logcat.error("PolloConfiguration: exception parsing the configuration file", e);
 			throw new PolloConfigurationException("Exception parsing the configuration file.", e);
+		}
+
+		//
+		// load user configuration
+		//
+
+		File file = new File(System.getProperty("user.home"), PolloConfiguration.USER_CONF_FILE_NAME);
+		if (file.exists())
+		{
+			digester.clear();
+			digester.push(polloConfiguration);
+			digester.addCallMethod("pollo/file-open-dialog-path", "setFileOpenDialogPath", 0);
+
+			try
+			{
+				digester.parse(file);
+			}
+			catch (Exception e)
+			{
+				logcat.error("PolloConfiguration: exception parsing the user configuration file", e);
+				throw new PolloConfigurationException("Exception parsing the user configuration file.", e);
+			}
+
+		}
+		else
+		{
+			logcat.info("No user configuration file found at: " + file);
 		}
 
 		return polloConfiguration;

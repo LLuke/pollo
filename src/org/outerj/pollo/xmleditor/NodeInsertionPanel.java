@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.Collection;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class NodeInsertionPanel extends JPanel
@@ -192,7 +193,7 @@ public class NodeInsertionPanel extends JPanel
 				case MODE_INSERT_BEFORE:
 				case MODE_INSERT_AFTER:
 					{
-						if (node == xmlEditorPanel.getXmlEditor().getRootElement())
+						if (node == xmlEditorPanel.getXmlEditor().getRootElement() || node.getParentNode() instanceof Document)
 						{
 							this.setListData(emptyArray);
 						}
@@ -230,6 +231,11 @@ public class NodeInsertionPanel extends JPanel
 							}
 							data[0] = insertUnlistedElement;
 							quickSort.sortPartial(data, 1);
+							this.setListData(data);
+						}
+						else if (node instanceof Document)
+						{
+							Object data[] = { insertUnlistedElement };
 							this.setListData(data);
 						}
 						else
@@ -313,14 +319,17 @@ public class NodeInsertionPanel extends JPanel
 
 				// determine the element from which to start searching for namespace declarations
 				Element namespaceSearchNode = null;
-				switch (mode)
+				if (!(selectedNode instanceof Document))
 				{
-					case MODE_INSERT_BEFORE:
-					case MODE_INSERT_AFTER:
-						namespaceSearchNode = (Element)selectedNode.getParentNode();
-						break;
-					case MODE_INSERT_INSIDE:
-						namespaceSearchNode = (Element)selectedNode;
+					switch (mode)
+					{
+						case MODE_INSERT_BEFORE:
+						case MODE_INSERT_AFTER:
+							namespaceSearchNode = (Element)selectedNode.getParentNode();
+							break;
+						case MODE_INSERT_INSIDE:
+							namespaceSearchNode = (Element)selectedNode;
+					}
 				}
 
 				Element newElement;
@@ -444,7 +453,7 @@ public class NodeInsertionPanel extends JPanel
 		}
 	}
 
-	public void cleanup()
+	public void dispose()
 	{
 	}
 }

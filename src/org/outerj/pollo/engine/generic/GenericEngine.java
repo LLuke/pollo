@@ -32,7 +32,7 @@ public class GenericEngine extends ViewEngine
 		setPreferredSize(new Dimension(900, 600));
 		setLayout(new BorderLayout());
 
-		String root        = "/*";
+		String root        = null; // "/*";
 		IDisplaySpecification displaySpecChain = viewTypeConf.createDisplaySpecChain();
 		ISchema schemaChain = viewTypeConf.createSchemaChain();
 		IAttributeEditorPlugin attrEditorPluginChain =
@@ -45,8 +45,8 @@ public class GenericEngine extends ViewEngine
 		add(xmlEditorPanel, BorderLayout.CENTER);
 	}
 
-	public void cleanup()
+	public void dispose()
 	{
-		xmlEditorPanel.cleanup();
+		xmlEditorPanel.dispose();
 	}
 }

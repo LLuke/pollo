@@ -39,6 +39,14 @@ public class UncommentAction extends AbstractAction
 	public void actionPerformed(ActionEvent event)
 	{
 		Node selectedNode = xmlEditor.getSelectedNode();
+		
+		if (selectedNode.getParentNode()  instanceof Document)
+		{
+			JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
+					"Sorry, uncomment is not supported at this place.");	
+			return;
+		}
+
 		String data = ((Comment)selectedNode).getData();
 
 		// put the data inside a wrapper tag. This wrapper tag declares all the namespaces known

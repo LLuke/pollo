@@ -4,15 +4,9 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.DataFlavor;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-import org.xml.sax.InputSource;
-import java.io.StringReader;
-import java.io.StringWriter;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.dom.DOMSource;
 
 /**
  * Transferable for DOM fragments. Used for drag-and-drop.

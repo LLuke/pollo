@@ -30,13 +30,16 @@ public class RemoveAction extends AbstractAction implements SelectionListener
 		if (node != xmlEditor.getRootView().getNode())
 		{
 			View newSelectedView = xmlEditor.getSelectionInfo().getSelectedNodeView().getNextButNotChild();
-			Element parent = (Element)node.getParentNode();
+			Node parent = node.getParentNode();
 			parent.removeChild(node);
 
-			int startV = newSelectedView.getVerticalPosition();
-			int startH = newSelectedView.getHorizontalPosition();
-			newSelectedView.markAsSelected(startH, startV);
-			xmlEditor.scrollAlignTop(startV, newSelectedView.getHeight());
+			if (newSelectedView != null)
+			{
+				int startV = newSelectedView.getVerticalPosition();
+				int startH = newSelectedView.getHorizontalPosition();
+				newSelectedView.markAsSelected(startH, startV);
+				xmlEditor.scrollAlignTop(startV, newSelectedView.getHeight());
+			}
 		}
 	}
 

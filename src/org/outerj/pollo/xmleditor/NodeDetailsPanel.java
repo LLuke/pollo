@@ -78,16 +78,16 @@ public class NodeDetailsPanel extends JPanel implements SelectionListener
 		currentPanel.requestFocus();
 	}
 
-	public void cleanup()
+	public void dispose()
 	{
 		Iterator cleanIt = panels.values().iterator();
 
 		while (cleanIt.hasNext())
 		{
 			Object object = (Object)cleanIt.next();
-			if (object instanceof Cleanable)
+			if (object instanceof Disposable)
 			{
-				((Cleanable)object).cleanup();
+				((Disposable)object).dispose();
 			}
 		}
 	}

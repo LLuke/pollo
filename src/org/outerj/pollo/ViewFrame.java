@@ -4,15 +4,23 @@ import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.model.View;
 import org.outerj.pollo.xmleditor.model.XmlModelListener;
 import org.outerj.pollo.dialog.AboutDialog;
+import org.outerj.pollo.texteditor.JEditTextArea;
+import org.outerj.pollo.texteditor.XMLTokenMarker;
+import org.outerj.pollo.texteditor.ReadOnlyInputHandler;
+import org.outerj.pollo.dialog.ErrorDialog;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 import javax.swing.Box;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -23,22 +31,45 @@ import java.io.File;
 /**
   Puts a ViewEngine (which is a JPanel) into a JFrame and adds a menubar.
  */
-public class ViewFrame extends JFrame implements ActionListener, View, XmlModelListener
+public class ViewFrame extends JFrame implements ActionListener, View, XmlModelListener, ChangeListener
 {
 	protected ViewEngine viewEngine;
+	protected JEditTextArea textViewer;
+	protected String frameTitle = "";
 
 	public ViewFrame(ViewEngine viewEngine)
 	{
 		super();
 		this.viewEngine = viewEngine;
-		setContentPane(viewEngine);
+
+		textViewer = new JEditTextArea();
+		textViewer.setTokenMarker(new XMLTokenMarker());
+		textViewer.setInputHandler(ReadOnlyInputHandler.getInstance());
+
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.add("Edit", viewEngine);
+		tabbedPane.add("View source", textViewer);
+		tabbedPane.addChangeListener(this);
+		
+		getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		addWindowListener(new WindowAdapter() { public void windowClosing(WindowEvent event) { close(); }});
 
 		viewEngine.getXmlModel().addListener(this);
+
+		// set the window title
 		fileNameChanged(viewEngine.getXmlModel());
 
+		// create the menu bar
+		createMenus();
+
+		pack();
+	}
+
+	public void createMenus()
+	{
 		// create menu bar
 		JMenuBar menuBar = new JMenuBar();
 
@@ -92,8 +123,6 @@ public class ViewFrame extends JFrame implements ActionListener, View, XmlModelL
 		aboutItem.addActionListener(this);
 		helpMenu.add(aboutItem);
 		menuBar.add(helpMenu);
-
-		pack();
 	}
 
 	public void actionPerformed(ActionEvent event)
@@ -120,7 +149,7 @@ public class ViewFrame extends JFrame implements ActionListener, View, XmlModelL
 			if (viewEngine.getXmlModel().closeView(this))
 			{
 				System.out.println("Frame closes, will do cleanup");
-				viewEngine.cleanup();
+				viewEngine.dispose();
 				System.out.println("cleanup done");
 				stop();
 			}
@@ -131,33 +160,62 @@ public class ViewFrame extends JFrame implements ActionListener, View, XmlModelL
 		}
 	}
 
+	/** Implementation of the ChangeListener interface. */
+	public void stateChanged(ChangeEvent event)
+	{
+		JTabbedPane tabbedPane = (JTabbedPane)event.getSource();
+		if (tabbedPane.getSelectedComponent() == textViewer)
+		{
+			try
+			{
+				String xml = viewEngine.getXmlModel().toXMLString();
+				textViewer.setText(xml);
+				textViewer.setCaretPosition(0);
+			}
+			catch (Exception e)
+			{
+				tabbedPane.setSelectedComponent(viewEngine);
+				ErrorDialog errorDialog = new ErrorDialog(null, "Could not serialize the DOM tree to text.", e);
+				errorDialog.show();
+			}
+		}
+	}
+
 	public void stop()
 	{
 		hide();
 		dispose();
 	}
 
-	/**
-	 * Implementation of the XmlModelListener interface.
-	 */
+	/** Implementation of the XmlModelListener interface. */
 	public void fileNameChanged(XmlModel xmlModel)
 	{
 		// set window title
 		File file = xmlModel.getFile();
 		if (file == null)
 		{
-			setTitle("Untitled");
+			frameTitle = "Untitled";
 		}
 		else
 		{
-			setTitle(file.getName() + "  (" + file.getParentFile().getPath() + ")");
+			frameTitle = file.getName() + "  (" + file.getParentFile().getPath() + ")";
 		}
+		setTitle(frameTitle);
 	}
 
-	/**
-	 * Implementation of the XmlModelListener interface.
-	 */
-	public void lastViewClosed(XmlModel xmlModel)
+	/** Implementation of the XmlModelListener interface. */
+	public void lastViewClosed(XmlModel xmlModel) {}
+
+	/** Implementation of the XmlModelListener interface. */
+	public void fileChanged(XmlModel sourceXmlModel)
 	{
+		setTitle("*" + frameTitle);
 	}
+
+	/** Implementation of the XmlModelListener interface. */
+	public void fileSaved(XmlModel sourceXmlModel)
+	{
+		setTitle(frameTitle);
+	}
+
 }

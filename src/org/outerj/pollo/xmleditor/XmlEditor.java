@@ -22,15 +22,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.awt.datatransfer.Transferable;
 import javax.swing.SwingUtilities;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Comment;
-import org.w3c.dom.Text;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Node;
-import org.w3c.dom.CharacterData;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.*;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
@@ -68,7 +60,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	protected LinkedList nodeClickedListenerList = new LinkedList();
 	protected DragSource dragSource;
 	protected String xpathForRoot;
-	protected Element rootElement;
+	protected Element rootNodeDisplayed;
 
 	// actions
 	protected CopyAction copyAction;
@@ -90,6 +82,10 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	protected InsertCharacterDataAction insertCDataAfterAction;
 	protected InsertCharacterDataAction insertCDataInsideAction;
 
+	protected InsertCharacterDataAction insertPIBeforeAction;
+	protected InsertCharacterDataAction insertPIAfterAction;
+	protected InsertCharacterDataAction insertPIInsideAction;
+
 	protected CommentOutAction commentOutAction;
 	protected UncommentAction uncommentAction;
 
@@ -98,6 +94,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 	protected CollapseExpandAction collapseAction;
 	protected CollapseExpandAction expandAction;
+
+	protected RenderViewToFileAction renderViewToFileAction;
 
 	protected static final int MARGIN_LEFT  = 0;
 	protected static final int MARGIN_TOP   = 0;
@@ -131,6 +129,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		inputMap.put(KeyStroke.getKeyStroke('O'), "insert-node-before"); // vi
 		inputMap.put(KeyStroke.getKeyStroke('i'), "insert-node-inside"); // vi
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "edit-details"); // vi
+		inputMap.put(KeyStroke.getKeyStroke('n'), "next-xpath-result"); // vi
+		inputMap.put(KeyStroke.getKeyStroke('N'), "prev-xpath-result"); // vi
 	}
 
 	/**
@@ -187,6 +187,13 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		insertCDataInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
 				InsertCharacterDataAction.TYPE_CDATA);
 
+		insertPIBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
+				InsertCharacterDataAction.TYPE_PI);
+		insertPIAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
+				InsertCharacterDataAction.TYPE_PI);
+		insertPIInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
+				InsertCharacterDataAction.TYPE_PI);
+
 		commentOutAction          = new CommentOutAction(this);
 		uncommentAction           = new UncommentAction(this);
 
@@ -194,6 +201,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		expandAllAction           = new CollapseExpandAction(this, CollapseExpandAction.EXPAND_ALL);
 		collapseAction            = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE);
 		expandAction              = new CollapseExpandAction(this, CollapseExpandAction.EXPAND);
+
+		renderViewToFileAction = new RenderViewToFileAction(this);
 
 		// init keymap and actionmap
 		setInputMap(WHEN_FOCUSED, inputMap);
@@ -329,6 +338,12 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 			createViewsRecursive((Element)node, view);
 			return view;
 		}
+		if (node.getNodeType() == Node.DOCUMENT_NODE)
+		{
+			DocumentBlockView view = new DocumentBlockView(parentView, (Document)node, this);
+			createViewsRecursive(node, view);
+			return view;
+		}
 		else if (node.getNodeType() == Node.COMMENT_NODE)
 		{
 			return createCommentView((Comment)node, parentView);
@@ -340,6 +355,10 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		else if (node.getNodeType() == Node.CDATA_SECTION_NODE)
 		{
 			return createCDataView((CDATASection)node, parentView);
+		}
+		else if (node.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE)
+		{
+			return createPIView((ProcessingInstruction)node, parentView);
 		}
 		throw new RuntimeException("Unsupported type of node: " + node.getNodeType());
 	}
@@ -356,15 +375,21 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		return view;
 	}
 
+	public View createPIView(ProcessingInstruction pi, View parentView)
+	{
+		PIView view = new PIView(parentView, pi, this);
+		return view;
+	}
+
 	public View createCDataView(CDATASection cdata, View parentView)
 	{
 		CDataView view = new CDataView(parentView, cdata, this);
 		return view;
 	}
 
-	private void createViewsRecursive(Element element, View parentView)
+	private void createViewsRecursive(Node parentNode, View parentView)
 	{
-		NodeList children = element.getChildNodes();
+		NodeList children = parentNode.getChildNodes();
 
 		for (int i = 0; i < children.getLength(); i++)
 		{
@@ -389,6 +414,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 			else if ((node.getNodeType() == Node.CDATA_SECTION_NODE))
 			{
 				View childView = createCDataView((CDATASection)node, parentView);
+				parentView.addChildView(childView);
+			}
+			else if ((node.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE))
+			{
+				View childView = createPIView((ProcessingInstruction)node, parentView);
 				parentView.addChildView(childView);
 			}
 		}
@@ -420,6 +450,9 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	
 	public void showContextMenu(Node node, int x, int y)
 	{
+		if (node instanceof Document)
+			return;
+
 		if (node == mainView.getNode())
 		{
 			// on the root element, show menu with limited choices
@@ -464,6 +497,16 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		if (node instanceof Element)
 			cdataMenu.add(getInsertCDataInsideAction());
 		popupMenu.add(cdataMenu);
+
+		JMenu piMenu = new JMenu("Insert PI");
+		piMenu.add(getInsertPIBeforeAction());
+		piMenu.add(getInsertPIAfterAction());
+		if (node instanceof Element)
+			piMenu.add(getInsertPIInsideAction());
+		popupMenu.add(piMenu);
+
+		popupMenu.addSeparator();
+		popupMenu.add(getRenderViewToFileAction());
 
 		if (node instanceof Element)
 		{
@@ -561,7 +604,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		{
 			if ( event.getDropSuccess() )
 			{
-				Element parent = (Element)draggingNode.getParentNode();
+				Node parent = draggingNode.getParentNode();
 				parent.removeChild(draggingNode);
 				xmlModel.getUndo().endUndoTransaction();
 			}
@@ -633,9 +676,17 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 					if (dropAction == DROP_ACTION_INSERT_BEFORE)
 					{
-						Element parent = (Element)dropNode.getParentNode();
+						Node parent = dropNode.getParentNode();
 
-						if (newNode.getNodeType() == Node.ELEMENT_NODE && !schema.isChildAllowed(parent, (Element)newNode))
+						if (parent instanceof Document && ((Document)parent).getDocumentElement() != null
+								&& !(newNode instanceof Comment || newNode instanceof ProcessingInstruction))
+						{
+							JOptionPane.showMessageDialog(getTopLevelAncestor(), "An XML document can have only one root element.");
+							event.rejectDrop();
+							return;
+						}
+
+						if (newNode.getNodeType() == Node.ELEMENT_NODE && !schema.isChildAllowed((Element)parent, (Element)newNode))
 						{
 							// schema tells it is not allowed here, but let the user decide
 							if (JOptionPane.showConfirmDialog(getTopLevelAncestor(), ((Element)newNode).getLocalName() + " is not allowed here. Insert it anyway?", "Let me ask you something...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION)
@@ -653,6 +704,14 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 					}
 					else if (dropAction == DROP_ACTION_APPEND_CHILD)
 					{
+						if (dropNode instanceof Document && ((Document)dropNode).getDocumentElement() != null
+								&& !(newNode instanceof Comment || newNode instanceof ProcessingInstruction))
+						{
+							JOptionPane.showMessageDialog(getTopLevelAncestor(), "An XML document can have only one root element.");
+							event.rejectDrop();
+							return;
+						}
+
 						if (newNode.getNodeType() == Node.ELEMENT_NODE && !schema.isChildAllowed((Element)dropNode, (Element)newNode))
 						{
 							if (JOptionPane.showConfirmDialog(getTopLevelAncestor(), ((Element)newNode).getLocalName() + " is not allowed here. Insert it anyway?", "Let me ask you something...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION)
@@ -664,7 +723,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 						if (draggingNode != null)
 							xmlModel.getUndo().startUndoTransaction("Drag-and-drop");
-						((Element)dropNode).appendChild(newNode);
+						dropNode.appendChild(newNode);
 						event.acceptDrop(DnDConstants.ACTION_MOVE);
 						event.getDropTargetContext().dropComplete(true);
 					}
@@ -750,30 +809,37 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		this.dropNode = node;
 	}
 
-	public Element getRootElement()
+	public Node getRootElement()
 	{
-		if (rootElement == null)
+		if (rootNodeDisplayed == null)
 		{
-			try
+			if (xpathForRoot == null)
 			{
-				Element documentElement = xmlModel.getDocument().getDocumentElement();
-				XPath xpath = new XPath(xpathForRoot);
-				SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
-				namespaceContext.addElementNamespaces(xpath.getNavigator(), documentElement);
-				xpath.setNamespaceContext(namespaceContext);
-				rootElement = (Element)xpath.selectSingleNode(documentElement);
+				return xmlModel.getDocument();
 			}
-			catch (Exception e)
+			else
 			{
-				System.out.println("Error evaluating XPath for getting root element: " + e);
-				return null;
+				try
+				{
+					Element documentElement = xmlModel.getDocument().getDocumentElement();
+					XPath xpath = new XPath(xpathForRoot);
+					SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
+					namespaceContext.addElementNamespaces(xpath.getNavigator(), documentElement);
+					xpath.setNamespaceContext(namespaceContext);
+					rootNodeDisplayed = (Element)xpath.selectSingleNode(documentElement);
+				}
+				catch (Exception e)
+				{
+					System.out.println("Error evaluating XPath for getting root element: " + e);
+					return null;
+				}
 			}
 		}
-		return rootElement;
+		return rootNodeDisplayed;
 	}
 
 	/**
-	  Holds information about the currently selected node.
+	 * Holds information about the currently selected node.
 	 */
 	public class SelectionInfo implements EventListener
 	{
@@ -831,14 +897,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		{
 			try
 			{
-				Iterator selectionListenersIt = selectionListeners.iterator();
-				while (selectionListenersIt.hasNext())
-				{
-					SelectionListener listener = (SelectionListener)selectionListenersIt.next();
-					listener.nodeUnselected(selectedNode);
-				}
-				selectedNode = null;
-				selectedNodeView = null;
+				unselect();
 			}
 			catch (Exception e)
 			{
@@ -846,12 +905,25 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 			}
 		}
 
+		public void unselect()
+		{
+			Iterator selectionListenersIt = selectionListeners.iterator();
+			while (selectionListenersIt.hasNext())
+			{
+				SelectionListener listener = (SelectionListener)selectionListenersIt.next();
+				listener.nodeUnselected(selectedNode);
+			}
+
+			selectedNode = null;
+			selectedNodeView = null;
+		}
+
 		public void addListener(SelectionListener listener)
 		{
 			selectionListeners.add(listener);
 		}
 
-		public void cleanup()
+		public void dispose()
 		{
 			if (selectedNode != null)
 			{
@@ -935,6 +1007,21 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		return insertCDataInsideAction;
 	}
 
+	public InsertCharacterDataAction getInsertPIBeforeAction()
+	{
+		return insertPIBeforeAction;
+	}
+
+	public InsertCharacterDataAction getInsertPIAfterAction()
+	{
+		return insertPIAfterAction;
+	}
+
+	public InsertCharacterDataAction getInsertPIInsideAction()
+	{
+		return insertPIInsideAction;
+	}
+
 	public CommentOutAction getCommentOutAction()
 	{
 		return commentOutAction;
@@ -955,6 +1042,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		return expandAllAction;
 	}
 
+	public RenderViewToFileAction getRenderViewToFileAction()
+	{
+		return renderViewToFileAction;
+	}
+
 	public SelectionInfo getSelectionInfo()
 	{
 		return selectionInfo;
@@ -971,6 +1063,10 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 			case Node.TEXT_NODE:
 				return true;
 			case Node.CDATA_SECTION_NODE:
+				return true;
+			case Node.DOCUMENT_NODE:
+				return true;
+			case Node.PROCESSING_INSTRUCTION_NODE:
 				return true;
 			default:
 				return false;
@@ -1036,11 +1132,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		return mainView;
 	}
 
-	public void cleanup()
+	public void dispose()
 	{
 		if (mainView != null)
 			mainView.removeEventListeners();
 
-		selectionInfo.cleanup();
+		selectionInfo.dispose();
 	}
 }

@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import java.util.ArrayList;
-import java.util.Properties;
 import java.io.File;
 
 public class Pollo implements XmlModelListener
@@ -33,9 +32,11 @@ public class Pollo implements XmlModelListener
 	protected        Action exitAction     = null;
 
 	protected PolloConfiguration configuration;
-	protected Properties properties;
 	protected ArrayList openFiles = new ArrayList();
 	protected WelcomeDialog welcomeDialog;
+
+	public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
+			org.outerj.pollo.xmleditor.AppenderDefinitions.MAIN);
 
 	public static void main(String [] args)
 		throws Exception
@@ -51,10 +52,9 @@ public class Pollo implements XmlModelListener
 	public void run()
 		throws Exception
 	{
-		//UIManager.setLookAndFeel(new com.incors.plaf.kunststoff.KunststoffLookAndFeel());
 		try
 		{
-			configuration = PolloConfigurationFactory.createConfiguration();
+			configuration = PolloConfigurationFactory.loadConfiguration();
 		}
 		catch (Exception e)
 		{
@@ -62,6 +62,20 @@ public class Pollo implements XmlModelListener
 			errorDialog.show();
 			System.exit(1);
 		}
+
+		/*
+		try
+		{
+			//UIManager.setLookAndFeel(new com.incors.plaf.kunststoff.KunststoffLookAndFeel());
+			if (configuration.getLookAndFeel != null)
+				UIManager.setLookAndFeel(Class.forName(configuration.getLookAndFeel()).newInstance());
+		}
+		catch (Exception e)
+		{
+			logcat.error("Could not set the look and feel", e);
+		}
+		*/
+
 		welcomeDialog = new WelcomeDialog();
 		welcomeDialog.show();
 	}
@@ -157,6 +171,16 @@ public class Pollo implements XmlModelListener
 		}
 		while (true);
 
+		try
+		{
+			configuration.store();
+		}
+		catch (Exception e)
+		{
+			ErrorDialog errorDialog = new ErrorDialog(null, "Could not store the user preferences.", e);
+			errorDialog.show();
+		}
+
 		System.exit(0);
 	}
 
@@ -199,33 +223,9 @@ public class Pollo implements XmlModelListener
 
 	}
 
-	public String getProperty(String name)
-	{
-		return properties.getProperty(name);
-	}
-
 	public PolloConfiguration getConfiguration()
 	{
 		return configuration;
-	}
-
-	public void loadProperties()
-	{
-		// read default properties
-		Properties defaultProperties = new Properties();
-		try
-		{
-			defaultProperties.load(instance.getClass().
-					getResource("/org/outerj/pollo/pollo.properties").openStream());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		this.properties = new Properties(defaultProperties);
-
-		// FIXME load user properties
 	}
 
 
@@ -238,7 +238,6 @@ public class Pollo implements XmlModelListener
 		if (instance == null)
 		{
 			instance = new Pollo();
-			instance.loadProperties();
 		}
 		return instance;
 	}
@@ -247,7 +246,7 @@ public class Pollo implements XmlModelListener
 	{
 		if (fileOpenAction == null)
 		{
-			fileOpenAction = new FileOpenAction();
+			fileOpenAction = new FileOpenAction(this);
 		}
 		return fileOpenAction;
 	}
@@ -270,7 +269,12 @@ public class Pollo implements XmlModelListener
 		return exitAction;
 	}
 
-	public void fileNameChanged(XmlModel xmlModel)
-	{
-	}
+	/** Implementation of the XmlModelListener interface. */
+	public void fileNameChanged(XmlModel sourceXmlModel) {}
+
+	/** Implementation of the XmlModelListener interface. */
+	public void fileChanged(XmlModel sourceXmlModel) {}
+
+	/** Implementation of the XmlModelListener interface. */
+	public void fileSaved(XmlModel sourceXmlModel) {}
 }

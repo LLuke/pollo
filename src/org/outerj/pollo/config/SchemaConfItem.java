@@ -2,7 +2,7 @@ package org.outerj.pollo.config;
 
 import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.schema.ISchemaFactory;
-import org.outerj.pollo.xmleditor.FactoryFactory;
+import org.outerj.pollo.xmleditor.ComponentManager;
 import org.outerj.pollo.xmleditor.exception.PolloException;
 
 public class SchemaConfItem extends ConfItem
@@ -21,7 +21,7 @@ public class SchemaConfItem extends ConfItem
 		ISchema schema = null;
 		try
 		{
-			ISchemaFactory schemaFactory = (ISchemaFactory)FactoryFactory.getInstance(getFactoryClass());
+			ISchemaFactory schemaFactory = (ISchemaFactory)ComponentManager.getFactoryInstance(getFactoryClass());
 			schema = schemaFactory.getSchema(getInitParams());
 		}
 		catch (Exception e)

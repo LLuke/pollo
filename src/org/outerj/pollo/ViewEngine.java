@@ -26,5 +26,5 @@ public abstract class ViewEngine extends JPanel
 	 * that is needed when the view is closed, such as removing
 	 * event listeners.
 	 */
-	public abstract void cleanup();
+	public abstract void dispose();
 }

@@ -1,6 +1,7 @@
 package org.outerj.pollo.engine.cocoon.compeditor;
 
 import org.outerj.pollo.xmleditor.util.DomUtils;
+import org.outerj.pollo.xmleditor.Disposable;
 
 import java.awt.Dimension;
 import java.awt.BorderLayout;
@@ -19,7 +20,7 @@ import javax.swing.table.TableColumn;
 import org.w3c.dom.Element;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 
-public class ComponentsEditor extends JPanel implements ActionListener
+public class ComponentsEditor extends JPanel implements ActionListener, Disposable
 {
 	protected JTable componentsTable;
 	protected ComponentsTableModel componentsTableModel;
@@ -135,5 +136,10 @@ public class ComponentsEditor extends JPanel implements ActionListener
 			Element parent = (Element)selectedEl.getParentNode();
 			parent.removeChild(selectedEl);
 		}
+	}
+
+	public void dispose()
+	{
+		componentsTableModel.dispose();
 	}
 }

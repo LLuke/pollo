@@ -16,6 +16,7 @@ import javax.swing.BoxLayout;
 import javax.swing.KeyStroke;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
+import javax.swing.InputMap;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -30,6 +31,7 @@ import org.jaxen.SimpleNamespaceContext;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 
 public class QueryByXPathPanel extends JPanel implements ActionListener
 {
@@ -73,24 +75,11 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 		JLabel label = new JLabel("XPath query:");
 		box.add(label);
 
-		xpathTextField = new JTextField();
+		xpathTextField = new EnterTextField();
 		Dimension dimension = xpathTextField.getPreferredSize();
 		dimension.width = Integer.MAX_VALUE;
 		xpathTextField.setMaximumSize(dimension);
 		box.add(xpathTextField);
-
-		// the query should be executed when the user presses enter, and it is only
-		// possible to put actions in keymaps, so quickly define an action here
-		xpathTextField.getKeymap().addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
-				new AbstractAction()
-				{
-					public void actionPerformed(ActionEvent event)
-					{
-						ActionEvent e = new ActionEvent(xpathTextField, 0, "execute");
-						QueryByXPathPanel.this.actionPerformed(e);
-					}
-				}
-				);
 
 		JButton executeButton = new JButton("Execute");
 		executeButton.setActionCommand("execute");
@@ -147,7 +136,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 				// as context for resolving namespace prefixes, the root node displayed
 				// in the XmlEditor widget is used
 				SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
-				namespaceContext.addElementNamespaces(xpath.getNavigator(), xmlEditor.getRootElement());
+				namespaceContext.addElementNamespaces(xpath.getNavigator(), xmlEditor.getRootElement() instanceof Document ? xmlEditor.getXmlModel().getDocument().getDocumentElement() : xmlEditor.getRootElement());
 				xpath.setNamespaceContext(namespaceContext);
 
 				resultList = xpath.selectNodes(xmlEditor.getRootElement());
@@ -304,6 +293,22 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 		if (query != null)
 		{
 			xpathTextField.setText(query.getExpression());
+		}
+	}
+
+	public class EnterTextField extends JTextField
+	{
+		public void processKeyEvent(KeyEvent event)
+		{
+			if (event.getKeyCode() == KeyEvent.VK_ENTER)
+			{
+				ActionEvent e = new ActionEvent(xpathTextField, 0, "execute");
+				QueryByXPathPanel.this.actionPerformed(e);
+			}
+			else
+			{
+				super.processKeyEvent(event);
+			}
 		}
 	}
 }

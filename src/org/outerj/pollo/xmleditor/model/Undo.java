@@ -14,6 +14,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 import org.w3c.dom.CharacterData;
+import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.MutationEvent;
@@ -50,11 +51,11 @@ public class Undo implements EventListener
 	{
 		this.xmlModel = xmlModel;
 
-		Element element = xmlModel.getDocument().getDocumentElement();
-		((EventTarget)element).addEventListener("DOMAttrModified", this, true);
-		((EventTarget)element).addEventListener("DOMNodeInserted", this, true);
-		((EventTarget)element).addEventListener("DOMNodeRemoved", this, true);
-		((EventTarget)element).addEventListener("DOMCharacterDataModified", this, true);
+		Node node = xmlModel.getDocument();
+		((EventTarget)node).addEventListener("DOMAttrModified", this, true);
+		((EventTarget)node).addEventListener("DOMNodeInserted", this, true);
+		((EventTarget)node).addEventListener("DOMNodeRemoved", this, true);
+		((EventTarget)node).addEventListener("DOMCharacterDataModified", this, true);
 
 		undoAction = new UndoAction();
 		undoAction.setEnabled(false);
@@ -171,7 +172,7 @@ public class Undo implements EventListener
 
 		public void undo()
 		{
-			Element parent = (Element)insertedNode.getParentNode();
+			Node parent = insertedNode.getParentNode();
 			parent.removeChild(insertedNode);
 		}
 
@@ -195,7 +196,7 @@ public class Undo implements EventListener
 				String prefix = insertedEl.getPrefix();
 				String localName = insertedEl.getLocalName();
 				String qname = prefix != null? prefix + ":" + localName : localName;
-				return "insert node '" + qname + "'";
+				return "insert node <" + qname + ">";
 			}
 			else
 			{
@@ -208,46 +209,41 @@ public class Undo implements EventListener
 	public class NodeRemovedUndo implements Undoable
 	{
 		public Node removedNode;
-		public Element parentEl;
+		public Node parentNode;
 		public Node nextSibling;
 
 		public NodeRemovedUndo(MutationEvent me)
 		{
 			removedNode = (Node)me.getTarget();
-			parentEl = (Element)removedNode.getParentNode();
+			parentNode = removedNode.getParentNode();
 			nextSibling = removedNode.getNextSibling();
 		}
 
 		public void undo()
 		{
-			parentEl.insertBefore(removedNode, nextSibling);
+			parentNode.insertBefore(removedNode, nextSibling);
 		}
 
 		public String getDescription()
 		{
-			if (removedNode.getNodeType() == Node.COMMENT_NODE)
+			switch (removedNode.getNodeType())
 			{
-				return "remove comment node";
-			}
-			else if (removedNode.getNodeType() == Node.TEXT_NODE)
-			{
-				return "remove text node";
-			}
-			else if (removedNode.getNodeType() == Node.CDATA_SECTION_NODE)
-			{
-				return "remove cdata section";
-			}
-			else if (removedNode.getNodeType() == Node.ELEMENT_NODE)
-			{
-				Element removedEl = (Element)removedNode;
-				String prefix = removedEl.getPrefix();
-				String localName = removedEl.getLocalName();
-				String qname = prefix != null? prefix + ":" + localName : localName;
-				return "remove node '" + qname + "'";
-			}
-			else
-			{
-				return "remove unknown node type?!";
+				case Node.COMMENT_NODE:
+					return "remove comment node";
+				case Node.TEXT_NODE:
+					return "remove text node";
+				case Node.CDATA_SECTION_NODE:
+					return "remove cdata section";
+				case Node.PROCESSING_INSTRUCTION_NODE:
+					return "remove cdata section";
+				case Node.ELEMENT_NODE:
+					Element removedEl = (Element)removedNode;
+					String prefix = removedEl.getPrefix();
+					String localName = removedEl.getLocalName();
+					String qname = prefix != null? prefix + ":" + localName : localName;
+					return "remove node <" + qname + ">";
+				default:
+					return "remove unknown node type?!";
 			}
 		}
 	}
@@ -322,37 +318,57 @@ public class Undo implements EventListener
 			switch(type)
 			{
 				case MutationEvent.ADDITION:
-					return "add attribute '" + qname + "' to '" + elQName + "'";
+					return "add attribute '" + qname + "' to <" + elQName + ">";
 				case MutationEvent.MODIFICATION:
-					return "change attribute '" + qname + "' of '" + elQName +
-						"' to '" + newValue + "'";
+					return "change attribute '" + qname + "' of <" + elQName +
+						"> to '" + newValue + "'";
 				case MutationEvent.REMOVAL:
-					return "removal of attribute '" + qname + "' from '" +
-						elQName + "'";
+					return "removal of attribute '" + qname + "' from <" +
+						elQName + ">";
 			}
 			return "Undo attribute modification";
 		}
 	}
 
+	/**
+	 * Can be used for both CharacterData and ProcessingInstruction nodes.
+	 */
 	public class CharacterDataModifiedUndo implements Undoable
 	{
 		protected String oldValue;
-		protected CharacterData characterData;
+		protected Node characterData;
 
 		public CharacterDataModifiedUndo(MutationEvent me)
 		{
-			characterData = (CharacterData)me.getTarget();
+			characterData = (Node)me.getTarget();
 			oldValue = me.getPrevValue();
 		}
 		
 		public void undo()
 		{
-			characterData.setData(oldValue);
+			if (characterData instanceof CharacterData)
+				((CharacterData)characterData).setData(oldValue);
+			else if (characterData instanceof ProcessingInstruction)
+				((ProcessingInstruction)characterData).setData(oldValue);
+			else
+				throw new RuntimeException("[Undo] Unexpected node type: " + characterData);
 		}
 
 		public String getDescription()
 		{
-			return "change text";
+			switch (characterData.getNodeType())
+			{
+				case Node.TEXT_NODE:
+					return "change text";
+				case Node.COMMENT_NODE:
+					return "change comment";
+				case Node.CDATA_SECTION_NODE:
+					return "change CDATA section";
+				case Node.PROCESSING_INSTRUCTION_NODE:
+					return "change processing instruction";
+				default:
+					return "change I-don't-know-what";
+			}
 		}
 	}
 

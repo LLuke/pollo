@@ -5,6 +5,7 @@ import java.awt.event.FocusEvent;
 import java.awt.Color;
 
 import javax.swing.border.Border;
+import javax.swing.border.BevelBorder;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
@@ -17,7 +18,13 @@ import javax.swing.JComponent;
 public class FocusBorder implements FocusListener
 {
 	protected JComponent component;
-	protected Border border = BorderFactory.createLineBorder(Color.red, 1);
+	protected static Border border;
+
+	static
+	{
+		border = BorderFactory.createLineBorder(Color.red, 1);
+	}
+
 	protected Border oldBorder;
 
 	/**
@@ -32,7 +39,12 @@ public class FocusBorder implements FocusListener
 	public void focusGained(FocusEvent event)
 	{
 		if (oldBorder == null)
-			oldBorder = component.getBorder();
+		{
+			//oldBorder = component.getBorder();
+			// if the oldBorder and the highlight border are not of the same
+			// width, the xmlEditor will change in width constantly
+			oldBorder = BorderFactory.createLineBorder(Color.gray, 1);
+		}
 		component.setBorder(border);
 	}
 

@@ -53,6 +53,8 @@ public interface View extends EventListener
 	 */
 	public boolean needsRepainting(int startVertical, int clipStartVertical, int clipEndVertical);
 
+	public int getWidth();
+
 	public void addChildView(View childView);
 
 	public void mousePressed          (MouseEvent e,              int startH, int startV);

@@ -33,16 +33,14 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.events.MutationEvent;
 
 
-public class ElementBlockView extends BlockView
+public class ElementBlockView extends ChildrenBlockView
 {
 	protected ElementSpec elementSpec;
 	protected String elementName;
 	protected int titleHeight = 10;
-	protected int contentHeight;
 	protected int collapseSignTop;
 	protected Element element;
 	protected Shape elementShape;
-	protected ArrayList childViewList = new ArrayList(10);
 	protected IDisplaySpecification displaySpec;
 
 	// everything for the attributes
@@ -53,26 +51,21 @@ public class ElementBlockView extends BlockView
 	protected boolean attributeLayoutUptodate = false;
 
 	// some rendering constants
-	protected static final int SPACING_VERTICAL = 5;
-	protected static final int BORDER_WIDTH = 6; //4;
-	protected static final int SPACING_HORIZONTAL = BORDER_WIDTH + 7;
+	protected static final int BORDER_WIDTH = 6;
+	protected static final int SPACING_HORIZONTAL = 7;
 	protected static final int EMPTY_CONTENT_HEIGHT = 10;
 	protected static final int COLLAPS_ICON_WIDTH = 15;
 	protected static final int END_MARKER_HEIGHT = 10;
 	protected static final int ATTR_SPACING = 9;
 	protected static final int ATTR_NAME_VALUE_SPACING = 2;
 
-	protected static final int NOT_CALCULATED    = -1;
-
 	public ElementBlockView(View parentView, Element element, XmlEditor xmlEditor)
 	{
-		super(parentView, xmlEditor);
+		super(parentView, element, xmlEditor);
 		this.element = element;
 
 		// register this view as an eventlistener for changes to the element
 		((EventTarget)element).addEventListener("DOMAttrModified", this, false);
-		((EventTarget)element).addEventListener("DOMNodeInserted", this, false);
-		((EventTarget)element).addEventListener("DOMNodeRemoved", this, false);
 
 		// get the ElementSpec from the DisplaySpec
 		displaySpec = xmlEditor.getDisplaySpec();
@@ -103,7 +96,7 @@ public class ElementBlockView extends BlockView
 		Graphics2D g = (Graphics2D)gr;
 
 		// make the shape
-		if (childViewList.size()  > 0)
+		if (hasChildren())
 		{
 			Polygon poly = new Polygon();
 			elementShape = poly;
@@ -143,28 +136,12 @@ public class ElementBlockView extends BlockView
 		g.draw(elementShape);
 	
 		g.setStroke(BlockView.STROKE_LIGHT);
-		if (childViewList.size()  > 0)
+		if (hasChildren())
 		{
 			// draw + or - sign
 			drawCollapseSign(g, isCollapsed(), startH + BORDER_WIDTH, startV + collapseSignTop);
 
-			// now draw the children, but only those that need updating
-			Iterator childrenIt = childViewList.iterator();
-
-			int totalHeight = titleHeight;
-			int clipStartVertical = (int)g.getClipBounds().getY();
-			int clipEndVertical = clipStartVertical + (int)g.getClipBounds().getHeight();
-			if (!isCollapsed())
-			{
-				int childVertPos = startV + titleHeight + SPACING_VERTICAL;
-				while (childrenIt.hasNext())
-				{
-					View view = (View)childrenIt.next();
-					if (view.needsRepainting(childVertPos, clipStartVertical, clipEndVertical))
-						view.paint(g, startH + SPACING_HORIZONTAL, childVertPos);
-					childVertPos += view.getHeight() + SPACING_VERTICAL;
-				}
-			}
+			super.paint(gr, startH, startV);
 		}
 
 		int baseline = startV + g.getFontMetrics(displaySpec.getElementNameFont()).getAscent() + 2;
@@ -246,17 +223,7 @@ public class ElementBlockView extends BlockView
 		collapseSignTop = (titleHeight / 2) - 5;
 
 		// layout the children of this view
-		if (childViewList.size() > 0)
-		{
-			Iterator childrenIt = childViewList.iterator();
-			while (childrenIt.hasNext())
-			{
-				View view = (View)childrenIt.next();
-				view.layout(width - SPACING_HORIZONTAL);
-			}
-		}
-
-		contentHeight = NOT_CALCULATED;
+		super.layout(width);
 	}
 
 
@@ -390,44 +357,13 @@ public class ElementBlockView extends BlockView
 	}
 
 
-	/**
-	 * Recalculates the height of this view and recursively of its parent views
-	 * when the height has changed because of element removal/addition or when
-	 * collapsing/expanding.
-	 */
-	public void heightChanged(int amount)
-	{
-		if (!isCollapsed())
-		{
-			contentHeight = contentHeight + amount;
-			if (parentView != null)
-				parentView.heightChanged(amount);
-			else
-			{
-				resetSize();
-			}
-		}
-	}
-
 	public int widthChanged(int amount)
 	{
 		this.width = this.width + amount;
 
-		Iterator childrenIt = childViewList.iterator();
-		while (childrenIt.hasNext())
-		{
-			View view = (View)childrenIt.next();
-			view.widthChanged(amount);
-		}
-
-		return getHeight();
+		return super.widthChanged(amount);
 	}
 
-
-	public void addChildView(View childView)
-	{
-		childViewList.add(childView);
-	}
 
 	// mouse events
 
@@ -453,91 +389,15 @@ public class ElementBlockView extends BlockView
 		}
 		else
 		{
-			Iterator childrenIt = childViewList.iterator();
-			int childVertPos = startV + titleHeight + SPACING_VERTICAL;
-			while (childrenIt.hasNext())
-			{
-				View childView = (View)childrenIt.next();
-				if (e.getY() > childVertPos && e.getY() < childVertPos + childView.getHeight())
-				{
-					childView.mousePressed(e, startH + SPACING_HORIZONTAL, childVertPos);
-					break;
-				}
-				childVertPos += childView.getHeight() + SPACING_VERTICAL;
-			}
+			super.mousePressed(e, startH, startV);
 		}
-	}
-
-
-	public int getHeight()
-	{
-		if (!isCollapsed() && childViewList.size() > 0)
-			return titleHeight + getContentHeight() + END_MARKER_HEIGHT; 
-		else if (isCollapsed())
-			return titleHeight + END_MARKER_HEIGHT; 
-		else
-			return titleHeight; 
-	}
-
-	public int getContentHeight()
-	{
-		if (contentHeight == NOT_CALCULATED)
-		{
-			Iterator childrenIt = childViewList.iterator();
-
-			if (childViewList.size() > 0)
-			{
-				int totalChildrenHeight = 0;
-
-				while (childrenIt.hasNext())
-				{
-					View view = (View)childrenIt.next();
-					totalChildrenHeight += view.getHeight() + SPACING_VERTICAL;
-				}
-
-				contentHeight = totalChildrenHeight + SPACING_VERTICAL;
-			}
-			else
-			{
-				contentHeight = 0;
-			}
-		}
-		return contentHeight;
-	}
-
-	public void invalidateHeight()
-	{
-		contentHeight = NOT_CALCULATED;
-	}
-
-	public boolean isCollapsable()
-	{
-		if (childViewList.size() > 0)
-			return true;
-		else
-			return false;
 	}
 
 	public void handleEvent(Event e)
 	{
 		try
 		{
-			if (e.getType().equalsIgnoreCase("DOMNodeInserted"))
-			{
-				if (((MutationEvent)e).getRelatedNode() != element)
-					return;
-				e.stopPropagation();
-				createViewsForNewChildren();
-			}
-			else if (e.getType().equalsIgnoreCase("DOMNodeRemoved"))
-			{
-				if (((Node)e.getTarget()).getParentNode() == element)
-				{
-					removeViewForRemovedChild((Node)e.getTarget());
-					e.stopPropagation();
-				}
-			}
-			else if (e.getType().equalsIgnoreCase("DOMAttrModified"))
+			if (e.getType().equalsIgnoreCase("DOMAttrModified"))
 			{
 				MutationEvent me = (MutationEvent)e;
 				if (me.getTarget() == element)
@@ -549,7 +409,7 @@ public class ElementBlockView extends BlockView
 			}
 			else
 			{
-				System.out.println("WARNING: unprocessed dom event:" + e.getType());
+				super.handleEvent(e);
 			}
 		}
 		catch (Exception exc)
@@ -567,104 +427,13 @@ public class ElementBlockView extends BlockView
 	}
 
 
-	/**
-	  This method updates the list of childviews: if elements were inserted
-	  in the dom, new corresponding views are created. Also updates the
-	  layout.
-	 */
-	public void createViewsForNewChildren()
-	{
-		NodeList children = element.getChildNodes();
-		int elementChildNodeCounter = 0;
-		boolean hasChildren = childViewList.size() > 0;
-		boolean heightChanged = false;
-		int oldHeight = getHeight();
-
-		for (int i = 0; i < children.getLength(); i++)
-		{
-			Node node = (Node)children.item(i);
-			if (XmlEditor.isNodeTypeSupported(node.getNodeType()))
-			{
-				View correspondingView = null;
-				try
-				{
-					correspondingView = (View)childViewList.get(elementChildNodeCounter);
-				}
-				catch (IndexOutOfBoundsException e) { }
-
-				if (correspondingView == null || correspondingView.getNode() != node)
-				{
-					View childView = xmlEditor.createView(node, this);
-					childView.layout(width - SPACING_HORIZONTAL);
-					childViewList.add(elementChildNodeCounter, childView);
-					heightChanged = true;
-				}
-				elementChildNodeCounter++;
-			}
-		}
-
-		if (heightChanged)
-		{
-			invalidateHeight();
-			int newHeight = getHeight();
-			int diff = newHeight - oldHeight;
-			applyHeightChange(diff);
-		}
-	}
-
-	public void removeViewForRemovedChild(Node removedChild)
-	{
-		NodeList children = element.getChildNodes();
-		int relevantChildNodeCounter = 0; // only nodes that are displayed count (currently e.g. not PI's)
-		boolean hasChildren = childViewList.size() > 0;
-		boolean heightChanged = false;
-		int oldHeight = getHeight();
-
-		for (int i = 0; i < children.getLength(); i++)
-		{
-			Node node = (Node)children.item(i);
-			if ((node == removedChild))
-			{
-				View correspondingView = (View)childViewList.get(relevantChildNodeCounter);
-				heightChanged = true;
-				correspondingView.removeEventListeners();
-				childViewList.remove(relevantChildNodeCounter);
-				break;
-				
-			}
-			if (XmlEditor.isNodeTypeSupported(node.getNodeType()))
-				relevantChildNodeCounter++;
-		}
-		if (heightChanged)
-		{
-			invalidateHeight();
-			int newHeight = getHeight();
-			int diff = newHeight - oldHeight;
-			applyHeightChange(diff);
-		}
-	}
-
 	public void removeEventListeners()
 	{
 		((EventTarget)element).removeEventListener("DOMAttrModified", this, false);
-		((EventTarget)element).removeEventListener("DOMNodeInserted", this, false);
-		((EventTarget)element).removeEventListener("DOMNodeRemoved", this, false);
 
-		Iterator childViewListIt = childViewList.iterator();
-		while (childViewListIt.hasNext())
-		{
-			View childView = (View)childViewListIt.next();
-			childView.removeEventListeners();
-		}
+		super.removeEventListeners();
 	}
 
-
-	private DocumentFragment createDocumentFragment(Node node)
-	{
-		DocumentFragment documentFragment = xmlEditor.getXmlModel().getDocument().createDocumentFragment();
-		documentFragment.appendChild(node.cloneNode(true));
-		return documentFragment;
-	}
 
 
 	public void dragGestureRecognized(DragGestureEvent event, int startH, int startV)
@@ -689,20 +458,10 @@ public class ElementBlockView extends BlockView
 		}
 		else
 		{
-			Iterator childrenIt = childViewList.iterator();
-			int childVertPos = startV + titleHeight + SPACING_VERTICAL;
-			while (childrenIt.hasNext())
-			{
-				View childView = (View)childrenIt.next();
-				if (p.getY() > childVertPos && p.getY() < childVertPos + childView.getHeight())
-				{
-					childView.dragGestureRecognized(event, startH + SPACING_HORIZONTAL, childVertPos);
-					break;
-				}
-				childVertPos += childView.getHeight() + SPACING_VERTICAL;
-			}
+			super.dragGestureRecognized(event, startH, startV);
 		}
 	}
+
 
 	public void dragOver(DropTargetDragEvent event, int startH, int startV)
 	{
@@ -715,9 +474,9 @@ public class ElementBlockView extends BlockView
 
 		Point p = event.getLocation();
 
-		if (p.getY() > startV && p.getY() < startV + titleHeight && p.getX() > startH)
+		if (p.getY() > startV && p.getY() < startV + getHeaderHeight() && p.getX() > startH)
 		{ // it is on this element
-			if (childViewList.size() > 0)
+			if (hasChildren())
 			{
 				// dropping is only allowed if this element has no children yet
 				xmlEditor.setDropData(xmlEditor.DROP_ACTION_NOT_ALLOWED, null);
@@ -726,7 +485,7 @@ public class ElementBlockView extends BlockView
 			}
 
 			// draw drag over effect
-			Rectangle rect = new Rectangle(startH, startV, width, titleHeight);
+			Rectangle rect = new Rectangle(startH, startV, width, getHeaderHeight());
 			xmlEditor.setDragOverEffectRedraw(new Rectangle(rect.x - 1, rect.y - 1, rect.width + 2, rect.height + 2));
 			Graphics2D graphics = (Graphics2D)xmlEditor.getGraphics();
 			graphics.setColor(new Color(255, 0, 0));
@@ -742,60 +501,9 @@ public class ElementBlockView extends BlockView
 			*/
 			return;
 		}
-		else if (p.getX() > startH && p.getX() < (startH + width - SPACING_HORIZONTAL) ) // maybe it's between to elements
+		else if (p.getX() > startH && p.getX() < (startH + width) ) // maybe it's between to elements
 		{
-			Iterator childrenIt = childViewList.iterator();
-			int childVertPos = startV + titleHeight + SPACING_VERTICAL;
-			View childView = null;
-			boolean lastOne = false;
-			while (childrenIt.hasNext() || (lastOne = true))
-			{
-				if (!lastOne)
-					childView = (View)childrenIt.next();
-
-				if (!lastOne && p.getY() > childVertPos && p.getY() < childVertPos + childView.getHeight())
-				{
-					childView.dragOver(event, startH + SPACING_HORIZONTAL, childVertPos);
-					break;
-				}
-				else if (p.getY() > (childVertPos - SPACING_VERTICAL) && p.getY() < childVertPos)
-				{
-					if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor) /* || deprecated
-							event.isDataFlavorSupported(CommandTransferable.commandFlavor)*/)
-					{
-						// draw drag over effect
-						Rectangle rect = new Rectangle(startH + SPACING_HORIZONTAL, childVertPos - 3,
-							   	width - SPACING_HORIZONTAL, 2);
-						xmlEditor.setDragOverEffectRedraw(rect);
-						Graphics2D graphics = (Graphics2D)xmlEditor.getGraphics();
-						graphics.setColor(new Color(255, 0, 0));
-						graphics.fill(rect);
-
-						if (!lastOne)
-							xmlEditor.setDropData(xmlEditor.DROP_ACTION_INSERT_BEFORE, childView.getNode());
-						else
-							xmlEditor.setDropData(xmlEditor.DROP_ACTION_APPEND_CHILD, 
-									childView.getNode().getParentNode());
-					}
-					if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor))
-						event.acceptDrag(DnDConstants.ACTION_MOVE);
-					/* CommandTransferable is deprecated
-					else if (event.isDataFlavorSupported(CommandTransferable.commandFlavor))
-						event.acceptDrag(DnDConstants.ACTION_MOVE);
-					*/
-					return;
-				}
-				else
-				{
-					xmlEditor.setDropData(xmlEditor.DROP_ACTION_NOT_ALLOWED, null);
-					event.rejectDrag();
-				}
-				childVertPos += childView.getHeight() + SPACING_VERTICAL;
-
-				if (lastOne == true)
-					break;
-			}
-
+			super.dragOver(event, startH, startV);
 		}
 		else
 		{
@@ -803,6 +511,7 @@ public class ElementBlockView extends BlockView
 			event.rejectDrag();
 		}
 	}
+
 
 	/**
 	 * Given a maximum allowed width (in pixels), this method calculates how much text
@@ -824,168 +533,18 @@ public class ElementBlockView extends BlockView
 		return i;
 	}
 
-	public void collapseAll()
+	public int getHeaderHeight()
 	{
-		// collapse myself
-		collapse();
-
-		// collapse my child views
-		Iterator childrenIt = childViewList.iterator();
-		while (childrenIt.hasNext())
-		{
-			View view = (View)childrenIt.next();
-			view.collapseAll();
-		}
+		return titleHeight;
 	}
 
-	public void expandAll()
+	public int getFooterHeight()
 	{
-		// expand my child views
-		Iterator childrenIt = childViewList.iterator();
-		while (childrenIt.hasNext())
-		{
-			View view = (View)childrenIt.next();
-			view.expandAll();
-		}
-
-		// expand myself
-		expand();
-
+		return END_MARKER_HEIGHT;
 	}
 
-	/**
-	 * Overidden method from BlockView class.
-	 */
-	public int getVerticalPosition(View wantedView)
+	public int getLeftMargin()
 	{
-		int startV = getVerticalPosition();
-
-		Iterator childrenIt = childViewList.iterator();
-
-		if (!isCollapsed())
-		{
-			int childVertPos = startV + titleHeight + SPACING_VERTICAL;
-			while (childrenIt.hasNext())
-			{
-				View view = (View)childrenIt.next();
-				if (view == wantedView)
-					return childVertPos;
-				childVertPos += view.getHeight() + SPACING_VERTICAL;
-			}
-		}
-		else
-		{
-			throw new RuntimeException("Cannot give the position of the childview is its parent is collapsed!");
-		}
-		throw new RuntimeException("The given view is not a childview.");
-	}
-
-	/**
-	 * Overidden method from BlockView class.
-	 */
-	public int getHorizontalPosition(View wantedChildView)
-	{
-		return getHorizontalPosition() + SPACING_HORIZONTAL;
-	}
-
-	/**
-	 * Overidden method from BlockView class.
-	 */
-	public View getNextSibling(View wantedChildView)
-	{
-		Iterator childrenIt = childViewList.iterator();
-		while (childrenIt.hasNext())
-		{
-			View view = (View)childrenIt.next();
-			if (view == wantedChildView)
-			{
-				try
-				{
-					return (View)childrenIt.next();
-				}
-				catch (java.util.NoSuchElementException e)
-				{
-					return null;
-				}
-			}
-		}
-		throw new RuntimeException("The given view is not a childview.");
-	}
-
-	/**
-	 * Overidden method from BlockView class.
-	 */
-	public View getNext(boolean visible)
-	{
-		if (childViewList.size() > 0 && (visible ? !isCollapsed() : true))
-		{
-			return (View)childViewList.get(0);
-		}
-		else
-		{
-			return super.getNext(visible);
-		}
-	}
-
-	/**
-	 * Overidden method from BlockView class.
-	 */
-	public View getPreviousSibling(View wantedChildView)
-	{
-		Iterator childrenIt = childViewList.iterator();
-		View previousView = null;
-		while (childrenIt.hasNext())
-		{
-			View view = (View)childrenIt.next();
-			if (view == wantedChildView)
-			{
-				return previousView;
-			}
-			previousView = view;
-		}
-		throw new RuntimeException("The given view is not a childview.");
-	}
-
-
-	public View getLastChild(boolean visible)
-	{
-		if (isCollapsed())
-			return this;
-
-		if (childViewList.size() > 0)
-		{
-			return ((View)childViewList.get(childViewList.size() - 1)).getLastChild(visible);
-		}
-		return this;
-	}
-
-	public View findNode(Node node)
-	{
-		if (node == element)
-			return this;
-
-		Node previousParent = node;
-		while(true)
-		{
-			Node parentNode = previousParent.getParentNode();
-			if (!(parentNode instanceof Element))
-			{
-				return null;
-			}
-
-			Element parentEl = (Element)parentNode;
-			if (parentEl == element)
-			{
-				// zoek onder mijn kinderen
-				Iterator childrenIt = childViewList.iterator();
-				while (childrenIt.hasNext())
-				{
-					View view = (View)childrenIt.next();
-					if (view.getNode() == previousParent)
-						return view.findNode(node);
-				}
-			}
-			previousParent = parentEl;
-		}
+		return BORDER_WIDTH + SPACING_HORIZONTAL;
 	}
 }

@@ -21,4 +21,15 @@ public interface XmlModelListener
 	 * the user used 'save as'.
 	 */
 	public void fileNameChanged(XmlModel sourceXmlModel);
+
+	/**
+	 * Called when the model has changed the first time after it was
+	 * saved.
+	 */
+	public void fileChanged(XmlModel sourceXmlModel);
+
+	/**
+	 * Called when the file is saved.
+	 */
+	public void fileSaved(XmlModel sourceXmlModel);
 }

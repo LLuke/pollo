@@ -280,12 +280,31 @@ public abstract class BlockView implements View
 	 */
 	public View getNext(boolean visible)
 	{
-		return getNextButNotChild();
+		View view = getNextSibling();
+		if (view == null)
+		{
+			if (parentView != null)
+			{
+				View view2 = parentView.getNextSibling();
+				if (view2 != null)
+					return view2;
+				else
+					return this;
+			}
+			return this;
+		}
+		else
+		{
+			return view;
+		}
 	}
 
 	/**
 	 * The difference between this method and getNext() is that this
 	 * one is not overidden in ElementBlockView.
+	 *
+	 * This method is used when a node is removed, so it may
+	 * not return itself.
 	 */
 	public View getNextButNotChild()
 	{
@@ -297,8 +316,10 @@ public abstract class BlockView implements View
 				View view2 = parentView.getNextSibling();
 				if (view2 != null)
 					return view2;
+				else
+					return parentView;
 			}
-			return this;
+			return null;
 		}
 		else
 		{
@@ -370,5 +391,10 @@ public abstract class BlockView implements View
 
 		if (parentView != null)
 			parentView.assureVisibility(true);
+	}
+
+	public int getWidth()
+	{
+		return width;
 	}
 }

@@ -3,7 +3,7 @@ package org.outerj.pollo.xmleditor.chardataeditor;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.util.FocusBorder;
-import org.outerj.pollo.xmleditor.Cleanable;
+import org.outerj.pollo.xmleditor.Disposable;
 
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -18,22 +18,25 @@ import java.awt.event.ActionEvent;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.CharacterData;
+import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.MutationEvent;
 
-public class CharDataPanel extends JPanel implements SelectionListener, EventListener, Cleanable
+public class CharDataPanel extends JPanel implements SelectionListener, EventListener, Disposable
 {
 	protected XmlModel xmlModel;
 	protected JTextArea charDataTextArea;
 	protected JScrollPane scrollPane;
-	protected CharacterData currentNode;
+	protected Node currentNode;
 	protected int nodetype;
 
 	/**
 	 * @param nodetype must be one of the following constants defined in
-	 * org.w3c.dom.Node : CDATA_SECTION_NODE, TEXT_NODE, COMMENT_NODE.
+	 * org.w3c.dom.Node : CDATA_SECTION_NODE, TEXT_NODE, COMMENT_NODE,
+	 * PROCESSIG_INSTRUCTION_NODE. This parameter specifies to which type
+	 * of node this editor will react.
 	 */
 	public CharDataPanel(XmlModel xmlModel, int nodetype)
 	{
@@ -75,12 +78,18 @@ public class CharDataPanel extends JPanel implements SelectionListener, EventLis
 
 		if (node.getNodeType() == nodetype)
 		{
-			CharacterData charData = (CharacterData)node;
-			charDataTextArea.setText(charData.getData());
+			String data;
+			if (node instanceof CharacterData)
+				data = ((CharacterData)node).getData();
+			else if (node instanceof ProcessingInstruction)
+				data = ((ProcessingInstruction)node).getData();
+			else
+				throw new RuntimeException("[CharDataPanel] Unsupported node: " + currentNode);
+			charDataTextArea.setText(data);
 			charDataTextArea.setCaretPosition(0);
 
-			currentNode = charData;
-			((EventTarget)charData).addEventListener("DOMCharacterDataModified", this, false);
+			((EventTarget)node).addEventListener("DOMCharacterDataModified", this, false);
+			currentNode = node;
 
 			setEnabled(true);
 		}
@@ -109,9 +118,22 @@ public class CharDataPanel extends JPanel implements SelectionListener, EventLis
 	{
 		if (currentNode != null)
 		{
-			if (!currentNode.getData().equals(charDataTextArea.getText()))
+			String data;
+			if (currentNode instanceof CharacterData)
+				data = ((CharacterData)currentNode).getData();
+			else if (currentNode instanceof ProcessingInstruction)
+				data = ((ProcessingInstruction)currentNode).getData();
+			else
+				throw new RuntimeException("[CharDataPanel] Unsupported node: " + currentNode);
+
+			if (!data.equals(charDataTextArea.getText()))
 			{
-				currentNode.setData(charDataTextArea.getText());
+				if (currentNode instanceof CharacterData)
+					((CharacterData)currentNode).setData(charDataTextArea.getText());
+				else if (currentNode instanceof ProcessingInstruction)
+					((ProcessingInstruction)currentNode).setData(charDataTextArea.getText());
+				else
+					throw new RuntimeException("[CharDataPanel] Unsupported node: " + currentNode);
 			}
 		}
 	}
@@ -125,7 +147,12 @@ public class CharDataPanel extends JPanel implements SelectionListener, EventLis
 		{
 			if (e.getType().equalsIgnoreCase("DOMCharacterDataModified"))
 			{
-				charDataTextArea.setText(currentNode.getData());
+				if (currentNode instanceof CharacterData)
+					charDataTextArea.setText(((CharacterData)currentNode).getData());
+				else if (currentNode instanceof ProcessingInstruction)
+					charDataTextArea.setText(((ProcessingInstruction)currentNode).getData());
+				else
+					throw new RuntimeException("[CharDataPanel] Unsupported node: " + currentNode);
 			}
 			else
 			{
@@ -146,7 +173,7 @@ public class CharDataPanel extends JPanel implements SelectionListener, EventLis
 		charDataTextArea.requestFocus();
 	}
 
-	public void cleanup()
+	public void dispose()
 	{
 		if (currentNode != null)
 		{

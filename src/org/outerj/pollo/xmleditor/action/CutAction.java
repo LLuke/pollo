@@ -27,8 +27,12 @@ public class CutAction extends RemoveAction
 
 	public void actionPerformed(ActionEvent e)
 	{
-		xmlEditor.putOnClipboard(xmlEditor.getSelectedNode());
-		super.actionPerformed(e);
+		Node node = xmlEditor.getSelectionInfo().getSelectedNode();
+		if (node != xmlEditor.getRootView().getNode())
+		{
+			xmlEditor.putOnClipboard(node);
+			super.actionPerformed(e);
+		}
 	}
 
 }

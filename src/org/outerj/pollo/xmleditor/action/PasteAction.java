@@ -6,9 +6,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.*;
 
 public class PasteAction extends AbstractAction
 {
@@ -57,15 +55,24 @@ public class PasteAction extends AbstractAction
 		Node newNode = clipboard.getFirstChild();
 		Node selectedNode = xmlEditor.getSelectedNode();
 
-		Element parent = (Element)selectedNode.getParentNode();
+		Node parent = selectedNode.getParentNode();
 
 		newNode = xmlEditor.getXmlModel().getDocument().importNode(newNode, true);
 
-		if (behaviour == PASTE_BEFORE)
+		if ((selectedNode instanceof Document || parent instanceof Document)
+				&& !(newNode instanceof Comment || newNode instanceof ProcessingInstruction)
+				&& ((selectedNode instanceof Document) && (((Document)selectedNode).getDocumentElement() != null)))
+		{
+			JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
+					"An XML document can have only one root element.");	
+			return;
+		}
+
+		if (parent != null && behaviour == PASTE_BEFORE)
 		{
 			parent.insertBefore(newNode, selectedNode);
 		}
-		else if (behaviour == PASTE_AFTER)
+		else if (parent != null && behaviour == PASTE_AFTER)
 		{
 			Node nextSibling = selectedNode.getNextSibling();
 			if (nextSibling != null)

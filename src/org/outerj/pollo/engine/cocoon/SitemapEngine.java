@@ -20,10 +20,10 @@ public class SitemapEngine extends ViewEngine
 {
 	public static final String COCOON_URI = "http://apache.org/cocoon/sitemap/1.0";
 
-	protected XmlEditorPanel xmlEditorPanel;
-	protected XmlEditorPanel actionsEditor;
-	protected XmlEditorPanel resourcesEditor;
-	protected XmlEditorPanel viewsEditor;
+	protected XmlEditorPanel xmlEditorPanel, actionsEditor, resourcesEditor, viewsEditor;
+
+	protected ComponentsEditor generators, transformers, readers, serializers,
+		selectors, matchers, actions;
 
 	public SitemapEngine(XmlModel xmlModel, ViewTypeConf viewTypeConf)
 		throws Exception
@@ -43,25 +43,25 @@ public class SitemapEngine extends ViewEngine
 				displaySpec, schema, attrEditorPlugin);
 		tabbedPane.addTab("Pipelines", xmlEditorPanel);
 		tabbedPane.addTab("Generators",
-				new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:generators"), "generator",
+				generators = new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:generators"), "generator",
 					COCOON_URI, "src", true, xmlModel));
 		tabbedPane.addTab("Transformers",
-				new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:transformers"), "transformer",
+				transformers = new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:transformers"), "transformer",
 					COCOON_URI, "src", true, xmlModel));
 		tabbedPane.addTab("Readers",
-				new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:readers"), "reader",
+				readers = new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:readers"), "reader",
 					COCOON_URI, "src", true, xmlModel));
 		tabbedPane.addTab("Serializers",
-				new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:serializers"), "serializer",
+				serializers = new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:serializers"), "serializer",
 					COCOON_URI, "src", true, xmlModel));
 		tabbedPane.addTab("Selectors",
-				new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:selectors"), "selector",
+				selectors = new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:selectors"), "selector",
 					COCOON_URI, "src", false, xmlModel));
 		tabbedPane.addTab("Matchers",
-				new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:matchers"), "matcher",
+				matchers = new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:matchers"), "matcher",
 					COCOON_URI, "src", false, xmlModel));
 		tabbedPane.addTab("Actions",
-				new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:actions"), "action",
+				actions = new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:actions"), "action",
 					COCOON_URI, "src", false, xmlModel));
 
 		actionsEditor = new XmlEditorPanel(xmlModel, "/map:sitemap/map:action-sets",
@@ -79,11 +79,19 @@ public class SitemapEngine extends ViewEngine
 		add(tabbedPane, BorderLayout.CENTER);
 	}
 
-	public void cleanup()
+	public void dispose()
 	{
-		xmlEditorPanel.cleanup();
-		actionsEditor.cleanup();
-		resourcesEditor.cleanup();
-		viewsEditor.cleanup();
+		xmlEditorPanel.dispose();
+		actionsEditor.dispose();
+		resourcesEditor.dispose();
+		viewsEditor.dispose();
+
+		generators.dispose();
+		transformers.dispose();
+		readers.dispose();
+		serializers.dispose();
+		selectors.dispose();
+		matchers.dispose();
+		actions.dispose();
 	}
 }

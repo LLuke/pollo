@@ -1,23 +1,33 @@
 package org.outerj.pollo.action;
 
 import org.outerj.pollo.Pollo;
-
 import org.outerj.pollo.util.ExtensionFileFilter;
+
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 public class FileOpenAction extends AbstractAction
 {
-	public FileOpenAction()
+	Pollo pollo;
+
+	public FileOpenAction(Pollo pollo)
 	{
 		super("Open file...");
+		this.pollo = pollo;
 	}
 
 	public void actionPerformed(ActionEvent e)
 	{
-		JFileChooser chooser = new JFileChooser();
+		String defaultPath = pollo.getConfiguration().getFileOpenDialogPath();
+		JFileChooser chooser = null;
+		if (defaultPath == null)
+			chooser = new JFileChooser();
+		else
+			chooser = new JFileChooser(new File(defaultPath));
+
 		FileFilter defaultFilter = chooser.getFileFilter();
 
 		ExtensionFileFilter filter1 = new ExtensionFileFilter(".xml", "XML files (*.xml)");
@@ -30,7 +40,9 @@ public class FileOpenAction extends AbstractAction
 		int returnVal = chooser.showOpenDialog(null);
 		if(returnVal == JFileChooser.APPROVE_OPTION)
 		{
-			Pollo.getInstance().openFile(chooser.getSelectedFile());
+			File selectedFile = chooser.getSelectedFile();
+			pollo.getConfiguration().setFileOpenDialogPath(selectedFile.getPath());
+			pollo.openFile(selectedFile);
 		}
 	}
 }

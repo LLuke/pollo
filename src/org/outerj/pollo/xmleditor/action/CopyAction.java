@@ -7,6 +7,7 @@ import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 
 import org.w3c.dom.Node;
+import org.w3c.dom.Document;
 
 /**
  * A Swing Action that places the currently selected node on the clipboard
@@ -30,7 +31,11 @@ public class CopyAction extends AbstractAction implements SelectionListener
 
 	public void actionPerformed(ActionEvent e)
 	{
-		xmlEditor.putOnClipboard(xmlEditor.getSelectedNode());
+		Node node = xmlEditor.getSelectedNode();
+		if (!(node instanceof Document))
+		{
+			xmlEditor.putOnClipboard(xmlEditor.getSelectedNode());
+		}
 	}
 
 	public void nodeUnselected(Node node)

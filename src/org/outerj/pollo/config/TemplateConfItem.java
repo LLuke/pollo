@@ -2,7 +2,7 @@ package org.outerj.pollo.config;
 
 import org.outerj.pollo.template.ITemplate;
 import org.outerj.pollo.template.ITemplateFactory;
-import org.outerj.pollo.xmleditor.FactoryFactory;
+import org.outerj.pollo.xmleditor.ComponentManager;
 import org.outerj.pollo.xmleditor.exception.PolloException;
 
 public class TemplateConfItem extends ConfItem
@@ -23,7 +23,7 @@ public class TemplateConfItem extends ConfItem
 		ITemplate template = null;
 		try
 		{
-			ITemplateFactory templateFactory = (ITemplateFactory)FactoryFactory.getInstance(getFactoryClass());
+			ITemplateFactory templateFactory = (ITemplateFactory)ComponentManager.getFactoryInstance(getFactoryClass());
 			template = templateFactory.getTemplate(getInitParams());
 		}
 		catch (Exception e)

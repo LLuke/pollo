@@ -19,6 +19,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.CharacterData;
+import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
@@ -48,7 +49,7 @@ public abstract class CharacterDataBlockView extends BlockView
 	protected static final int COLLAPSE_SIGN_TOP_POSITION  = 2;
 	protected static final int COLLAPSE_SIGN_LEFT_POSITION = 3;
 
-	protected CharacterData characterData;
+	protected Node characterData; //CharacterData characterData;
 
 	protected int numberOfLines;
 	protected int [] lineInfo;
@@ -56,13 +57,19 @@ public abstract class CharacterDataBlockView extends BlockView
 		// the offset (in the data array), length, and the clippinglength
 	protected char [] data;
 
-	public CharacterDataBlockView(View parentView, CharacterData characterData, XmlEditor xmlEditor)
+	/**
+	 * @param characterData should be a node of type CharacterData or ProcessingInstruction
+	 */
+	public CharacterDataBlockView(View parentView, Node characterData, XmlEditor xmlEditor)
 	{
 		super(parentView, xmlEditor);
 		this.characterData = characterData;
 
 		// we keep a copy of the characterData's data in a char array, because thats easier and faster to work with
-		data = characterData.getData().toCharArray();
+		if (characterData instanceof CharacterData)
+			data = ((CharacterData)characterData).getData().toCharArray();
+		else if (characterData instanceof ProcessingInstruction)
+			data = ((ProcessingInstruction)characterData).getData().toCharArray();
 
 		// register this view as an eventlistener for changes to the character data 
 		((EventTarget)characterData).addEventListener("DOMCharacterDataModified", this, false);
@@ -82,30 +89,29 @@ public abstract class CharacterDataBlockView extends BlockView
 		// draw the collapse sign
 		drawCollapseSign(g, isCollapsed, startH + COLLAPSE_SIGN_LEFT_POSITION, startV + COLLAPSE_SIGN_TOP_POSITION);
 
-		if (!isCollapsed)
+		// draw the characterdata text
+		int verticalOffset = startV + getHeader() + fontMetrics.getAscent();
+		// if the view is collapsed and there is a header, draw no lines, otheriwse draw 1 line
+		int doHowMuchLines = isCollapsed() ? (getHeader() != 0 ? 0 : 1) : numberOfLines;
+		for (int i = 0; i < doHowMuchLines; i++)
 		{
-			// draw the characterdata text
-			int verticalOffset = startV + fontMetrics.getAscent();
-			for (int i = 0; i < numberOfLines; i++)
+			if (lineInfo[(i*3)+2] == NOT_CALCULATED) // clipping not calculated
 			{
-				if (lineInfo[(i*3)+2] == NOT_CALCULATED) // clipping not calculated
-				{
-					lineInfo[(i*3)+2] = clipText(data, lineInfo[(i*3)], lineInfo[(i*3)+1],
-							width - LEFT_TEXT_MARGIN - RIGHT_TEXT_MARGIN);
-				}
-
-				if (lineInfo[(i*3)+2] == NO_CLIPPING) // draw all text
-				{
-					g.drawChars(data, lineInfo[(i*3)], lineInfo[(i*3)+1], startH + LEFT_TEXT_MARGIN, verticalOffset);
-				}
-				else // draw part of the text and three dots after it
-				{
-					g.drawChars(data, lineInfo[(i*3)], lineInfo[(i*3)+2], startH + LEFT_TEXT_MARGIN, verticalOffset);
-					g.drawString("...", startH + LEFT_TEXT_MARGIN
-						   	+ fontMetrics.charsWidth(data, lineInfo[(i*3)], lineInfo[(i*3)+2]), verticalOffset);
-				}
-				verticalOffset += lineHeight;
+				lineInfo[(i*3)+2] = clipText(data, lineInfo[(i*3)], lineInfo[(i*3)+1],
+						width - LEFT_TEXT_MARGIN - RIGHT_TEXT_MARGIN);
 			}
+
+			if (lineInfo[(i*3)+2] == NO_CLIPPING) // draw all text
+			{
+				g.drawChars(data, lineInfo[(i*3)], lineInfo[(i*3)+1], startH + LEFT_TEXT_MARGIN, verticalOffset);
+			}
+			else // draw part of the text and three dots after it
+			{
+				g.drawChars(data, lineInfo[(i*3)], lineInfo[(i*3)+2], startH + LEFT_TEXT_MARGIN, verticalOffset);
+				g.drawString("...", startH + LEFT_TEXT_MARGIN
+						+ fontMetrics.charsWidth(data, lineInfo[(i*3)], lineInfo[(i*3)+2]), verticalOffset);
+			}
+			verticalOffset += lineHeight;
 		}
 	}
 
@@ -208,9 +214,9 @@ public abstract class CharacterDataBlockView extends BlockView
 	public int getHeight()
 	{
 		if (!isCollapsed)
-			return numberOfLines * lineHeight;
+			return getHeader() + (numberOfLines * lineHeight) + getFooter();
 		else
-			return 12;
+			return fontMetrics.getHeight();
 	}
 
 
@@ -220,7 +226,10 @@ public abstract class CharacterDataBlockView extends BlockView
 		{
 			if (e.getType().equalsIgnoreCase("DOMCharacterDataModified"))
 			{
-				data = characterData.getData().toCharArray();
+				if (characterData instanceof CharacterData)
+					data = ((CharacterData)characterData).getData().toCharArray();
+				else if (characterData instanceof ProcessingInstruction)
+					data = ((ProcessingInstruction)characterData).getData().toCharArray();
 				int oldHeight = getHeight();
 				layout(width);
 				int newHeight = getHeight();
@@ -329,5 +338,21 @@ public abstract class CharacterDataBlockView extends BlockView
 	public boolean isCollapsable()
 	{
 		return true;
+	}
+
+	/**
+	 * Allows subclasses to specify a region below the text.
+	 */
+	protected int getFooter()
+	{
+		return 0;
+	}
+
+	/**
+	 * Allows subclasses to specify a region above the text.
+	 */
+	protected int getHeader()
+	{
+		return 0;
 	}
 }

@@ -5,7 +5,7 @@ import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPluginFactory;
 import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.exception.PolloException;
-import org.outerj.pollo.xmleditor.FactoryFactory;
+import org.outerj.pollo.xmleditor.ComponentManager;
 
 public class AttrEditorPluginConfItem extends ConfItem
 {
@@ -24,7 +24,7 @@ public class AttrEditorPluginConfItem extends ConfItem
 		try
 		{
 			IAttributeEditorPluginFactory pluginFactory =
-				(IAttributeEditorPluginFactory)FactoryFactory.getInstance(getFactoryClass());
+				(IAttributeEditorPluginFactory)ComponentManager.getFactoryInstance(getFactoryClass());
 			plugin = pluginFactory.getInstance(getInitParams(), xmlModel, schema);
 		}
 		catch (Exception e)

@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashMap;
@@ -57,6 +58,11 @@ public class XmlModel
 	protected Action saveAction = new SaveAction();
 	protected Action saveAsAction = new SaveAsAction();
 	protected Action closeAction = new CloseAction();
+
+	public static final int FILENAME_CHANGED = 1;
+	public static final int LAST_VIEW_CLOSED = 2;
+	public static final int FILE_CHANGED     = 3;
+	public static final int FILE_SAVED       = 4;
 
 	public XmlModel(File file)
 		throws InvalidXmlException
@@ -138,15 +144,11 @@ public class XmlModel
 		serializer.transform(new DOMSource(getDocument()), new StreamResult(filename));
 		*/
 
-		String encoding = document.getEncoding();
-		OutputFormat outputFormat = new OutputFormat(document, encoding != null ? encoding : "ISO-8859-1", true);
-		outputFormat.setIndent(2);
-
 		FileOutputStream output = null;
 		try
 		{
 			output = new FileOutputStream(filename);
-			XMLSerializer serializer = new XMLSerializer(output, outputFormat);
+			XMLSerializer serializer = new XMLSerializer(output, createOutputFormat());
 			serializer.serialize(document);
 		}
 		finally
@@ -156,6 +158,7 @@ public class XmlModel
 		
 		modified = false;
 		saveAction.setEnabled(false);
+		notify(FILE_SAVED);
 	}
 
 	public void store()
@@ -163,6 +166,26 @@ public class XmlModel
 		//throws TransformerConfigurationException, TransformerException
 	{
 		store(file.getAbsolutePath());
+	}
+
+	public OutputFormat createOutputFormat()
+	{
+		String encoding = document.getEncoding();
+		OutputFormat outputFormat = new OutputFormat(document, encoding != null ? encoding : "ISO-8859-1", true);
+		outputFormat.setIndent(2);
+
+		return outputFormat;
+	}
+
+	public String toXMLString()
+		throws Exception
+	{
+		StringWriter writer = new StringWriter();
+
+		XMLSerializer serializer = new XMLSerializer(writer, createOutputFormat());
+		serializer.serialize(document);
+
+		return writer.toString();
 	}
 
 	public Element getNextElementSibling(Element element)
@@ -190,7 +213,7 @@ public class XmlModel
 	 */
 	public String findNamespaceForPrefix(Element element, String prefix)
 	{
-		if (prefix == null)
+		if (element == null || prefix == null)
 			return null;
 
 		if (prefix.equals("xml"))
@@ -232,7 +255,7 @@ public class XmlModel
 	 */
 	public String findPrefixForNamespace(Element element, String ns)
 	{
-		if (ns == null)
+		if (element == null || ns == null)
 			return null;
 
 		if (ns.equals("http://www.w3.org/XML/1998/namespace"))
@@ -309,6 +332,9 @@ public class XmlModel
 	 */
 	public String findDefaultNamespace(Element element)
 	{
+		if (element == null)
+			return null;
+
 		// Note: the prefix xmlns is not bound to any namespace URI
 		Element currentEl = element;
 		do
@@ -359,10 +385,11 @@ public class XmlModel
 
 	public void markModified()
 	{
-		modified = true;
-		if (!saveAction.isEnabled())
+		if (modified == false)
 		{
+			modified = true;
 			saveAction.setEnabled(true);
+			notify(FILE_CHANGED);
 		}
 	}
 
@@ -391,29 +418,33 @@ public class XmlModel
 			if (!askToSave()) return false;
 
 			// last view was closed, notified XmlModelListeners of this fact
-			notifyLastViewClosed();
+			notify(LAST_VIEW_CLOSED);
 		}
 		registeredViewsList.remove(view);
 		return true;
 	}
 
-	public void notifyLastViewClosed()
+	public void notify(int eventtype)
 	{
 		Iterator xmlModelListenersIt = xmlModelListeners.iterator();
 		while (xmlModelListenersIt.hasNext())
 		{
 			XmlModelListener listener = (XmlModelListener)xmlModelListenersIt.next();
-			listener.lastViewClosed(this);
-		}
-	}
-
-	public void notifyFileNameChanged()
-	{
-		Iterator xmlModelListenersIt = xmlModelListeners.iterator();
-		while (xmlModelListenersIt.hasNext())
-		{
-			XmlModelListener listener = (XmlModelListener)xmlModelListenersIt.next();
-			listener.fileNameChanged(this);
+			switch (eventtype)
+			{
+				case FILENAME_CHANGED:
+					listener.fileNameChanged(this);
+					break;
+				case LAST_VIEW_CLOSED:
+					listener.lastViewClosed(this);
+					break;
+				case FILE_CHANGED:
+					listener.fileChanged(this);
+					break;
+				case FILE_SAVED:
+					listener.fileSaved(this);
+					break;
+			}
 		}
 	}
 
@@ -445,7 +476,7 @@ public class XmlModel
 		}
 		if (file != null)
 		{
-			notifyFileNameChanged();
+			notify(FILENAME_CHANGED);
 			save();
 		}
 	}
@@ -464,7 +495,7 @@ public class XmlModel
 		}
 
 		registeredViewsList.clear();
-		notifyLastViewClosed();
+		notify(LAST_VIEW_CLOSED);
 
 		return true;
 	}

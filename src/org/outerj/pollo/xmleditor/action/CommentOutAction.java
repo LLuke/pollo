@@ -10,14 +10,11 @@ import java.io.StringWriter;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Document;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
@@ -42,6 +39,13 @@ public class CommentOutAction extends AbstractAction
 	public void actionPerformed(ActionEvent event)
 	{
 		Node selectedNode = xmlEditor.getSelectedNode();
+
+		if (selectedNode instanceof Document)
+		{
+			JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
+					"You cannot comment out the XML document itself.");	
+			return;
+		}
 		StringWriter commentWriter = new StringWriter();
 
 		try
@@ -69,7 +73,7 @@ public class CommentOutAction extends AbstractAction
 			return;
 		}
 
-		Element parent = (Element)selectedNode.getParentNode();
+		Node parent = selectedNode.getParentNode();
 
 		Node newNode = xmlEditor.getXmlModel().getDocument().createComment(commentWriter.toString());
 
