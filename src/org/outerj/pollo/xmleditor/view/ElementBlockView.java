@@ -88,25 +88,7 @@ public class ElementBlockView extends ChildrenBlockView
 		// make the shape
 		if (hasChildren())
 		{
-			Polygon poly = new Polygon();
-			elementShape = poly;
-			// starting at the top left point
-			poly.addPoint(startH, startV);
-			poly.addPoint(startH + width, startV);
-			poly.addPoint(startH + width, startV + titleHeight);
-			if (!isCollapsed())
-			{
-				poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight);
-				poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight + getContentHeight());
-				poly.addPoint(startH + BORDER_WIDTH + 4, startV + titleHeight + getContentHeight());
-				poly.addPoint(startH, startV + titleHeight + getContentHeight() + END_MARKER_HEIGHT);
-			}
-			else
-			{
-				poly.addPoint(startH + BORDER_WIDTH + 4, startV + titleHeight);
-				poly.addPoint(startH, startV + titleHeight + END_MARKER_HEIGHT);
-			}
-
+			elementShape = getElementShape(g, startH, startV);
 		}
 		else
 		{
@@ -143,6 +125,73 @@ public class ElementBlockView extends ChildrenBlockView
 		if (extraAttrViewInfoList != null)
 			drawAttributes(g, extraAttrViewInfoList, startH, baseline);
 	}
+
+	protected Shape getElementShape(Graphics2D g, int startH, int startV)
+	{
+		// because of a clipping bug in Java (which is probably caused by a coordinate-size limitation
+		// of the underlying windowing systems), java cannot correctly clip large shapes, therefore
+		// we'll clip the largest parts ourselves.
+
+		int clipStartVertical = (int)g.getClipBounds().getY();
+		int clipEndVertical = clipStartVertical + (int)g.getClipBounds().getHeight();
+
+		final int margin = 4; // a margin to account for the border widths
+
+		// case 1: only the middle part is visible
+		if (!isCollapsed() && (startV + titleHeight + margin < clipStartVertical) && (startV + titleHeight + getContentHeight() - margin > clipEndVertical))
+		{
+			return new Rectangle(startH, clipStartVertical - margin , BORDER_WIDTH, clipEndVertical - clipStartVertical + margin + margin);
+		}
+		// the top and the middle parts are visible, bottom part is not
+		else if (!isCollapsed() && startV + margin > clipStartVertical && (startV + titleHeight + getContentHeight() - margin > clipEndVertical))
+		{
+			Polygon poly = new Polygon();
+			// starting at the top left point
+			poly.addPoint(startH, startV);
+			poly.addPoint(startH + width, startV);
+			poly.addPoint(startH + width, startV + titleHeight);
+			poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight);
+			poly.addPoint(startH + BORDER_WIDTH, clipEndVertical + margin);
+			poly.addPoint(startH, clipEndVertical + margin);
+			return poly;
+		}
+		// the middle and the bottom parts are visible, the top part is not
+		else if (!isCollapsed() && (startV + titleHeight + margin < clipStartVertical) && (startV + titleHeight + margin < clipStartVertical))
+		{
+			Polygon poly = new Polygon();
+			// starting at the top left point
+			poly.addPoint(startH, clipStartVertical - margin);
+			poly.addPoint(startH + BORDER_WIDTH, clipStartVertical - margin);
+			poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight + getContentHeight());
+			poly.addPoint(startH + BORDER_WIDTH + 4, startV + titleHeight + getContentHeight());
+			poly.addPoint(startH, startV + titleHeight + getContentHeight() + END_MARKER_HEIGHT);
+			return poly;
+		}
+		// all other cases: return the whole shape. If the java clipping bug would eventually be solved, this
+		// is the only part we need to keep.
+		else
+		{
+			Polygon poly = new Polygon();
+			// starting at the top left point
+			poly.addPoint(startH, startV);
+			poly.addPoint(startH + width, startV);
+			poly.addPoint(startH + width, startV + titleHeight);
+			if (!isCollapsed())
+			{
+				poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight);
+				poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight + getContentHeight());
+				poly.addPoint(startH + BORDER_WIDTH + 4, startV + titleHeight + getContentHeight());
+				poly.addPoint(startH, startV + titleHeight + getContentHeight() + END_MARKER_HEIGHT);
+			}
+			else
+			{
+				poly.addPoint(startH + BORDER_WIDTH + 4, startV + titleHeight);
+				poly.addPoint(startH, startV + titleHeight + END_MARKER_HEIGHT);
+			}
+			return poly;
+		}
+	}
+
 
 	protected void drawAttributes(Graphics2D g, ArrayList myAttrViewInfoList, int startH, int baseline)
 	{
