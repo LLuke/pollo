@@ -17,7 +17,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.List;
 
 public class QueryByXPathPanel extends JPanel implements ActionListener, Disposable
@@ -64,46 +63,22 @@ public class QueryByXPathPanel extends JPanel implements ActionListener, Disposa
 
         xpathCombo = new JComboBox(Pollo.getInstance().getConfiguration().getRecentlyUsedXPathsModel());
         xpathCombo.setEditable(true);
-        xpathCombo.getEditor().getEditorComponent().addKeyListener(new KeyListener()
+
+        JComponent editorComponent = (JComponent)xpathCombo.getEditor().getEditorComponent();
+        editorComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "execute-xpath");
+        editorComponent.getActionMap().put("execute-xpath", new AbstractAction()
         {
-            public void keyTyped(KeyEvent e)
+            public void actionPerformed(ActionEvent e)
             {
-            }
-
-            public void keyPressed(KeyEvent e)
-            {
-            }
-
-            public void keyReleased(KeyEvent e)
-            {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER)
-                {
-                    String newSelection = (String)xpathCombo.getSelectedItem();
-                    if (xpathCombo.getEditor().getItem().equals(newSelection))
-                    {
-                        ActionEvent actionEvent = new ActionEvent(e.getSource(), 0, "execute");
-                        QueryByXPathPanel.this.actionPerformed(actionEvent);
-                    }
-                    else
-                    {
-                        xpathCombo.getEditor().setItem(newSelection);
-                    }
-                }
+                executeQuery();
             }
         });
+
         Dimension dimension = xpathCombo.getPreferredSize();
         dimension.width = Integer.MAX_VALUE;
         dimension.height = dimension.height - 4;
         xpathCombo.setMaximumSize(dimension);
         box.add(xpathCombo);
-
-        /*
-        JButton executeButton = new JButton("Execute");
-        executeButton.setActionCommand("execute");
-        executeButton.addActionListener(this);
-        executeButton.setRequestFocusEnabled(false);
-        box.add(executeButton);
-        */
 
         prevButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/Back16.gif"));
         prevButton.setActionCommand("prevResult");
@@ -129,82 +104,84 @@ public class QueryByXPathPanel extends JPanel implements ActionListener, Disposa
         this.add(box, BorderLayout.CENTER);
     }
 
+    public void executeQuery()
+    {
+        XPath xpath;
+        String xpathString = (String)xpathCombo.getEditor().getItem();
+        try
+        {
+            xpath = new DOMXPath(xpathString);
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(getTopLevelAncestor()
+                    , "Could not parse XPath expression: " + e.getMessage()
+                    , "Error", JOptionPane.ERROR_MESSAGE);
+            prevButton.setEnabled(false);
+            nextButton.setEnabled(false);
+            progress.setText("");
+            resultList = null;
+            return;
+        }
+
+        try
+        {
+            // as context for resolving namespace prefixes, the root node displayed
+            // in the XmlEditor widget is used
+            SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
+            namespaceContext.addElementNamespaces(xpath.getNavigator(), xmlEditor.getXmlModel().getDocument().getDocumentElement());
+            xpath.setNamespaceContext(namespaceContext);
+
+            resultList = xpath.selectNodes(xmlEditor.getRootElement());
+            Pollo.getInstance().getConfiguration().addRecentlyUsedXPath(xpathString);
+            xpathCombo.getEditor().setItem(xpathString);
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(getTopLevelAncestor()
+                    , "Could not execute XPath expression: " + e.getMessage()
+                    , "Error", JOptionPane.ERROR_MESSAGE);
+            prevButton.setEnabled(false);
+            nextButton.setEnabled(false);
+            progress.setText("");
+            resultList = null;
+            return;
+        }
+
+        if (resultList == null || resultList.size() == 0)
+        {
+            JOptionPane.showMessageDialog(getTopLevelAncestor()
+                    , "This XPath query returned no result"
+                    , "XPath", JOptionPane.INFORMATION_MESSAGE);
+            prevButton.setEnabled(false);
+            nextButton.setEnabled(false);
+            progress.setText("");
+            resultList = null;
+            return;
+        }
+
+        if(!(resultList.get(0) instanceof Node))
+        {
+            JOptionPane.showMessageDialog(getTopLevelAncestor()
+                    , "Result of the query: " + resultList.get(0).toString()
+                    , "XPath", JOptionPane.INFORMATION_MESSAGE);
+            prevButton.setEnabled(false);
+            nextButton.setEnabled(false);
+            progress.setText("");
+            resultList = null;
+            return;
+        }
+
+        currentResult = -1;
+        prevButton.setEnabled(true);
+        nextButton.setEnabled(true);
+        jump(true);
+        xmlEditor.requestFocus();
+    }
+
     public void actionPerformed(ActionEvent event)
     {
-        if (event.getActionCommand().equals("execute"))
-        {
-            XPath xpath;
-            String xpathString = (String)xpathCombo.getEditor().getItem();
-            try
-            {
-                xpath = new DOMXPath(xpathString);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(getTopLevelAncestor()
-                        , "Could not parse XPath expression: " + e.getMessage()
-                        , "Error", JOptionPane.ERROR_MESSAGE);
-                prevButton.setEnabled(false);
-                nextButton.setEnabled(false);
-                progress.setText("");
-                resultList = null;
-                return;
-            }
-
-            try
-            {
-                // as context for resolving namespace prefixes, the root node displayed
-                // in the XmlEditor widget is used
-                SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
-                namespaceContext.addElementNamespaces(xpath.getNavigator(), xmlEditor.getXmlModel().getDocument().getDocumentElement());
-                xpath.setNamespaceContext(namespaceContext);
-
-                resultList = xpath.selectNodes(xmlEditor.getRootElement());
-                Pollo.getInstance().getConfiguration().addRecentlyUsedXPath(xpathString);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(getTopLevelAncestor()
-                        , "Could not execute XPath expression: " + e.getMessage()
-                        , "Error", JOptionPane.ERROR_MESSAGE);
-                prevButton.setEnabled(false);
-                nextButton.setEnabled(false);
-                progress.setText("");
-                resultList = null;
-                return;
-            }
-
-            if (resultList == null || resultList.size() == 0)
-            {
-                JOptionPane.showMessageDialog(getTopLevelAncestor()
-                        , "This XPath query returned no result"
-                        , "XPath", JOptionPane.INFORMATION_MESSAGE);
-                prevButton.setEnabled(false);
-                nextButton.setEnabled(false);
-                progress.setText("");
-                resultList = null;
-                return;
-            }
-
-            if(!(resultList.get(0) instanceof Node))
-            {
-                JOptionPane.showMessageDialog(getTopLevelAncestor()
-                        , "Result of the query: " + resultList.get(0).toString()
-                        , "XPath", JOptionPane.INFORMATION_MESSAGE);
-                prevButton.setEnabled(false);
-                nextButton.setEnabled(false);
-                progress.setText("");
-                resultList = null;
-                return;
-            }
-
-            currentResult = -1;
-            prevButton.setEnabled(true);
-            nextButton.setEnabled(true);
-            jump(true);
-            xmlEditor.requestFocus();
-        }
-        else if (event.getActionCommand().equals("prevResult"))
+        if (event.getActionCommand().equals("prevResult"))
         {
             jump(false);
             xmlEditor.requestFocus();
@@ -261,9 +238,9 @@ public class QueryByXPathPanel extends JPanel implements ActionListener, Disposa
 
         View view;
         if (node instanceof Attr)
-            view = (View)xmlEditor.getRootView().findNode(((Attr)node).getOwnerElement());
+            view = xmlEditor.getRootView().findNode(((Attr)node).getOwnerElement());
         else
-            view = (View)xmlEditor.getRootView().findNode(node);
+            view = xmlEditor.getRootView().findNode(node);
 
         if (view == null)
         {
