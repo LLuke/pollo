@@ -76,7 +76,7 @@ public class RenderViewToFileAction extends AbstractAction
 			// ask user for a filename
 			if (fileChooser == null)
 				fileChooser = new JFileChooser();
-			int returnVal = fileChooser.showOpenDialog(xmlEditor.getTopLevelAncestor());
+			int returnVal = fileChooser.showSaveDialog(xmlEditor.getTopLevelAncestor());
 			if(returnVal != JFileChooser.APPROVE_OPTION)
 				return;
 
