@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.util.ResourceManager;
 import org.w3c.dom.Node;
 
 import java.awt.event.ActionEvent;
@@ -16,9 +17,12 @@ import java.awt.event.ActionEvent;
  */
 public class CutAction extends RemoveAction
 {
+    protected static final ResourceManager resourceManager = ResourceManager.getManager(CutAction.class);
+
 	public CutAction(XmlEditor xmlEditor)
 	{
 		super(xmlEditor);
+        resourceManager.configureAction(this);
 	}
 
 	public void actionPerformed(ActionEvent e)

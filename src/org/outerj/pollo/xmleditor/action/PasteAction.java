@@ -2,7 +2,7 @@ package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
-import org.outerj.pollo.gui.EmptyIcon;
+import org.outerj.pollo.util.ResourceManager;
 import org.w3c.dom.*;
 
 import javax.swing.*;
@@ -16,6 +16,7 @@ public class PasteAction extends AbstractAction implements SelectionListener
 
 	protected XmlEditor xmlEditor;
 	protected int behaviour;
+    protected static final ResourceManager resourceManager = ResourceManager.getManager(PasteAction.class);
 
 	public PasteAction(XmlEditor xmlEditor, int behaviour)
 	{
@@ -23,6 +24,18 @@ public class PasteAction extends AbstractAction implements SelectionListener
 		this.behaviour = behaviour;
 		setEnabled(false);
 		xmlEditor.getSelectionInfo().addListener(this);
+
+        String propertyPrefix;
+        if (behaviour == PASTE_BEFORE)
+            propertyPrefix = "pasteBeforeAction";
+        else if (behaviour == PASTE_AFTER)
+            propertyPrefix = "pasteAfterAction";
+        else if (behaviour == PASTE_ASCHILD)
+            propertyPrefix = "pasteInsideAction";
+        else
+            throw new RuntimeException("[PasteAction] Invalid behaviour: " + behaviour);
+
+        resourceManager.configureAction(propertyPrefix, this);
 	}
 
 	public void actionPerformed(ActionEvent e)

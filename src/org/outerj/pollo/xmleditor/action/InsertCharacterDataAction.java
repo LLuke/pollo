@@ -2,6 +2,7 @@ package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.util.ResourceManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -9,8 +10,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
-  An action to insert comment, text or cdata nodes before, after
-  or as child of the currently selected node.
+ * An action to insert comment, text or cdata nodes before, after
+ * or as child of the currently selected node.
+ *
+ * <p>It would have been more OO to create 12 different Actions instead of this one,
+ * but I'll save that cleanup for later.
  */
 public class InsertCharacterDataAction extends AbstractAction implements SelectionListener
 {
@@ -26,6 +30,7 @@ public class InsertCharacterDataAction extends AbstractAction implements Selecti
 	protected XmlEditor xmlEditor;
 	protected int behaviour;
 	protected int type;
+    protected static final ResourceManager resourceManager = ResourceManager.getManager(InsertCharacterDataAction.class);
 
 	public InsertCharacterDataAction(XmlEditor xmlEditor, int behaviour, int type)
 	{
@@ -34,6 +39,30 @@ public class InsertCharacterDataAction extends AbstractAction implements Selecti
 		this.type      = type;
 		setEnabled(false);
 		xmlEditor.getSelectionInfo().addListener(this);
+
+        String propertyPrefix;
+        if (type == TYPE_TEXT)
+            propertyPrefix = "insertText";
+        else if (type == TYPE_COMMENT)
+            propertyPrefix = "insertComment";
+        else if (type == TYPE_CDATA)
+            propertyPrefix = "insertCData";
+        else if (type == TYPE_PI)
+            propertyPrefix = "insertPI";
+        else
+            throw new RuntimeException("[InsertCharacterDataAction] Invalid type: " + type);
+
+        if (behaviour == INSERT_BEFORE)
+            propertyPrefix += "BeforeAction";
+        else if (behaviour == INSERT_AFTER)
+            propertyPrefix += "AfterAction";
+        else if (behaviour == INSERT_INSIDE)
+            propertyPrefix += "InsideAction";
+        else
+            throw new RuntimeException("[InsertCharacterDataAction] Invalid behaviour: " + behaviour);
+
+        resourceManager.configureAction(propertyPrefix, this);
+
 	}
 
 	public void actionPerformed(ActionEvent e)

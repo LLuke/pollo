@@ -87,12 +87,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	protected CommentOutAction commentOutAction;
 	protected UncommentAction uncommentAction;
 
-	protected CollapseExpandAction collapseAllAction;
-	protected CollapseExpandAction expandAllAction;
-	protected CollapseExpandAction toggleAction;
-
-	protected CollapseExpandAction collapseAction;
-	protected CollapseExpandAction expandAction;
+	protected CollapseAllAction collapseAllAction;
+	protected ExpandAllAction expandAllAction;
+	protected ToggleExpandCollapseAction toggleAction;
+	protected CollapseAction collapseAction;
+	protected ExpandAction expandAction;
 
 	protected RenderViewToFileAction renderViewToFileAction;
 	protected FocusOnEditorAction focusOnEditorAction;
@@ -145,8 +144,6 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		addNodeClickedListener(this);
 		setOpaque(true);
 
-		ResourceManager resMgr = ResourceManager.getManager(XmlEditor.class);
-
 		// init drag-and-drop
 		dragSource = new DragSource();
 		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
@@ -155,77 +152,52 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 		// init actions
 		copyAction                = new CopyAction(this);
-		resMgr.configureAction("copyAction", copyAction);
 		cutAction                 = new CutAction(this);
-		resMgr.configureAction("cutAction", cutAction);
 		removeAction              = new RemoveAction(this);
-		resMgr.configureAction("removeAction", removeAction);
 		
 		pasteBeforeAction         = new PasteAction(this, PasteAction.PASTE_BEFORE);
-		resMgr.configureAction("pasteBeforeAction", pasteBeforeAction);
 		pasteAfterAction          = new PasteAction(this, PasteAction.PASTE_AFTER);
-		resMgr.configureAction("pasteAfterAction", pasteAfterAction);
 		pasteInsideAction         = new PasteAction(this, PasteAction.PASTE_ASCHILD);
-		resMgr.configureAction("pasteInsideAction", pasteInsideAction);
 		
 		insertCommentBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
 				InsertCharacterDataAction.TYPE_COMMENT);
-		resMgr.configureAction("insertCommentBeforeAction", insertCommentBeforeAction);
 		insertCommentAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
 				InsertCharacterDataAction.TYPE_COMMENT);
-		resMgr.configureAction("insertCommentAfterAction", insertCommentAfterAction);
 		insertCommentInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
 				InsertCharacterDataAction.TYPE_COMMENT);
-		resMgr.configureAction("insertCommentInsideAction", insertCommentInsideAction);
 
 		insertTextBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
 				InsertCharacterDataAction.TYPE_TEXT);
-		resMgr.configureAction("insertTextBeforeAction", insertTextBeforeAction);
 		insertTextAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
 				InsertCharacterDataAction.TYPE_TEXT);
-		resMgr.configureAction("insertTextAfterAction", insertTextAfterAction);
 		insertTextInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
 				InsertCharacterDataAction.TYPE_TEXT);
-		resMgr.configureAction("insertTextInsideAction", insertTextInsideAction);
 
 		insertCDataBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
 				InsertCharacterDataAction.TYPE_CDATA);
-		resMgr.configureAction("insertCDataBeforeAction", insertCDataBeforeAction);
 		insertCDataAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
 				InsertCharacterDataAction.TYPE_CDATA);
-		resMgr.configureAction("insertCDataAfterAction", insertCDataAfterAction);
 		insertCDataInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
 				InsertCharacterDataAction.TYPE_CDATA);
-		resMgr.configureAction("insertCDataInsideAction", insertCDataInsideAction);
 
 		insertPIBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
 				InsertCharacterDataAction.TYPE_PI);
-		resMgr.configureAction("insertPIBeforeAction", insertPIBeforeAction);
 		insertPIAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
 				InsertCharacterDataAction.TYPE_PI);
-		resMgr.configureAction("insertPIAfterAction", insertPIAfterAction);
 		insertPIInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
 				InsertCharacterDataAction.TYPE_PI);
-		resMgr.configureAction("insertPIInsideAction", insertPIInsideAction);
 
 		commentOutAction          = new CommentOutAction(this);
 		uncommentAction           = new UncommentAction(this);
 
-		collapseAllAction         = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE_ALL);
-		resMgr.configureAction("collapseAllAction", collapseAllAction);
-		expandAllAction           = new CollapseExpandAction(this, CollapseExpandAction.EXPAND_ALL);
-		resMgr.configureAction("expandAllAction", expandAllAction);
-		collapseAction            = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE);
-		resMgr.configureAction("collapseAction", collapseAction);
-		expandAction              = new CollapseExpandAction(this, CollapseExpandAction.EXPAND);
-		resMgr.configureAction("expandAction", expandAction);
-		toggleAction              = new CollapseExpandAction(this, CollapseExpandAction.TOGGLE);
-		resMgr.configureAction("toggleAction", toggleAction);
+		collapseAllAction         = new CollapseAllAction(this);
+		expandAllAction           = new ExpandAllAction(this);
+		collapseAction            = new CollapseAction(this);
+		expandAction              = new ExpandAction(this);
+		toggleAction              = new ToggleExpandCollapseAction(this);
 
 		renderViewToFileAction = new RenderViewToFileAction(this);
-		resMgr.configureAction("renderViewToFileAction", renderViewToFileAction);
 		focusOnEditorAction = new FocusOnEditorAction(this);
-		resMgr.configureAction("focusOnEditorAction", focusOnEditorAction);
 
 		// init keymap and actionmap
 		setInputMap(WHEN_FOCUSED, inputMap);
@@ -1036,27 +1008,27 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		return uncommentAction;
 	}
 
-	public CollapseExpandAction getCollapseAction()
+	public CollapseAction getCollapseAction()
 	{
 		return collapseAction;
 	}
 
-	public CollapseExpandAction getCollapseAllAction()
+	public CollapseAllAction getCollapseAllAction()
 	{
 		return collapseAllAction;
 	}
 
-	public CollapseExpandAction getExpandAction()
+	public ExpandAction getExpandAction()
 	{
 		return expandAction;
 	}
 
-	public CollapseExpandAction getToggleAction()
+	public ToggleExpandCollapseAction getToggleAction()
 	{
 		return toggleAction;
 	}
 
-	public CollapseExpandAction getExpandAllAction()
+	public ExpandAllAction getExpandAllAction()
 	{
 		return expandAllAction;
 	}

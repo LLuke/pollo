@@ -6,6 +6,7 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.view.View;
+import org.outerj.pollo.util.ResourceManager;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
@@ -23,16 +24,15 @@ import java.io.OutputStream;
  *
  * @author Bruno Dumon
  */
-public class RenderViewToFileAction extends AbstractAction implements SelectionListener
+public class RenderViewToFileAction extends AbstractNodeAction
 {
-	protected XmlEditor xmlEditor;
 	protected JFileChooser fileChooser;
+    protected static final ResourceManager resourceManager = ResourceManager.getManager(RenderViewToFileAction.class);
 
 	public RenderViewToFileAction(XmlEditor xmlEditor)
 	{
-		this.xmlEditor = xmlEditor;
-		xmlEditor.getSelectionInfo().addListener(this);
-		setEnabled(false);
+		super(xmlEditor);
+        resourceManager.configureAction(this);
 	}
 
 	public void actionPerformed(ActionEvent event)
@@ -95,16 +95,6 @@ public class RenderViewToFileAction extends AbstractAction implements SelectionL
 						"Error storing image: " + e.getMessage());	
 			}
 		}
-	}
-
-	public void nodeUnselected(Node node)
-	{
-		setEnabled(false);
-	}
-
-	public void nodeSelected(Node node)
-	{
-		setEnabled(true);
 	}
 
 }

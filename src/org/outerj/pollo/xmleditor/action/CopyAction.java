@@ -2,6 +2,7 @@ package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.util.ResourceManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -16,15 +17,14 @@ import java.awt.event.ActionEvent;
  *
  * @author Bruno Dumon
  */
-public class CopyAction extends AbstractAction implements SelectionListener
+public class CopyAction extends AbstractNodeAction
 {
-	protected XmlEditor xmlEditor;
+    protected static final ResourceManager resourceManager = ResourceManager.getManager(CopyAction.class);
 
 	public CopyAction(XmlEditor xmlEditor)
 	{
-		this.xmlEditor = xmlEditor;
-		xmlEditor.getSelectionInfo().addListener(this);
-		setEnabled(false);
+        super(xmlEditor);
+        resourceManager.configureAction(this);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -34,15 +34,5 @@ public class CopyAction extends AbstractAction implements SelectionListener
 		{
 			xmlEditor.putOnClipboard(xmlEditor.getSelectedNode());
 		}
-	}
-
-	public void nodeUnselected(Node node)
-	{
-		setEnabled(false);
-	}
-
-	public void nodeSelected(Node node)
-	{
-		setEnabled(true);
 	}
 }
