@@ -1,9 +1,6 @@
 package org.outerj.pollo;
 
-import org.outerj.pollo.action.CloseAction;
-import org.outerj.pollo.action.SaveAction;
-import org.outerj.pollo.action.SaveAsAction;
-import org.outerj.pollo.action.CloseViewAction;
+import org.outerj.pollo.action.*;
 import org.outerj.pollo.config.ViewTypeConf;
 import org.outerj.pollo.config.PolloConfiguration;
 import org.outerj.pollo.gui.*;
@@ -55,6 +52,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
     protected SaveAsAction saveAsAction;
     protected CloseAction closeAction;
     protected CloseViewAction closeViewAction;
+    protected CloseAllExceptThisAction closeAllExceptThisAction;
     protected static ResourceManager resMgr = ResourceManager.getManager(EditorPanelImpl.class);
 
     public EditorPanelImpl(XmlModel xmlModel, ViewTypeConf viewTypeConf, PolloFrame polloFrame)
@@ -91,6 +89,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         saveAsAction = new SaveAsAction(xmlModel, polloFrame);
         closeAction = new CloseAction(xmlModel, polloFrame);
         closeViewAction = new CloseViewAction(polloFrame, this);
+        closeAllExceptThisAction = new CloseAllExceptThisAction(xmlModel, polloFrame);
 
         // add the component to the panel
         this.setLayout(new BorderLayout());
@@ -128,6 +127,10 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         textFileMenu.addSeparator();
         domFileMenu.add(Utilities.createMenuItemFromAction(closeAction));
         textFileMenu.add(Utilities.createMenuItemFromAction(closeAction));
+        domFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getCloseAllAction()));
+        textFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getCloseAllAction()));
+        domFileMenu.add(Utilities.createMenuItemFromAction(closeAllExceptThisAction));
+        textFileMenu.add(Utilities.createMenuItemFromAction(closeAllExceptThisAction));
         domFileMenu.addSeparator();
         textFileMenu.addSeparator();
         domFileMenu.add(Utilities.createMenuItemFromAction(saveAction));
@@ -664,5 +667,10 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
             setSelectedIndex(0);
         }
 
+    }
+
+    public Action getCloseAction()
+    {
+        return closeViewAction;
     }
 }
