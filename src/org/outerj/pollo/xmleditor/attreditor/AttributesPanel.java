@@ -3,8 +3,10 @@ package org.outerj.pollo.xmleditor.attreditor;
 import org.outerj.pollo.DomConnected;
 import org.outerj.pollo.gui.FocusHighlightComponent;
 import org.outerj.pollo.gui.SomeLinesBorder;
+import org.outerj.pollo.gui.SmallButton;
 import org.outerj.pollo.xmleditor.Disposable;
 import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.xmleditor.IconManager;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
 import org.outerj.pollo.xmleditor.model.XmlModel;
@@ -76,28 +78,20 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
         setLayout(new BorderLayout());
         add(scrollPane, BorderLayout.CENTER);
 
-        addAttrButton = new JButton("Add attribute...");
+        addAttrButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/xmleditor/attreditor/add_attribute.gif"));
         addAttrButton.setActionCommand("add");
         addAttrButton.addActionListener(this);
+        addAttrButton.setToolTipText("Add attribute...");
 
-        deleteAttrButton = new JButton("Clear value");
+        deleteAttrButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/xmleditor/attreditor/remove_attribute.gif"));
         deleteAttrButton.setActionCommand("delete");
         deleteAttrButton.addActionListener(this);
+        deleteAttrButton.setToolTipText("Remove attribute");
 
-        JPanel rightPanel = new JPanel();
-        add(rightPanel, BorderLayout.EAST);
-        GridBagLayout gridbag = new GridBagLayout();
-        rightPanel.setLayout(gridbag);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-
-        gridbag.setConstraints(addAttrButton, gbc);
-        gridbag.setConstraints(deleteAttrButton, gbc);
-
-        rightPanel.add(addAttrButton);
-        rightPanel.add(deleteAttrButton);
+        Box buttonsBox = new Box(BoxLayout.Y_AXIS);
+        buttonsBox.add(addAttrButton);
+        buttonsBox.add(deleteAttrButton);
+        add(buttonsBox, BorderLayout.EAST);
 
         setEnabled(false);
     }
