@@ -41,7 +41,8 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
     protected NodeDetailsPanel nodeDetailsPanel;
     protected JSplitPane xmlEditorAndNodeInsertPanelSplit;
     protected JSplitPane xmlEditorAndValidationErrorsSplit;
-    protected JSplitPane splitPane1AndAttributesPanelSplit;
+    protected JSplitPane topBottomSplit;
+    protected JSplitPane nodeDetailsAndHelpPanelSplit;
     protected Container xpathAndXmlEditorContainer;
     protected ValidationErrorsPanel validationErrorsPanel;
     protected AttributesPanel attrPanel;
@@ -124,6 +125,10 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
                     }
                 });
 
+        // create the HelpPanel
+        HelpPanel helpPanel = new HelpPanel(xmlEditor, attrPanel);
+        helpPanel.setBorder(ShadowBorder.getInstance());
+
         // Create the container containing the QueryByXPath panel and the XmlEditor component
         xpathAndXmlEditorContainer = new Container();
         xpathAndXmlEditorContainer.setLayout(new BorderLayout());
@@ -140,32 +145,27 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
         xmlEditorAndNodeInsertPanelSplit.setDividerSize(3);
         xmlEditorAndNodeInsertPanelSplit.setBorder(BorderFactory.createEmptyBorder());
 
-        // create second splitpane (first split pane - attributesPanel)
-        splitPane1AndAttributesPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, xmlEditorAndNodeInsertPanelSplit, nodeDetailsPanel);
-        splitPane1AndAttributesPanelSplit.setResizeWeight(1); // xml content editor gets extra space
-        splitPane1AndAttributesPanelSplit.setDividerLocation(Pollo.getInstance().getConfiguration().getSplitPane2Pos());
-        splitPane1AndAttributesPanelSplit.addPropertyChangeListener(new SplitPaneDividerListener());
-        splitPane1AndAttributesPanelSplit.setDividerSize(3);
-        splitPane1AndAttributesPanelSplit.setBorder(BorderFactory.createEmptyBorder());
-        add(splitPane1AndAttributesPanelSplit, BorderLayout.CENTER);
+        // create nodeDetailsPanel - helpPanel splitPane
+        nodeDetailsAndHelpPanelSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, nodeDetailsPanel, helpPanel);
+        nodeDetailsAndHelpPanelSplit.setDividerSize(3);
+        nodeDetailsAndHelpPanelSplit.setBorder(BorderFactory.createEmptyBorder());
+        nodeDetailsAndHelpPanelSplit.setDividerLocation(Pollo.getInstance().getConfiguration().getSplitPane3Pos());
+        nodeDetailsAndHelpPanelSplit.addPropertyChangeListener(new SplitPaneDividerListener());
+        nodeDetailsAndHelpPanelSplit.setOneTouchExpandable(true);
 
-        Box statusBars = new Box(BoxLayout.Y_AXIS);
-
-        HelpBar helpBar = new HelpBar(xmlEditor, attrPanel);
-        helpBar.setBorder(new CompoundBorder(new EmptyBorder(3, 0, 0, 0), BorderFactory.createBevelBorder(BevelBorder.LOWERED)));
-        Dimension preferredSize = helpBar.getPreferredSize();
-        preferredSize.width = Integer.MAX_VALUE;
-        helpBar.setMaximumSize(preferredSize);
-        statusBars.add(helpBar);
+        // create top - bottom split pane
+        topBottomSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, xmlEditorAndNodeInsertPanelSplit, nodeDetailsAndHelpPanelSplit);
+        topBottomSplit.setResizeWeight(1); // xml content editor gets extra space
+        topBottomSplit.setDividerLocation(Pollo.getInstance().getConfiguration().getSplitPane2Pos());
+        topBottomSplit.addPropertyChangeListener(new SplitPaneDividerListener());
+        topBottomSplit.setDividerSize(3);
+        topBottomSplit.setBorder(BorderFactory.createEmptyBorder());
+        topBottomSplit.setOneTouchExpandable(true);
+        add(topBottomSplit, BorderLayout.CENTER);
 
         NodePathBar nodePathBar = new NodePathBar(xmlEditor, attrPanel);
         nodePathBar.setBorder(new CompoundBorder(new EmptyBorder(3, 0, 0, 0), BorderFactory.createBevelBorder(BevelBorder.LOWERED)));
-        preferredSize = nodePathBar.getPreferredSize();
-        preferredSize.width = Integer.MAX_VALUE;
-        nodePathBar.setMaximumSize(preferredSize);
-        statusBars.add(nodePathBar);
-
-        add(statusBars, BorderLayout.SOUTH);
+        add(nodePathBar, BorderLayout.SOUTH);
 
         setXmlModel(model);
     }
@@ -179,7 +179,8 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
                 PolloConfiguration conf = Pollo.getInstance().getConfiguration();
 
                 conf.setSplitPane1Pos(xmlEditorAndNodeInsertPanelSplit.getDividerLocation());
-                conf.setSplitPane2Pos(splitPane1AndAttributesPanelSplit.getDividerLocation());
+                conf.setSplitPane2Pos(topBottomSplit.getDividerLocation());
+                conf.setSplitPane3Pos(nodeDetailsAndHelpPanelSplit.getDividerLocation());
 
                 // also change the default window size, since the position of the divider is dependent on the
                 // size of the current window
