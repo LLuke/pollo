@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+The element colors are the same for elements belonging to the same group:
+- type definition components: xsd:simpleType,xsd:complexType
+- declaration components: xsd:attribute,xsd:element,xsd:notation
+- model group components: model groups(xsd:all,xsd:choice,xsd:sequence),
+                          particles,
+                          wildcards (xsd:any),
+                          attribute uses (xsd:attribute)
+- identity constraint definition components: xsd:unique, xsd:key, xsd:keyref,xsd:selector,xsd:field
+- group definition components (for reuse): xsd:attributeGroup,xsd:group 
+- annotation components: xsd:annotation,xsd:appinfo,xsd:documentation
+
+- xsd:union,xsd:list
+- xsd:restriction,xsd:extension
+- xsd:complexContent,xsd:simpleContent
+- the facets
+-->
+<displayspec xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <element name="xsd:schema">
+        <display type="block"/>
+        <background-color red="224" green="238" blue="224"/>
+		<showattributes names="id,version,finalDefault,blockDefault,elementFormDefault,attributeFormDefault,targetNamespace"/>
+    </element>
+
+	<element name="xsd:complexType">
+        <display type="block"/>
+        <background-color red="124" green="142" blue="255"/>
+		<showattributes names="id,name,abstract,final,block,mixed"/>
+    </element>
+
+    <element name="xsd:complexContent">
+        <display type="block"/>
+		<background-color red="174" green="164" blue="232"/>
+		<showattributes names="id,mixed"/>
+    </element>
+
+    <element name="xsd:simpleContent">
+        <display type="block"/>
+		<background-color red="174" green="164" blue="232"/>
+		<showattributes names="id,mixed"/>
+    </element>
+
+	<element name="xsd:extension">
+        <display type="block"/>
+        <background-color red="255" green="150" blue="155"/>
+		<showattributes names="id,base"/>
+    </element>
+
+    <element name="xsd:element">
+        <display type="block"/>
+        <background-color red="255" green="218" blue="124"/>
+		<showattributes names="id,name,ref,type,minOccurs,maxOccurs,nillable,substitutionGroup,abstract,final,block,default,fixed,form"/>
+    </element>
+
+    <element name="xsd:group">
+        <display type="block"/>
+        <background-color red="209" green="175" blue="202"/>
+		<showattributes names="id,name,ref,minOccurs,maxOccurs"/>
+    </element>
+
+    <element name="xsd:all">
+        <display type="block"/>
+        <background-color red="139" green="214" blue="189"/>
+		<showattributes names="id,minOccurs,maxOccurs"/>
+    </element>
+
+    <element name="xsd:choice">
+        <display type="block"/>
+        <background-color red="139" green="214" blue="189"/>
+		<showattributes names="id,minOccurs,maxOccurs"/>
+    </element>
+
+    <element name="xsd:sequence">
+        <display type="block"/>
+        <background-color red="139" green="214" blue="189"/>
+		<showattributes names="id,minOccurs,maxOccurs"/>
+    </element>
+
+    <element name="xsd:any">
+        <display type="block"/>
+        <background-color red="139" green="214" blue="189"/>
+		<showattributes names="id,namespace,processContents,minOccurs,maxOccurs"/>
+    </element>
+
+    <element name="xsd:anyAttribute">
+        <display type="block"/>
+        <background-color red="224" green="238" blue="224"/>
+		<showattributes names="id,namespace,processContents"/>
+    </element>
+
+    <element name="xsd:attribute">
+        <display type="block"/>
+        <background-color red="255" green="218" blue="124"/>
+		<showattributes names="id,name,ref,type,use,default,fixed,form"/>
+    </element>
+
+    <element name="xsd:attributeGroup">
+        <display type="block"/>
+        <background-color red="209" green="175" blue="202"/>
+		<showattributes names="id,name,ref"/>
+    </element>
+
+	<element name="xsd:unique">
+        <display type="block"/>
+        <background-color red="229" green="174" blue="177"/>
+		<showattributes names="id,name"/>
+    </element>
+
+	<element name="xsd:key">
+        <display type="block"/>
+        <background-color red="229" green="174" blue="177"/>
+		<showattributes names="id,name"/>
+    </element>
+
+    <element name="xsd:keyref">
+        <display type="block"/>
+        <background-color red="229" green="174" blue="177"/>
+		<showattributes names="id,name,refer"/>
+    </element>
+
+    <element name="xsd:selector">
+        <display type="block"/>
+        <background-color red="229" green="174" blue="177"/>
+		<showattributes names="id,xpath"/>
+    </element>
+
+    <element name="xsd:field">
+        <display type="block"/>
+        <background-color red="229" green="174" blue="177"/>
+		<showattributes names="id,xpath"/>
+    </element>
+
+    <element name="xsd:include">
+        <display type="block"/>
+        <background-color red="224" green="238" blue="224"/>
+		<showattributes names="id,schemaLocation"/>
+    </element>
+
+    <element name="xsd:import">
+        <display type="block"/>
+        <background-color red="224" green="238" blue="224"/>
+		<showattributes names="id,namespace,schemaLocation"/>
+    </element>
+
+    <element name="xsd:redefine">
+        <display type="block"/>
+        <background-color red="224" green="238" blue="224"/>
+		<showattributes names="id,schemaLocation"/>
+    </element>
+
+    <element name="xsd:notation">
+        <display type="block"/>
+        <background-color red="255" green="218" blue="124"/>
+		<showattributes names="id,name,system,public"/>
+    </element>
+
+    <element name="xsd:annotation">
+        <display type="block"/>
+        <background-color red="224" green="238" blue="224"/>
+    </element>
+
+    <element name="xsd:appinfo">
+        <display type="block"/>
+        <background-color red="224" green="238" blue="224"/>
+		<showattributes names="id,source"/>
+    </element>
+
+    <element name="xsd:documentation">
+        <display type="block"/>
+        <background-color red="224" green="238" blue="224"/>
+		<showattributes names="id,source,xml:lang"/>
+    </element>
+
+	<element name="xsd:simpleType">
+        <display type="block"/>
+        <background-color red="124" green="142" blue="255"/>
+		<showattributes names="id,name,final"/>
+    </element>
+
+    <element name="xsd:restriction">
+        <display type="block"/>
+        <background-color red="255" green="150" blue="155"/>
+		<showattributes names="id,base"/>
+    </element>
+
+    <element name="xsd:list">
+        <display type="block"/>
+		<background-color red="255" green="219" blue="221"/>
+		<showattributes names="id,itemType"/>
+    </element>
+
+    <element name="xsd:union">
+        <display type="block"/>
+		<background-color red="255" green="219" blue="221"/>
+		<showattributes names="id,memberTypes"/>
+    </element>
+
+    <element name="xsd:maxExclusive">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+    <element name="xsd:minExclusive">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+    <element name="xsd:maxInclusive">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+    <element name="xsd:minInclusive">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+    <element name="xsd:totalDigits">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+    <element name="xsd:fractionDigits">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+    <element name="xsd:length">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+    <element name="xsd:minLength">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+    <element name="xsd:maxLength">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+	<element name="xsd:enumeration">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value"/>
+    </element>
+
+	<element name="xsd:whiteSpace">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value,fixed"/>
+    </element>
+
+	<element name="xsd:pattern">
+        <display type="block"/>
+        <background-color red="224" green="204" blue="169"/>
+		<showattributes names="id,value"/>
+    </element>
+</displayspec>

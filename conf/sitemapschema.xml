@@ -11,6 +11,10 @@
 
 <schema xmlns:map="http://apache.org/cocoon/sitemap/1.0">
 	
+	<!-- This element defines the namespace prefixes that can be used in XPath expressions.
+	Note that the 'xmlns:' should not be used at the start of attribute names. -->
+	<xpath-ns-prefixes map="http://apache.org/cocoon/sitemap/1.0"/>
+
 	<element name="map:parameter">
 		<attributes>
 			<attribute name="name"/>
@@ -20,7 +24,7 @@
 
 	<element name="map:generate">
 		<attributes>
-			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:generators/map:generator/@name/text()"/>
+			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:generators/map:generator/@name"/>
 			<attribute name="src"/>
 		</attributes>
 		<allowedsubelements names="map:parameter"/>
@@ -28,7 +32,7 @@
 
 	<element name="map:transform">
 		<attributes>
-			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:transformers/map:transformer/@name/text()"/>
+			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:transformers/map:transformer/@name"/>
 			<attribute name="src"/>
 		</attributes>
 		<allowedsubelements names="map:parameter"/>
@@ -36,7 +40,7 @@
 
 	<element name="map:serialize">
 		<attributes>
-			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:serializers/map:serializer/@name/text()"/>
+			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:serializers/map:serializer/@name"/>
 			<attribute name="mime-type"/>
 			<attribute name="status-code"/>
 		</attributes>
@@ -45,7 +49,7 @@
 
 	<element name="map:read">
 		<attributes>
-			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:readers/map:reader/@name/text()"/>
+			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:readers/map:reader/@name"/>
 			<attribute name="src"/>
 			<attribute name="mime-type"/>
 		</attributes>
@@ -55,7 +59,7 @@
 	<element name="map:redirect-to">
 		<attributes>
 			<attribute name="uri"/>
-			<attribute name="resource" readvaluesfrom="/map:sitemap/map:resources/map:resource/@name/text()"/>
+			<attribute name="resource" readvaluesfrom="/map:sitemap/map:resources/map:resource/@name"/>
 			<attribute name="session" choosefrom="yes,no,true,false"/>
 		</attributes>
 		<allowedsubelements names=""/>
@@ -63,15 +67,15 @@
 
 	<element name="map:act">
 		<attributes>
-			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:actions/map:action/@name/text()"/>
-			<attribute name="set" readvaluesfrom="/map:sitemap/map:action-sets/map:action-set/@name/text()"/>
+			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:actions/map:action/@name"/>
+			<attribute name="set" readvaluesfrom="/map:sitemap/map:action-sets/map:action-set/@name"/>
 		</attributes>
 		<allowedsubelements names="map:parameter,map:generate,map:transform,map:serialize,map:select,map:match,map:act,map:redirect-to,map:read,map:label,map:aggregate,map:mount"/>
 	</element>
 
 	<element name="map:select">
 		<attributes>
-			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:selectors/map:selector/@name/text()"/>
+			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:selectors/map:selector/@name"/>
 		</attributes>
 		<allowedsubelements names="map:parameter,map:when,map:otherwise"/>
 	</element>
@@ -89,7 +93,7 @@
 
 	<element name="map:match">
 		<attributes>
-			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:matchers/map:matcher/@name/text()"/>
+			<attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:matchers/map:matcher/@name"/>
 			<attribute name="pattern"/>
 		</attributes>
 		<allowedsubelements names="map:parameter,map:generate,map:transform,map:serialize,map:select,map:match,map:act,map:redirect-to,map:read,map:label,map:aggregate,map:mount"/>
@@ -179,6 +183,106 @@
 
 	<element name="map:handle-errors">
 		<allowedsubelements names="map:generate,map:transform,map:serialize,map:select,map:match,map:act,map:redirect-to,map:read,map:label,map:aggregate,map:mount"/>
+	</element>
+
+	<element name="map:components">
+		<allowedsubelements names="map:generators,map:transformers,map:readers,map:serializers,map:selectors,map:matchers,map:actions"/>
+	</element>
+
+	<element name="map:generators">
+		<attributes>
+			<attribute name="default" readvaluesfrom="/map:sitemap/map:components/map:generators/map:generator/@name"/>
+		</attributes>
+		<allowedsubelements names="map:generator"/>
+	</element>
+
+	<element name="map:transformers">
+		<attributes>
+			<attribute name="default" readvaluesfrom="/map:sitemap/map:components/map:transformers/map:transformer/@name"/>
+		</attributes>
+		<allowedsubelements names="map:transformer"/>
+	</element>
+
+	<element name="map:readers">
+		<attributes>
+			<attribute name="default" readvaluesfrom="/map:sitemap/map:components/map:readers/map:reader/@name"/>
+		</attributes>
+		<allowedsubelements names="map:reader"/>
+	</element>
+
+	<element name="map:serializers">
+		<attributes>
+			<attribute name="default" readvaluesfrom="/map:sitemap/map:components/map:serializers/map:serializer/@name"/>
+		</attributes>
+		<allowedsubelements names="map:serializer"/>
+	</element>
+
+	<element name="map:selectors">
+		<attributes>
+			<attribute name="default" readvaluesfrom="/map:sitemap/map:components/map:selectors/map:selector/@name"/>
+		</attributes>
+		<allowedsubelements names="map:selector"/>
+	</element>
+
+	<element name="map:matchers">
+		<attributes>
+			<attribute name="default" readvaluesfrom="/map:sitemap/map:components/map:matchers/map:matcher/@name"/>
+		</attributes>
+		<allowedsubelements names="map:matcher"/>
+	</element>
+
+	<element name="map:actions">
+		<allowedsubelements names="map:action"/>
+	</element>
+
+	<element name="map:generator">
+		<attributes>
+			<attribute name="name"/>
+			<attribute name="src"/>
+		</attributes>
+	</element>
+
+	<element name="map:transformer">
+		<attributes>
+			<attribute name="name"/>
+			<attribute name="src"/>
+		</attributes>
+	</element>
+
+	<element name="map:reader">
+		<attributes>
+			<attribute name="name"/>
+			<attribute name="src"/>
+		</attributes>
+	</element>
+
+	<element name="map:serializer">
+		<attributes>
+			<attribute name="name"/>
+			<attribute name="src"/>
+			<attribute name="mime-type"/>
+		</attributes>
+	</element>
+
+	<element name="map:selector">
+		<attributes>
+			<attribute name="name"/>
+			<attribute name="src"/>
+		</attributes>
+	</element>
+
+	<element name="map:matcher">
+		<attributes>
+			<attribute name="name"/>
+			<attribute name="src"/>
+		</attributes>
+	</element>
+
+	<element name="map:action">
+		<attributes>
+			<attribute name="name"/>
+			<attribute name="src"/>
+		</attributes>
 	</element>
 
 </schema>

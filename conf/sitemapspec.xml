@@ -1,164 +1,228 @@
 <?xml version="1.0"?>
 
 <!-- Display Specification for use with Cocoon Sitemap editor. 
-     This file specifies the colors/fonts to use, and which attributes
+     This file specifies the colors to use, and which attributes
 	 to show on an element.
 -->
 
 <!-- author: Bruno Dumon (bruno.dumon@advalvas.be)             -->
 
 <displayspec xmlns:map="http://apache.org/cocoon/sitemap/1.0">
-	<general>
-		<attribute-label-font name="Dialog" bold="false" size="12"/>
-		<attribute-value-font name="Dialog" bold="false" size="12"/>
-	</general>
 
 	<element name="map:pipelines">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="224" green="238" blue="224"/>
-		<!-- <background-color red="207" green="230" blue="115"/> -->
 	</element>
 	<element name="map:pipeline">
-		<display type="structural"/>
-		<name-font name="SansSerif" bold="false" size="12"/>
-		<!-- <background-color red="216" green="132" blue="156"/> -->
+		<display type="block"/>
 		<background-color red="115" green="230" blue="161"/>
-		<showattributes><att>internal-only</att></showattributes>
+		<showattributes names="internal-only"/>
 	</element>
 	<element name="map:parameter">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="230" green="230" blue="230"/>
-		<showattributes><att>name</att><att>value</att></showattributes>
+		<showattributes names="name,value"/>
 	</element>
 	<element name="map:generate">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="195" green="207" blue="195"/>
-		<showattributes><att>type</att><att>src</att></showattributes>
+		<showattributes names="type,src"/>
 	</element>
 	<element name="map:transform">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="219" green="232" blue="219"/>
-		<showattributes><att>type</att><att>src</att></showattributes>
+		<showattributes names="type,src"/>
 	</element>
 	<element name="map:serialize">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="230" green="244" blue="230"/>
-		<showattributes><att>type</att><att>status-code</att><att>mime-type</att></showattributes>
+		<showattributes names="type,status-code,mime-type"/>
 	</element>
 	<element name="map:match">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
-		<!-- <background-color red="132" green="168" blue="216"/> -->
+		<display type="block"/>
 		<background-color red="151" green="161" blue="230"/>
-		<showattributes><att>type</att><att>pattern</att></showattributes>
+		<showattributes names="type,pattern"/>
 	</element>
 	<element name="map:redirect-to">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
-		<background-color red="214" green="212" blue="132"/>
-		<showattributes><att>uri</att><att>resource</att><att>session</att></showattributes>
+		<display type="block"/>
+		<background-color red="214" green="214" blue="132"/>
+		<showattributes names="uri,resource,session"/>
 	</element>
 	<element name="map:mount">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="195" green="207" blue="195"/>
-		<showattributes><att>src</att><att>uri-prefix</att><att>reload-method</att><att>check-reload</att></showattributes>
+		<showattributes names="src,uri-prefix,reload-method,check-reload"/>
 	</element>
 	<element name="map:read">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="195" green="207" blue="195"/>
-		<showattributes><att>type</att><att>src</att><att>mime-type</att></showattributes>
+		<showattributes names="type,src,mime-type"/>
 	</element>
 	<element name="map:aggregate">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="184" green="166" blue="188"/>
-		<showattributes><att>ns</att><att>prefix</att></showattributes>
+		<showattributes names="ns,prefix"/>
 	</element>
 	<element name="map:part">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="220" green="198" blue="224"/>
-		<showattributes><att>src</att><att>element</att><att>ns</att><att>prefix</att><att>strip-root</att></showattributes>
+		<showattributes names="src,element,ns,prefix,strip-root"/>
 	</element>
 	<element name="map:act">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="237" green="180" blue="180"/>
-		<showattributes><att>type</att><att>set</att><att>action</att></showattributes>
+		<showattributes names="type,set,action"/>
 	</element>
 	<element name="map:label">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="255" green="255" blue="255"/>
-		<showattributes><att>name</att></showattributes>
+		<showattributes names="name"/>
 	</element>
 	<element name="map:select">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="156" green="209" blue="173"/>
-		<showattributes><att>type</att></showattributes>
+		<showattributes names="type"/>
 	</element>
 	<element name="map:when">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="156" green="209" blue="173"/>
-		<showattributes><att>test</att></showattributes>
+		<showattributes names="test"/>
 	</element>
 	<element name="map:otherwise">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="156" green="209" blue="173"/>
 	</element>
 	<element name="map:handle-errors">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
-		<!-- <background-color red="255" green="100" blue="100"/> -->
+		<display type="block"/>
 		<background-color red="229" green="146" blue="146"/>
 	</element>
 
 	<element name="map:resources">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="132" green="168" blue="216"/>
-		<showattributes><att>name</att></showattributes>
+		<showattributes names="name"/>
 	</element>
 	<element name="map:resource">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="237" green="180" blue="180"/>
-		<showattributes><att>name</att></showattributes>
+		<showattributes names="name"/>
 	</element>
 
 	<element name="map:views">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="132" green="168" blue="216"/>
-		<showattributes><att>name</att></showattributes>
+		<showattributes names="name"/>
 	</element>
 	<element name="map:view">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="237" green="180" blue="180"/>
-		<showattributes><att>name</att><att>from-label</att><att>form-position</att></showattributes>
+		<showattributes names="name,from-label,form-position"/>
 	</element>
 
 	<element name="map:action-sets">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="132" green="168" blue="216"/>
 	</element>
 	<element name="map:action-set">
-		<display type="structural"/>
-		<name-font name="Dialog" bold="false" size="12"/>
+		<display type="block"/>
 		<background-color red="230" green="184" blue="115"/>
-		<showattributes><att>name</att></showattributes>
+		<showattributes names="name"/>
 	</element>
 
+
+
+
+
+	<element name="map:sitemap">
+		<display type="block"/>
+		<background-color red="181" green="181" blue="204"/>
+	</element>
+
+	<element name="map:components">
+		<display type="block"/>
+		<background-color red="230" green="184" blue="115"/>
+	</element>
+
+	<element name="map:generators">
+		<display type="block"/>
+		<background-color red="192" green="204" blue="181"/>
+		<showattributes names="default"/>
+	</element>
+
+	<element name="map:transformers">
+		<display type="block"/>
+		<background-color red="192" green="204" blue="181"/>
+		<showattributes names="default"/>
+	</element>
+
+	<element name="map:readers">
+		<display type="block"/>
+		<background-color red="192" green="204" blue="181"/>
+		<showattributes names="default"/>
+	</element>
+
+	<element name="map:serializers">
+		<display type="block"/>
+		<background-color red="192" green="204" blue="181"/>
+		<showattributes names="default"/>
+	</element>
+
+	<element name="map:selectors">
+		<display type="block"/>
+		<background-color red="192" green="204" blue="181"/>
+		<showattributes names="default"/>
+	</element>
+
+	<element name="map:matchers">
+		<display type="block"/>
+		<background-color red="192" green="204" blue="181"/>
+		<showattributes names="default"/>
+	</element>
+
+	<element name="map:actions">
+		<display type="block"/>
+		<background-color red="192" green="204" blue="181"/>
+	</element>
+
+	<element name="map:generator">
+		<display type="block"/>
+		<background-color red="181" green="204" blue="202"/>
+		<showattributes names="name,src"/>
+	</element>
+
+	<element name="map:transformer">
+		<display type="block"/>
+		<background-color red="181" green="204" blue="202"/>
+		<showattributes names="name,src"/>
+	</element>
+
+	<element name="map:reader">
+		<display type="block"/>
+		<background-color red="181" green="204" blue="202"/>
+		<showattributes names="name,src"/>
+	</element>
+
+	<element name="map:serializer">
+		<display type="block"/>
+		<background-color red="181" green="204" blue="202"/>
+		<showattributes names="name,src,mime-type"/>
+	</element>
+
+	<element name="map:selector">
+		<display type="block"/>
+		<background-color red="181" green="204" blue="202"/>
+		<showattributes names="name,src"/>
+	</element>
+
+	<element name="map:matcher">
+		<display type="block"/>
+		<background-color red="181" green="204" blue="202"/>
+		<showattributes names="name,src"/>
+	</element>
+
+	<element name="map:action">
+		<display type="block"/>
+		<background-color red="181" green="204" blue="202"/>
+		<showattributes names="name,src"/>
+	</element>
 </displayspec>
