@@ -5,6 +5,7 @@ import org.outerj.pollo.gui.SomeLinesBorder;
 import org.outerj.pollo.gui.FocusHighlightComponent;
 import org.outerj.pollo.plaf.PolloTheme;
 import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.xmleditor.Disposable;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.schema.ISchema;
@@ -287,5 +288,11 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 	public void reconnectToDom()
 	{
 		attributesTableModel.reconnectToDom();
+	}
+
+	public void dispose()
+	{
+		if (attrEditorPlugin instanceof Disposable)
+			((Disposable)attrEditorPlugin).dispose();
 	}
 }
