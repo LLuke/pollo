@@ -1,5 +1,6 @@
 package org.outerj.pollo.gui;
 
+import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.PolloFrame;
 import org.outerj.pollo.Pollo;
@@ -23,7 +24,8 @@ public class RecentlyOpenedFilesMenu extends JMenu
 	public RecentlyOpenedFilesMenu(PolloFrame polloFrame)
 	{
 		super ("Open Recent File");
-		setIcon(EmptyIcon.getInstance());
+		ResourceManager resMgr = ResourceManager.getManager(RecentlyOpenedFilesMenu.class);
+		resMgr.configureMenu( this );
 		this.polloFrame = polloFrame;
 	}
 
@@ -57,7 +59,15 @@ public class RecentlyOpenedFilesMenu extends JMenu
 			File file = new File(fullpath);
 			if (!file.exists())
 			{
-				JOptionPane.showMessageDialog(polloFrame, "This file does not exist anymore:\n" + fullpath, "Error", JOptionPane.ERROR_MESSAGE);
+				ResourceManager resMgr = ResourceManager.getManager(RecentlyOpenedFilesMenu.class);
+
+				String message = resMgr.getString("FileDoesNotExistMessageDialog_message");
+				message += fullpath;
+
+				String title = resMgr.getString("FileDoesNotExistMessageDialog_title");
+
+				JOptionPane.showMessageDialog(polloFrame, 
+					message, title, JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			Pollo.getInstance().openFile(file, polloFrame);

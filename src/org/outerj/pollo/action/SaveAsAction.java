@@ -3,10 +3,12 @@ package org.outerj.pollo.action;
 import org.outerj.pollo.PolloFrame;
 import org.outerj.pollo.gui.ErrorDialog;
 import org.outerj.pollo.gui.EmptyIcon;
+import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+
 
 public class SaveAsAction extends AbstractAction
 {
@@ -16,6 +18,9 @@ public class SaveAsAction extends AbstractAction
 	public SaveAsAction(XmlModel xmlModel, PolloFrame polloFrame)
 	{
 		super("Save As...", EmptyIcon.getInstance());
+		ResourceManager resMgr = ResourceManager.getManager(SaveAsAction.class);
+        resMgr.configureAction(this);
+
 		this.xmlModel = xmlModel;
 		this.polloFrame = polloFrame;
 	}

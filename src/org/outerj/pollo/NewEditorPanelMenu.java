@@ -1,5 +1,6 @@
 package org.outerj.pollo;
 
+import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.gui.EmptyIcon;
 
@@ -21,7 +22,8 @@ public class NewEditorPanelMenu extends JMenu
 	public NewEditorPanelMenu(PolloFrame polloFrame)
 	{
 		super ("Create new view on file");
-		setIcon(EmptyIcon.getInstance());
+		ResourceManager resMgr = ResourceManager.getManager(NewEditorPanelMenu.class);
+		resMgr.configureMenu( this );
 		this.polloFrame = polloFrame;
 	}
 

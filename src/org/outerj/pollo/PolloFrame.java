@@ -3,6 +3,7 @@ package org.outerj.pollo;
 import org.outerj.pollo.action.*;
 import org.outerj.pollo.gui.RecentlyOpenedFilesMenu;
 import org.outerj.pollo.xmleditor.IconManager;
+import org.outerj.pollo.util.ResourceManager;
 
 import javax.swing.*;
 import javax.swing.plaf.TabbedPaneUI;
@@ -48,6 +49,9 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 	public PolloFrame()
 	{
 		super("Pollo");
+		ResourceManager resMgr = ResourceManager.getManager(PolloFrame.class);
+		setTitle(resMgr.getString("Title"));
+		
         setIconImage(IconManager.getIcon("org/outerj/pollo/resource/pollo_icon.gif").getImage());
 
 		editorPanelTabs = new DnDTabbedPane();
@@ -92,9 +96,11 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 	 */
 	protected void createNoEditorPanelsMenuBar()
 	{
+		ResourceManager resMgr = ResourceManager.getManager(PolloFrame.class);
 		noEditorPanelsMenuBar = new JMenuBar();
 
-		JMenu fileMenu = new JMenu("File");
+		JMenu fileMenu = new JMenu(resMgr.getString( "FileMenu_Text" ));
+		resMgr.setMnemonic( fileMenu, "FileMenu_MnemonicKey" );
 		noEditorPanelsMenuBar.add(fileMenu);
 		fileMenu.add(getFileNewAction());
 		fileMenu.addSeparator();
@@ -104,14 +110,16 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 		fileMenu.add(getExitAction());
 
 		// view menu
-		JMenu viewMenu = new JMenu("View");
+		JMenu viewMenu = new JMenu(resMgr.getString("ViewMenu_Text"));
+		resMgr.setMnemonic( viewMenu, "ViewMenu_MnemonicKey" );
 		noEditorPanelsMenuBar.add(viewMenu);
 		viewMenu.add(Pollo.getInstance().getNewPolloFrameAction());
 		viewMenu.add(new NewEditorPanelMenu(this));
 
 		// help menu
 		noEditorPanelsMenuBar.add(Box.createHorizontalGlue());
-		JMenu helpMenu = new JMenu("Help");
+		JMenu helpMenu = new JMenu(resMgr.getString("HelpMenu_Text"));
+		resMgr.setMnemonic( helpMenu, "HelpMenu_MnemonicKey" );
 		noEditorPanelsMenuBar.add(helpMenu);
 
 		helpMenu.add(getHelpAction());

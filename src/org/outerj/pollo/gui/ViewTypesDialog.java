@@ -401,7 +401,7 @@ public class ViewTypesDialog extends JPanel implements ActionListener
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
 		dialog.show();
-		System.out.println("na de show");
+		//System.out.println("na de show");
 		dialog.getLayeredPane().remove(this);
 		return ok;
 	}

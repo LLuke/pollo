@@ -2,16 +2,22 @@ package org.outerj.pollo.action;
 
 import org.outerj.pollo.Pollo;
 import org.outerj.pollo.PolloFrame;
+
+import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.xmleditor.IconManager;
 
 import javax.swing.*;
+
 import java.awt.event.ActionEvent;
+
 
 /**
  * Action to create a new file.
  *
  * @author Bruno Dumon
  */
+
+
 public class FileNewAction extends AbstractAction
 {
 	PolloFrame polloFrame;
@@ -19,14 +25,22 @@ public class FileNewAction extends AbstractAction
 
 	public FileNewAction(PolloFrame polloFrame)
 	{
-		super("New...", IconManager.getIcon("org/outerj/pollo/resource/new.gif"));
-		putValue(Action.SHORT_DESCRIPTION, "New file");
+		super("New...");
+
+		ResourceManager resMgr = ResourceManager.getManager(FileNewAction.class);
+        resMgr.configureAction(this);
+
+
 		this.polloFrame = polloFrame;
+
+
 		this.pollo = pollo;
 	}
+
 
 	public void actionPerformed(ActionEvent e)
 	{
 		pollo.newFileWizard(polloFrame);
 	}
+
 }

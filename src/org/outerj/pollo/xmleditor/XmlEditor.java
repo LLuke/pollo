@@ -5,6 +5,7 @@ import org.jaxen.XPath;
 import org.jaxen.dom.DOMXPath;
 import org.outerj.pollo.DomConnected;
 import org.outerj.pollo.gui.EmptyIcon;
+import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.xmleditor.action.*;
 import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
@@ -151,6 +152,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		addNodeClickedListener(this);
 		setOpaque(true);
 
+		ResourceManager resMgr = ResourceManager.getManager(XmlEditor.class);
+
 		// init drag-and-drop
 		dragSource = new DragSource();
 		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
@@ -161,44 +164,65 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		copyAction                = new CopyAction(this);
 		cutAction                 = new CutAction(this);
 		removeAction              = new RemoveAction(this);
+		
 		pasteBeforeAction         = new PasteAction(this, PasteAction.PASTE_BEFORE);
+		resMgr.configureAction("pasteBeforeAction", pasteBeforeAction);
 		pasteAfterAction          = new PasteAction(this, PasteAction.PASTE_AFTER);
+		resMgr.configureAction("pasteAfterAction", pasteAfterAction);
 		pasteInsideAction         = new PasteAction(this, PasteAction.PASTE_ASCHILD);
+		resMgr.configureAction("pasteInsideAction", pasteInsideAction);
+		
 		insertCommentBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
 				InsertCharacterDataAction.TYPE_COMMENT);
+		resMgr.configureAction("insertCommentBeforeAction", insertCommentBeforeAction);
 		insertCommentAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
 				InsertCharacterDataAction.TYPE_COMMENT);
+		resMgr.configureAction("insertCommentAfterAction", insertCommentAfterAction);
 		insertCommentInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
 				InsertCharacterDataAction.TYPE_COMMENT);
+		resMgr.configureAction("insertCommentInsideAction", insertCommentInsideAction);
 
 		insertTextBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
 				InsertCharacterDataAction.TYPE_TEXT);
+		resMgr.configureAction("insertTextBeforeAction", insertTextBeforeAction);
 		insertTextAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
 				InsertCharacterDataAction.TYPE_TEXT);
+		resMgr.configureAction("insertTextAfterAction", insertTextAfterAction);
 		insertTextInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
 				InsertCharacterDataAction.TYPE_TEXT);
+		resMgr.configureAction("insertTextInsideAction", insertTextInsideAction);
 
 		insertCDataBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
 				InsertCharacterDataAction.TYPE_CDATA);
+		resMgr.configureAction("insertCDataBeforeAction", insertCDataBeforeAction);
 		insertCDataAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
 				InsertCharacterDataAction.TYPE_CDATA);
+		resMgr.configureAction("insertCDataAfterAction", insertCDataAfterAction);
 		insertCDataInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
 				InsertCharacterDataAction.TYPE_CDATA);
+		resMgr.configureAction("insertCDataInsideAction", insertCDataInsideAction);
 
 		insertPIBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
 				InsertCharacterDataAction.TYPE_PI);
+		resMgr.configureAction("insertPIBeforeAction", insertPIBeforeAction);
 		insertPIAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
 				InsertCharacterDataAction.TYPE_PI);
+		resMgr.configureAction("insertPIAfterAction", insertPIAfterAction);
 		insertPIInsideAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_INSIDE,
 				InsertCharacterDataAction.TYPE_PI);
+		resMgr.configureAction("insertPIInsideAction", insertPIInsideAction);
 
 		commentOutAction          = new CommentOutAction(this);
 		uncommentAction           = new UncommentAction(this);
 
 		collapseAllAction         = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE_ALL);
+		resMgr.configureAction("collapseAllAction", collapseAllAction);
 		expandAllAction           = new CollapseExpandAction(this, CollapseExpandAction.EXPAND_ALL);
+		resMgr.configureAction("expandAllAction", expandAllAction);
 		collapseAction            = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE);
+		resMgr.configureAction("collapseAction", collapseAction);
 		expandAction              = new CollapseExpandAction(this, CollapseExpandAction.EXPAND);
+		resMgr.configureAction("expandAction", expandAction);
 
 		renderViewToFileAction = new RenderViewToFileAction(this);
 

@@ -4,6 +4,7 @@ import org.outerj.pollo.Pollo;
 import org.outerj.pollo.PolloFrame;
 import org.outerj.pollo.xmleditor.IconManager;
 import org.outerj.pollo.util.ExtensionFileFilter;
+import org.outerj.pollo.util.ResourceManager;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -15,16 +16,22 @@ public class FileOpenAction extends AbstractAction
 	Pollo pollo = Pollo.getInstance();
 	PolloFrame polloFrame;
 
+
 	public FileOpenAction(PolloFrame polloFrame)
 	{
-		super("Open...", IconManager.getIcon("org/outerj/pollo/resource/open.gif"));
-		putValue(Action.SHORT_DESCRIPTION, "Open file");
+		super("Open...");
+
+		ResourceManager resMgr = ResourceManager.getManager(FileOpenAction.class);
+        resMgr.configureAction(this);
+
 		this.polloFrame = polloFrame;
 	}
+
 
 	public void actionPerformed(ActionEvent e)
 	{
 		String defaultPath = pollo.getConfiguration().getFileOpenDialogPath();
+
 		JFileChooser chooser = null;
 		if (defaultPath == null)
 			chooser = new JFileChooser();
@@ -32,7 +39,6 @@ public class FileOpenAction extends AbstractAction
 			chooser = new JFileChooser(new File(defaultPath));
 
 		FileFilter defaultFilter = chooser.getFileFilter();
-
 		ExtensionFileFilter filter1 = new ExtensionFileFilter(".xml", "XML files (*.xml)");
 		chooser.addChoosableFileFilter(filter1);
 		ExtensionFileFilter filter2 = new ExtensionFileFilter(".xmap", "Cocoon Sitemap files (*.xmap)");

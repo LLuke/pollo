@@ -1,6 +1,9 @@
 package org.outerj.pollo.gui;
 
 import javax.swing.*;
+
+import org.outerj.pollo.util.ResourceManager;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +21,9 @@ public class AboutDialog extends JDialog
 	{
 		super(parent, "About Pollo");
 
+		ResourceManager resMgr = ResourceManager.getManager(AboutDialog.class);
+		setTitle(resMgr.getString("Title"));
+		
 		GridBagLayout layout = new GridBagLayout();
 		getContentPane().setLayout(layout);
 
@@ -35,15 +41,17 @@ public class AboutDialog extends JDialog
 
 
 		JTabbedPane licenseTabs = new JTabbedPane();
-		licenseTabs.add("About", createTextArea("/org/outerj/pollo/resource/general.txt"));
-		licenseTabs.add("Pollo license", createTextArea("/org/outerj/pollo/resource/pollo_license.txt"));
-		licenseTabs.add("Changelog", createTextArea("/org/outerj/pollo/resource/ChangeLog"));
-		licenseTabs.add("Acknowledgements", createTextArea("/org/outerj/pollo/resource/acknowledgments.txt"));
+		licenseTabs.add(resMgr.getString("licenseTab1_title"), createTextArea("/org/outerj/pollo/resource/general.txt"));
+		licenseTabs.add(resMgr.getString("licenseTab2_title"), createTextArea("/org/outerj/pollo/resource/pollo_license.txt"));
+		licenseTabs.add(resMgr.getString("licenseTab3_title"), createTextArea("/org/outerj/pollo/resource/ChangeLog"));
+		licenseTabs.add(resMgr.getString("licenseTab4_title"), createTextArea("/org/outerj/pollo/resource/acknowledgments.txt"));
 
 		layout.setConstraints(licenseTabs, constraints);
 		getContentPane().add(licenseTabs);
 
-		JButton closeButton = new JButton("Close");
+		JButton closeButton = new JButton(resMgr.getString("closeButton_Text"));
+		closeButton.setMnemonic(resMgr.getKeyStroke("closeButton_MnemonicKey").getKeyCode());
+		
 		closeButton.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent e) { hide(); } });
 		constraints = new GridBagConstraints();
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -62,6 +70,8 @@ public class AboutDialog extends JDialog
 
 	protected JScrollPane createTextArea(String resourceName)
 	{
+		ResourceManager resMgr = ResourceManager.getManager(AboutDialog.class);
+
 		JTextArea textArea = new JTextArea();
 		try
 		{
@@ -83,7 +93,10 @@ public class AboutDialog extends JDialog
 		{
 			textArea.setText("Error: Could not load text.");
 		}
-		textArea.setFont(new Font("Monospaced", 0, 12));
+		
+		Font font = resMgr.getFont( "TextArea_font" );
+		textArea.setFont( font );
+
 		textArea.setEditable(false);
 		textArea.setCaretPosition(0);
 
