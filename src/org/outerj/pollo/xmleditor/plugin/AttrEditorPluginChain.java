@@ -1,11 +1,12 @@
 package org.outerj.pollo.xmleditor.plugin;
 
 import org.w3c.dom.Element;
+import org.outerj.pollo.xmleditor.Disposable;
 
 import javax.swing.table.TableCellEditor;
 import java.util.ArrayList;
 
-public class AttrEditorPluginChain implements IAttributeEditorPlugin
+public class AttrEditorPluginChain implements IAttributeEditorPlugin, Disposable
 {
 	protected ArrayList plugins = new ArrayList();
 
@@ -25,5 +26,17 @@ public class AttrEditorPluginChain implements IAttributeEditorPlugin
 				return editor;
 		}
 		return null;
+	}
+
+	public void dispose()
+	{
+		for (int i = 0; i < plugins.size(); i++)
+		{
+			Object plugin = plugins.get(i);
+			if (plugin instanceof Disposable)
+			{
+				((Disposable)plugin).dispose();
+			}
+		}
 	}
 }
