@@ -11,6 +11,7 @@ import org.outerj.pollo.texteditor.XmlTextEditorPanel;
 import org.outerj.pollo.texteditor.XmlTextEditor;
 import org.outerj.pollo.texteditor.SyntaxDocument;
 import org.outerj.pollo.util.ResourceManager;
+import org.outerj.pollo.util.Utilities;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.XmlEditorPanel;
 import org.outerj.pollo.xmleditor.IconManager;
@@ -114,28 +115,28 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		resMgr.configureMenu("domFileMenu", domFileMenu);
 		JMenu textFileMenu = new JMenu("File");
 		resMgr.configureMenu("textFileMenu", textFileMenu);
-		domFileMenu.add(polloFrame.getFileNewAction());
-		textFileMenu.add(polloFrame.getFileNewAction());
+		domFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getFileNewAction()));
+		textFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getFileNewAction()));
 		domFileMenu.addSeparator();
 		textFileMenu.addSeparator();
-		domFileMenu.add(polloFrame.getFileOpenAction());
-		textFileMenu.add(polloFrame.getFileOpenAction());
+		domFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getFileOpenAction()));
+		textFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getFileOpenAction()));
 		domFileMenu.add(new RecentlyOpenedFilesMenu(polloFrame));
 		textFileMenu.add(new RecentlyOpenedFilesMenu(polloFrame));
 		domFileMenu.addSeparator();
 		textFileMenu.addSeparator();
-		domFileMenu.add(closeAction);
-		textFileMenu.add(closeAction);
+		domFileMenu.add(Utilities.createMenuItemFromAction(closeAction));
+		textFileMenu.add(Utilities.createMenuItemFromAction(closeAction));
 		domFileMenu.addSeparator();
 		textFileMenu.addSeparator();
-		domFileMenu.add(saveAction);
-		textFileMenu.add(saveAction);
-		domFileMenu.add(saveAsAction);
-		textFileMenu.add(saveAsAction);
+		domFileMenu.add(Utilities.createMenuItemFromAction(saveAction));
+		textFileMenu.add(Utilities.createMenuItemFromAction(saveAction));
+		domFileMenu.add(Utilities.createMenuItemFromAction(saveAsAction));
+		textFileMenu.add(Utilities.createMenuItemFromAction(saveAsAction));
 		domFileMenu.addSeparator();
 		textFileMenu.addSeparator();
-		domFileMenu.add(polloFrame.getExitAction());
-		textFileMenu.add(polloFrame.getExitAction());
+		domFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getExitAction()));
+		textFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getExitAction()));
 
 		domModeMenuBar.add(domFileMenu);
 		textModeMenuBar.add(textFileMenu);
@@ -143,23 +144,22 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		// create edit menu for the dom menu bar
 		JMenu domEditMenu = new JMenu("Edit");
 		resMgr.configureMenu("domEditMenu", domEditMenu);
-		JMenuItem domUndo = new JMenuItem(xmlModel.getUndo().getUndoAction());
-		domEditMenu.add(domUndo);
+		domEditMenu.add(Utilities.createMenuItemFromAction(xmlModel.getUndo().getUndoAction()));
 		domEditMenu.addSeparator();
 
 		XmlEditor xmleditor = xmlEditorPanel.getXmlEditor();
-		domEditMenu.add(new JMenuItem(xmleditor.getCopyAction()));
-		domEditMenu.add(new JMenuItem(xmleditor.getCutAction()));
+		domEditMenu.add(Utilities.createMenuItemFromAction(xmleditor.getCopyAction()));
+		domEditMenu.add(Utilities.createMenuItemFromAction(xmleditor.getCutAction()));
 		JMenu domEditPasteMenu = new JMenu("Paste");
 		resMgr.configureMenu("domEditPasteMenu", domEditPasteMenu);
-		domEditPasteMenu.add(new JMenuItem(xmleditor.getPasteBeforeAction()));
-		domEditPasteMenu.add(new JMenuItem(xmleditor.getPasteAfterAction()));
-		domEditPasteMenu.add(xmleditor.getPasteInsideAction());
+		domEditPasteMenu.add(Utilities.createMenuItemFromAction(xmleditor.getPasteBeforeAction()));
+		domEditPasteMenu.add(Utilities.createMenuItemFromAction(xmleditor.getPasteAfterAction()));
+		domEditPasteMenu.add(Utilities.createMenuItemFromAction(xmleditor.getPasteInsideAction()));
 		domEditMenu.add(domEditPasteMenu);
 
 		domEditMenu.addSeparator();
-		domEditMenu.add(xmleditor.getCommentOutAction());
-		domEditMenu.add(xmleditor.getUncommentAction());
+		domEditMenu.add(Utilities.createMenuItemFromAction(xmleditor.getCommentOutAction()));
+		domEditMenu.add(Utilities.createMenuItemFromAction(xmleditor.getUncommentAction()));
 		domModeMenuBar.add(domEditMenu);
 
 		// Insert menu for the dom menu bar
@@ -167,58 +167,58 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		resMgr.configureMenu("domInsertMenu", domInsertMenu);
 		JMenu domTextMenu = new JMenu("Text Node");
 		resMgr.configureMenu("domTextMenu", domTextMenu);
-		domTextMenu.add(xmleditor.getInsertTextBeforeAction());
-		domTextMenu.add(xmleditor.getInsertTextAfterAction());
-		domTextMenu.add(xmleditor.getInsertTextInsideAction());
+		domTextMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertTextBeforeAction()));
+		domTextMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertTextAfterAction()));
+		domTextMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertTextInsideAction()));
 		domInsertMenu.add(domTextMenu);
 		JMenu domCommentMenu = new JMenu("Comment Node");
 		resMgr.configureMenu("domCommentMenu", domCommentMenu);
-		domCommentMenu.add(xmleditor.getInsertCommentBeforeAction());
-		domCommentMenu.add(xmleditor.getInsertCommentAfterAction());
-		domCommentMenu.add(xmleditor.getInsertCommentInsideAction());
+		domCommentMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertCommentBeforeAction()));
+		domCommentMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertCommentAfterAction()));
+		domCommentMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertCommentInsideAction()));
 		domInsertMenu.add(domCommentMenu);
 		JMenu domCDataMenu = new JMenu("CDATA section");
 		resMgr.configureMenu("domCDataMenu", domCDataMenu );
-		domCDataMenu.add(xmleditor.getInsertCDataBeforeAction());
-		domCDataMenu.add(xmleditor.getInsertCDataAfterAction());
-		domCDataMenu.add(xmleditor.getInsertCDataInsideAction());
+		domCDataMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertCDataBeforeAction()));
+		domCDataMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertCDataAfterAction()));
+		domCDataMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertCDataInsideAction()));
 		domInsertMenu.add(domCDataMenu);
 		JMenu domPiMenu = new JMenu("Processing Instruction");
 		resMgr.configureMenu("domPiMenu", domPiMenu);
-		domPiMenu.add(xmleditor.getInsertPIBeforeAction());
-		domPiMenu.add(xmleditor.getInsertPIAfterAction());
-		domPiMenu.add(xmleditor.getInsertPIInsideAction());
+		domPiMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertPIBeforeAction()));
+		domPiMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertPIAfterAction()));
+		domPiMenu.add(Utilities.createMenuItemFromAction(xmleditor.getInsertPIInsideAction()));
 		domInsertMenu.add(domPiMenu);
 		domModeMenuBar.add(domInsertMenu);
 
 		// tree menu for the dom menu bar
 		JMenu domTreeMenu = new JMenu("Tree");
 		resMgr.configureMenu("domTreeMenu", domTreeMenu);
-		domTreeMenu.add(xmleditor.getCollapseAction());
-	    ResourceManager.registerAccelerator(this, xmleditor.getCollapseAction());
-		domTreeMenu.add(xmleditor.getExpandAction());
-	    ResourceManager.registerAccelerator(this, xmleditor.getExpandAction());
+		domTreeMenu.add(Utilities.createMenuItemFromAction(xmleditor.getCollapseAction()));
+		domTreeMenu.add(Utilities.createMenuItemFromAction(xmleditor.getExpandAction()));
 		domTreeMenu.addSeparator();
-		domTreeMenu.add(xmleditor.getCollapseAllAction());
-		domTreeMenu.add(xmleditor.getExpandAllAction());
+		domTreeMenu.add(Utilities.createMenuItemFromAction(xmleditor.getCollapseAllAction()));
+		domTreeMenu.add(Utilities.createMenuItemFromAction(xmleditor.getExpandAllAction()));
+		domTreeMenu.addSeparator();
+		domTreeMenu.add(Utilities.createMenuItemFromAction(xmleditor.getToggleAction()));
 		domModeMenuBar.add(domTreeMenu);
 
 		// schema menu for the dom menu bar
 		JMenu schemaMenu = new JMenu("Schema");
 		resMgr.configureMenu("schemaMenu", schemaMenu);
-		schemaMenu.add(xmlEditorPanel.getValidateAction());
-		schemaMenu.add(new org.outerj.pollo.xmleditor.action.ShowContentModelAction(xmleditor));
+		schemaMenu.add(Utilities.createMenuItemFromAction(xmlEditorPanel.getValidateAction()));
+		schemaMenu.add(Utilities.createMenuItemFromAction(new org.outerj.pollo.xmleditor.action.ShowContentModelAction(xmleditor)));
 		domModeMenuBar.add(schemaMenu);
 
 		// edit menu for the text menu bar
 		JMenu editMenu = new JMenu("Edit");
 		resMgr.configureMenu("editMenu", editMenu);
-		editMenu.add(xmlTextEditorPanel.getDocument().getUndoAction());
-		editMenu.add(xmlTextEditorPanel.getDocument().getRedoAction());
+		editMenu.add(Utilities.createMenuItemFromAction(xmlTextEditorPanel.getDocument().getUndoAction()));
+		editMenu.add(Utilities.createMenuItemFromAction(xmlTextEditorPanel.getDocument().getRedoAction()));
 		editMenu.addSeparator();
-		editMenu.add(xmlTextEditorPanel.getEditor().getCutAction());
-		editMenu.add(xmlTextEditorPanel.getEditor().getCopyAction());
-		editMenu.add(xmlTextEditorPanel.getEditor().getPasteAction());
+		editMenu.add(Utilities.createMenuItemFromAction(xmlTextEditorPanel.getEditor().getCutAction()));
+		editMenu.add(Utilities.createMenuItemFromAction(xmlTextEditorPanel.getEditor().getCopyAction()));
+		editMenu.add(Utilities.createMenuItemFromAction(xmlTextEditorPanel.getEditor().getPasteAction()));
 		textModeMenuBar.add(editMenu);
 
 		// create the action plugin menu (for dom mode)
@@ -237,8 +237,8 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		textViewMenu.add(closeViewAction);
 		domViewMenu.add(new NewEditorPanelMenu(polloFrame));
 		textViewMenu.add(new NewEditorPanelMenu(polloFrame));
-		domViewMenu.add(Pollo.getInstance().getNewPolloFrameAction());
-		textViewMenu.add(Pollo.getInstance().getNewPolloFrameAction());
+		domViewMenu.add(Utilities.createMenuItemFromAction(Pollo.getInstance().getNewPolloFrameAction()));
+		textViewMenu.add(Utilities.createMenuItemFromAction(Pollo.getInstance().getNewPolloFrameAction()));
 
 		// help menu for the dom and text mode menu bar
 		domModeMenuBar.add(Box.createHorizontalGlue());
@@ -249,10 +249,10 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		JMenu textHelpMenu = new JMenu("Help");
 		resMgr.configureMenu("textHelpMenu", textHelpMenu);
 
-		domHelpMenu.add(polloFrame.getHelpAction());
-		textHelpMenu.add(polloFrame.getHelpAction());
-		domHelpMenu.add(polloFrame.getAboutAction());
-		textHelpMenu.add(polloFrame.getAboutAction());
+		domHelpMenu.add(Utilities.createMenuItemFromAction(polloFrame.getHelpAction()));
+		textHelpMenu.add(Utilities.createMenuItemFromAction(polloFrame.getHelpAction()));
+		domHelpMenu.add(Utilities.createMenuItemFromAction(polloFrame.getAboutAction()));
+		textHelpMenu.add(Utilities.createMenuItemFromAction(polloFrame.getAboutAction()));
 
 		domModeMenuBar.add(domHelpMenu);
 		textModeMenuBar.add(textHelpMenu);
