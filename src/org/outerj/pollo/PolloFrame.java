@@ -11,6 +11,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.PopupMenuListener;
+import javax.swing.event.PopupMenuEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -397,6 +399,22 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
                     JPopupMenu popupMenu = new JPopupMenu();
                     popupMenu.add(editorPanel.getCloseAction());
                     popupMenu.add(closeAllViewsExceptThisAction);
+                    popupMenu.addPopupMenuListener(new PopupMenuListener()
+                    {
+                        public void popupMenuWillBecomeVisible(PopupMenuEvent e)
+                        {
+                        }
+
+                        public void popupMenuWillBecomeInvisible(PopupMenuEvent e)
+                        {
+                            // remove all menu items to avoid memory leak
+                            ((JPopupMenu)e.getSource()).removeAll();
+                        }
+
+                        public void popupMenuCanceled(PopupMenuEvent e)
+                        {
+                        }
+                    });
                     popupMenu.show(editorPanelTabs, e.getX(), e.getY());
                 }
             }
