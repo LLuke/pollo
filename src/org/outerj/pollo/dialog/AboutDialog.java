@@ -1,28 +1,19 @@
 package org.outerj.pollo.dialog;
 
-import javax.swing.JDialog;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.JTabbedPane;
-import javax.swing.JScrollPane;
-import javax.swing.JButton;
-
-import java.io.IOException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Frame;
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
+/**
+ * About dialog for Pollo.
+ *
+ * @author Bruno Dumon
+ */
 public class AboutDialog extends JDialog
 {
-
 	public AboutDialog(Frame parent)
 	{
 		super(parent, "About Pollo");
@@ -44,13 +35,10 @@ public class AboutDialog extends JDialog
 
 
 		JTabbedPane licenseTabs = new JTabbedPane();
-		licenseTabs.add("About", createTextArea("/org/outerj/pollo/general.txt"));
-		licenseTabs.add("Pollo license", createTextArea("/org/outerj/pollo/pollo_license.txt"));
-		licenseTabs.add("Changelog", createTextArea("/org/outerj/pollo/ChangeLog"));
-		licenseTabs.add("Apache", createTextArea("/org/outerj/pollo/apache_license.txt"));
-		licenseTabs.add("Jaxen", createTextArea("/org/outerj/pollo/jaxen_license.txt"));
-		licenseTabs.add("Kunstoff", createTextArea("/org/outerj/pollo/kunststoff_license.txt"));
-		licenseTabs.add("Others", createTextArea("/org/outerj/pollo/others_license.txt"));
+		licenseTabs.add("About", createTextArea("/org/outerj/pollo/resource/general.txt"));
+		licenseTabs.add("Pollo license", createTextArea("/org/outerj/pollo/resource/pollo_license.txt"));
+		licenseTabs.add("Changelog", createTextArea("/org/outerj/pollo/resource/ChangeLog"));
+		licenseTabs.add("Acknowledgements", createTextArea("/org/outerj/pollo/resource/acknowledgments.txt"));
 
 		layout.setConstraints(licenseTabs, constraints);
 		getContentPane().add(licenseTabs);

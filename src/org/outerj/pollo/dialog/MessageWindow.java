@@ -1,10 +1,8 @@
 package org.outerj.pollo.dialog;
 
-import javax.swing.JWindow;
-import javax.swing.JLabel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import java.awt.Dimension;
+import java.awt.*;
 
 public class MessageWindow extends JWindow
 {
