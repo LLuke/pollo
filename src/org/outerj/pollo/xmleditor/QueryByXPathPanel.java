@@ -13,7 +13,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -106,7 +105,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener, Disposa
 		box.add(executeButton);
 		*/
 
-		prevButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/backward.gif"));
+		prevButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/Back16.gif"));
 		prevButton.setActionCommand("prevResult");
 		prevButton.addActionListener(this);
 		prevButton.setEnabled(false);
@@ -115,13 +114,13 @@ public class QueryByXPathPanel extends JPanel implements ActionListener, Disposa
 		progress = new JLabel("");
 		box.add(progress);
 
-		nextButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/forward.gif"));
+		nextButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/Forward16.gif"));
 		nextButton.setActionCommand("nextResult");
 		nextButton.addActionListener(this);
 		nextButton.setEnabled(false);
 		box.add(nextButton);
 
-		JButton insertExampleButton = new SmallButton("?");
+		JButton insertExampleButton = new SmallButton(IconManager.getIcon("org/outerj/pollo/resource/Help16.gif"));
 		insertExampleButton.setToolTipText("Insert example query");
 		insertExampleButton.setActionCommand("insert-example");
 		insertExampleButton.addActionListener(this);
