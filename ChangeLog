@@ -3,7 +3,8 @@ version 0.4
  This version has been possible through the kind sponsering by Infobjects.
 
  - A new, more classic, tree view has been introduced next to Pollo's special
-   colorful treeview.
+   colorful treeview. The type of tree to be used is specified as
+   part of the display specification, but can be overridden by the user.
  - Support more options in the display specifications:
     - for elements and attributes, a label can be defined to be shown
       instead of the real element name
