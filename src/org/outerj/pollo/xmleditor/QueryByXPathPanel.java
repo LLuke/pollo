@@ -22,7 +22,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 	protected XmlEditor xmlEditor;
 	protected AttributesPanel attributesPanel;
 
-	protected JTextField xpathTextField;
+	protected JComboBox xpathCombo;
 	protected JButton nextButton, prevButton;
 	protected JLabel progress;
 
@@ -59,11 +59,28 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 		JLabel label = new JLabel("XPath query:");
 		box.add(label);
 
-		xpathTextField = new EnterTextField();
-		Dimension dimension = xpathTextField.getPreferredSize();
+		xpathCombo = new JComboBox(Pollo.getInstance().getConfiguration().getRecentlyUsedXPathsModel());
+		xpathCombo.setEditable(true);
+		xpathCombo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+			{
+                JComboBox comboBox = (JComboBox)e.getSource();
+                String newSelection = (String)comboBox.getSelectedItem();
+				if (xpathCombo.getEditor().getItem().equals(newSelection))
+				{
+					ActionEvent actionEvent = new ActionEvent(e.getSource(), 0, "execute");
+					QueryByXPathPanel.this.actionPerformed(actionEvent);
+				}
+				else
+				{
+					xpathCombo.getEditor().setItem(newSelection);
+				}
+			}
+		});
+		Dimension dimension = xpathCombo.getPreferredSize();
 		dimension.width = Integer.MAX_VALUE;
-		xpathTextField.setMaximumSize(dimension);
-		box.add(xpathTextField);
+		xpathCombo.setMaximumSize(dimension);
+		box.add(xpathCombo);
 
 		JButton executeButton = new JButton("Execute");
 		executeButton.setActionCommand("execute");
@@ -103,9 +120,10 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 		if (event.getActionCommand().equals("execute"))
 		{
 			XPath xpath;
+			String xpathString = (String)xpathCombo.getEditor().getItem();
 			try
 			{
-				xpath = new XPath(xpathTextField.getText());
+				xpath = new XPath(xpathString);
 			}
 			catch (Exception e)
 			{
@@ -128,6 +146,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 				xpath.setNamespaceContext(namespaceContext);
 
 				resultList = xpath.selectNodes(xmlEditor.getRootElement());
+				Pollo.getInstance().getConfiguration().addRecentlyUsedXPath(xpathString);
 			}
 			catch (Exception e)
 			{
@@ -280,23 +299,9 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 
 		if (query != null)
 		{
-			xpathTextField.setText(query.getExpression());
+			xpathCombo.getEditor().setItem(query.getExpression());
 		}
 	}
 
-	public class EnterTextField extends JTextField
-	{
-		public void processKeyEvent(KeyEvent event)
-		{
-			if (event.getKeyCode() == KeyEvent.VK_ENTER)
-			{
-				ActionEvent e = new ActionEvent(xpathTextField, 0, "execute");
-				QueryByXPathPanel.this.actionPerformed(e);
-			}
-			else
-			{
-				super.processKeyEvent(event);
-			}
-		}
-	}
+
 }
