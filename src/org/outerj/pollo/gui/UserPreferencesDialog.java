@@ -88,6 +88,7 @@ public class UserPreferencesDialog extends JPanel implements ActionListener
         protected FontSizeComboBox attributeValueFontSizeCombo = new FontSizeComboBox();
         protected FontStyleComboBox attributeValueFontStyleCombo = new FontStyleComboBox();
         protected JCheckBox textAntialiasingCheckBox = new JCheckBox(resourceManager.getString("antialias-text"));
+        protected FontSizeComboBox textFontSizeCombo = new FontSizeComboBox();
 
         public ViewSettingsPanel()
         {
@@ -95,6 +96,7 @@ public class UserPreferencesDialog extends JPanel implements ActionListener
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(0, 6, 0, 6);
+            gbc.anchor = gbc.WEST;
             gbc.gridx = 1;
             gbc.gridy = 0;
             add(new JLabel(resourceManager.getString("size")), gbc);
@@ -109,27 +111,22 @@ public class UserPreferencesDialog extends JPanel implements ActionListener
 
             gbc.gridx = 1;
             gbc.gridy = 1;
-            gbc.anchor = gbc.WEST;
             add(elementNameFontSizeCombo, gbc);
 
             gbc.gridx = 2;
             gbc.gridy = 1;
-            gbc.anchor = gbc.WEST;
             add(elementNameFontStyleCombo, gbc);
 
             gbc.gridx = 0;
             gbc.gridy = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
             add(new JLabel(resourceManager.getString("attribute-name-font")), gbc);
 
             gbc.gridx = 1;
             gbc.gridy = 2;
-            gbc.anchor = gbc.WEST;
             add(attributeNameFontSizeCombo, gbc);
 
             gbc.gridx = 2;
             gbc.gridy = 2;
-            gbc.anchor = gbc.WEST;
             add(attributeNameFontStyleCombo, gbc);
 
             gbc.gridx = 0;
@@ -138,22 +135,26 @@ public class UserPreferencesDialog extends JPanel implements ActionListener
 
             gbc.gridx = 1;
             gbc.gridy = 3;
-            gbc.anchor = gbc.WEST;
             add(attributeValueFontSizeCombo, gbc);
 
             gbc.gridx = 2;
             gbc.gridy = 3;
-            gbc.anchor = gbc.WEST;
             add(attributeValueFontStyleCombo, gbc);
 
             gbc.gridx = 0;
             gbc.gridy = 4;
-            gbc.anchor = gbc.WEST;
-            add(textAntialiasingCheckBox, gbc);
+            add(new JLabel(resourceManager.getString("text-font")), gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 4;
+            add(textFontSizeCombo, gbc);
 
             gbc.gridx = 0;
             gbc.gridy = 5;
-            gbc.anchor = gbc.WEST;
+            add(textAntialiasingCheckBox, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy = 6;
             gbc.gridwidth = gbc.REMAINDER;
             add(new JLabel(resourceManager.getString("settings-only-affect-new-views")), gbc);
         }
@@ -167,6 +168,7 @@ public class UserPreferencesDialog extends JPanel implements ActionListener
             attributeNameFontStyleCombo.setStyle(configuration.getAttributeNameFontStyle());
             attributeValueFontSizeCombo.setFontSize(configuration.getAttributeValueFontSize());
             attributeValueFontStyleCombo.setStyle(configuration.getAttributeValueFontStyle());
+            textFontSizeCombo.setFontSize(configuration.getTextFontSize());
             textAntialiasingCheckBox.setSelected(configuration.isTextAntialiasing());
         }
 
@@ -178,6 +180,7 @@ public class UserPreferencesDialog extends JPanel implements ActionListener
             configuration.setAttributeNameFontStyle(attributeNameFontStyleCombo.getStyle());
             configuration.setAttributeValueFontSize(attributeValueFontSizeCombo.getFontSize());
             configuration.setAttributeValueFontStyle(attributeValueFontStyleCombo.getStyle());
+            configuration.setTextFontSize(textFontSizeCombo.getFontSize());
             configuration.setTextAntialiasing(textAntialiasingCheckBox.isSelected());
         }
     }

@@ -133,6 +133,9 @@ public class PolloConfigurationFactory
                 polloConfiguration.setAttributeValueFontSize(attributeValueFontConf.getAttributeAsInteger("size", 12));
                 polloConfiguration.setAttributeValueFontStyle(attributeValueFontConf.getAttributeAsInteger("style", 0));
 
+                Configuration textFontConf = config.getChild("text-font");
+                polloConfiguration.setTextFontSize(textFontConf.getAttributeAsInteger("size", 12));
+
                 polloConfiguration.setTextAntialiasing(config.getChild("text-antialiasing").getValueAsBoolean(false));
             }
             catch (Exception e)

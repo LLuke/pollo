@@ -80,6 +80,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
             configuration.getAttributeNameFontSize()));
         xmlEditorPanel.getXmlEditor().setAttributeValueFont(new Font("Default", configuration.getAttributeValueFontStyle(),
             configuration.getAttributeValueFontSize()));
+        xmlEditorPanel.getXmlEditor().setCharacterDataFont(new Font("Monospaced", 0, configuration.getTextFontSize()));
         xmlEditorPanel.getXmlEditor().setAntialiasing(configuration.isTextAntialiasing());
 
         // no borders

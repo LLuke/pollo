@@ -52,6 +52,7 @@ public class PolloConfiguration
     protected int attributeNameFontStyle;
     protected int attributeValueFontSize;
     protected int attributeValueFontStyle;
+    protected int textFontSize;
     protected boolean textAntialiasing;
 
     public static final String USER_CONF_FILE_NAME = ".pollorc";
@@ -74,6 +75,7 @@ public class PolloConfiguration
     private static final String ATTRIBUTE_NAME_FONT = "attribute-name-font";
     private static final String ATTRIBUTE_VALUE_FONT = "attribute-value-font";
     private static final String TEXT_ANTIALIASING = "text-antialiasing";
+    private static final String TEXT_FONT = "text-font";
 
 
     public PolloConfiguration()
@@ -330,6 +332,16 @@ public class PolloConfiguration
         this.attributeValueFontStyle = attributeValueFontStyle;
     }
 
+    public int getTextFontSize()
+    {
+        return textFontSize;
+    }
+
+    public void setTextFontSize(int textFontSize)
+    {
+        this.textFontSize = textFontSize;
+    }
+
     public boolean isTextAntialiasing()
     {
         return textAntialiasing;
@@ -441,6 +453,11 @@ public class PolloConfiguration
         attributeValueFontAttrs.addAttribute("", "style", "style", "CDATA", String.valueOf(getAttributeValueFontStyle()));
         handler.startElement("", ATTRIBUTE_VALUE_FONT, ATTRIBUTE_VALUE_FONT, attributeValueFontAttrs);
         handler.endElement("", ATTRIBUTE_VALUE_FONT, ATTRIBUTE_VALUE_FONT);
+
+        AttributesImpl textFontAttrs = new AttributesImpl();
+        textFontAttrs.addAttribute("", "size", "size", "CDATA", String.valueOf(getTextFontSize()));
+        handler.startElement("", TEXT_FONT, TEXT_FONT, textFontAttrs);
+        handler.endElement("", TEXT_FONT, TEXT_FONT);
 
         handler.startElement("", TEXT_ANTIALIASING, TEXT_ANTIALIASING, new AttributesImpl());
         String textAntialiasingString = String.valueOf(textAntialiasing);
