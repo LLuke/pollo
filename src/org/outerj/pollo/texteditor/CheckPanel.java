@@ -49,7 +49,8 @@ public class CheckPanel extends JPanel implements ActionListener
 		int line = exception.getLineNumber();
 		int col = exception.getColumnNumber();
 
-		textArea.setCaretPosition(textArea.getLineStartOffset(line - 1) + col - 1);
+		if (!(line <= 0 || col <= 0))
+			textArea.setCaretPosition(textArea.getLineStartOffset(line - 1) + col - 1);
 		messageLabel.setText(exception.getMessage());
 	}
 
