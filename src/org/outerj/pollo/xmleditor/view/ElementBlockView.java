@@ -415,8 +415,11 @@ public class ElementBlockView extends ChildrenBlockView
 			else
 				collapse();
 		}
-		else if ( e.getY() > startV && e.getY() < startV + titleHeight
-			   && e.getX() > startH + BORDER_WIDTH + 10)
+		else if ( /* title */ (e.getY() > startV && e.getY() < startV + titleHeight
+			   && e.getX() > startH + BORDER_WIDTH)
+				|| (/* vertical bar */ !isCollapsed()
+				&& e.getY() > startV && e.getY() < startV + titleHeight + getContentHeight() + END_MARKER_HEIGHT
+				&& e.getX() >= startH && e.getX() <= startH + BORDER_WIDTH) )
 		{
 			NodeClickedEvent nce = new NodeClickedEvent(element, e);
 			xmlEditor.fireNodeClickedEvent(nce);
