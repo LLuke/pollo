@@ -24,6 +24,7 @@ public final class AttributeSchema
     public final String localName;
     public final String xpathExpr;
     public String [] values;
+    public boolean required = false;
 
     public AttributeSchema(String namespaceURI, String localName, String xpathExpr, NamespaceContext namespaceContext)
     {
