@@ -35,7 +35,7 @@ public class Pollo implements XmlModelListener
 	public static void main(String [] args)
 		throws Exception
 	{
-		Pollo.getInstance().run();
+		Pollo.getInstance().run(args);
 	}
 
 	/** Constructor is private, use the getInstance method instead. */
@@ -43,9 +43,21 @@ public class Pollo implements XmlModelListener
 	{
 	}
 
-	public void run()
+	public void run(String [] args)
 		throws Exception
 	{
+		// check for command-line parameters
+		File autoOpenFile = null;
+		if (args.length > 0)
+		{
+			autoOpenFile = new File(args[0]);
+			if (!autoOpenFile.exists())
+			{
+				System.out.println("File not found: " + args[0]);
+			}
+		}
+
+		// load configuration
 		try
 		{
 			configuration = PolloConfigurationFactory.loadConfiguration();
@@ -53,7 +65,7 @@ public class Pollo implements XmlModelListener
 		catch (Exception e)
 		{
 			ErrorDialog errorDialog = new ErrorDialog(null, "Error while reading the configuration file.", e);
-			errorDialog.show();
+			errorDialog.setVisible(true);
 			System.exit(1);
 		}
 
@@ -65,7 +77,10 @@ public class Pollo implements XmlModelListener
 		// show a PolloFrame
 		PolloFrame polloFrame = new PolloFrame();
 		manageFrame(polloFrame);
-		polloFrame.show();
+		polloFrame.setVisible(true);
+
+		if (autoOpenFile != null)
+			openFile(autoOpenFile, polloFrame);
 	}
 
 	/**
@@ -100,7 +115,7 @@ public class Pollo implements XmlModelListener
 		catch (Exception e)
 		{
 			ErrorDialog errorDialog = new ErrorDialog(polloFrame, "Could not read this file.", e);
-			errorDialog.show();
+			errorDialog.setVisible(true);
 			return;
 		}
 
@@ -139,7 +154,7 @@ public class Pollo implements XmlModelListener
 			catch (Exception e2)
 			{
 				ErrorDialog errorDialog = new ErrorDialog(polloFrame, "Could not create the view.", e2);
-				errorDialog.show();
+				errorDialog.setVisible(true);
 				return null;
 			}
 			xmlModel.registerView(editorPanel);
@@ -190,7 +205,7 @@ public class Pollo implements XmlModelListener
 			catch (Exception e)
 			{
 				ErrorDialog errorDialog = new ErrorDialog(parent, "An error occured.", e);
-				errorDialog.show();
+				errorDialog.setVisible(true);
 			}
 
 			if (!ok)
@@ -214,7 +229,7 @@ public class Pollo implements XmlModelListener
 		catch (Exception e)
 		{
 			ErrorDialog errorDialog = new ErrorDialog(null, "Could not store the user preferences.", e);
-			errorDialog.show();
+			errorDialog.setVisible(true);
 		}
 	}
 
@@ -243,7 +258,7 @@ public class Pollo implements XmlModelListener
 			catch (Exception e)
 			{
 				ErrorDialog errorDialog = new ErrorDialog(polloFrame, "Error during template creation.", e);
-				errorDialog.show();
+				errorDialog.setVisible(true);
 				return;
 			}
 
