@@ -203,6 +203,8 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		domTreeMenu.add(Utilities.createMenuItemFromAction(xmleditor.getExpandAllAction()));
 		domTreeMenu.addSeparator();
 		domTreeMenu.add(Utilities.createMenuItemFromAction(xmleditor.getToggleAction()));
+		domTreeMenu.addSeparator();
+		domTreeMenu.add(Utilities.createMenuItemFromAction(xmleditor.getRenderViewToFileAction()));
 		domModeMenuBar.add(domTreeMenu);
 
 		// schema menu for the dom menu bar
