@@ -1,3 +1,12 @@
+version 0.3.6
+=============
+ - Made pollo.bat work on older Windows versions (such as Windows 98)
+ - Added an editor for editing display specification files. I've created
+   this only for the fun of it, mainly for writing the color-selector.
+   If you'd like to see it improved, consider contributing!
+ - Added simple search functionality in text-mode, kindly contributed by
+   Roger I Martin.
+
 version 0.3.5
 =============
 FEATURES
