@@ -4,9 +4,7 @@ import com.sun.msv.grammar.*;
 import com.sun.msv.grammar.util.ExpressionPrinter;
 import org.outerj.pollo.gui.ErrorDialog;
 import org.outerj.pollo.gui.EmptyIcon;
-import org.outerj.pollo.xmleditor.IconManager;
-import org.outerj.pollo.xmleditor.SelectionListener;
-import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.*;
 import org.outerj.pollo.xmleditor.exception.PolloException;
 import org.outerj.pollo.xmleditor.schema.ChainedSchema;
 import org.outerj.pollo.xmleditor.schema.ISchema;
@@ -34,24 +32,26 @@ import java.awt.event.ActionListener;
  */
 public class ShowContentModelAction extends AbstractAction implements SelectionListener
 {
+    protected XmlEditorPanel xmlEditorPanel;
     protected XmlEditor xmlEditor;
     protected ContentModelDialog contentModelDialog;
 
-    public ShowContentModelAction(XmlEditor xmlEditor)
+    public ShowContentModelAction(XmlEditorPanel xmlEditorPanel)
     {
         super("Show content model...", EmptyIcon.getInstance());
-        this.xmlEditor = xmlEditor;
+        this.xmlEditorPanel = xmlEditorPanel;
+        this.xmlEditor = xmlEditorPanel.getXmlEditor();
         xmlEditor.getSelectionInfo().addListener(this);
         setEnabled(false);
     }
 
     public void actionPerformed(ActionEvent e)
     {
-        ISchema schema = xmlEditor.getSchema();
+        ISchema schema = xmlEditorPanel.getSchema();
         Node selectedNode = xmlEditor.getSelectedNode();
         if (!(selectedNode instanceof Element))
         {
-            JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(), "An element must be selected to show the content model.",
+            JOptionPane.showMessageDialog(xmlEditorPanel.getTopLevelAncestor(), "An element must be selected to show the content model.",
                     "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -76,6 +76,8 @@ public class ShowContentModelAction extends AbstractAction implements SelectionL
                 {
                     ErrorDialog errorDialog = new ErrorDialog((Frame)xmlEditor.getTopLevelAncestor(),
                             "Error while trying to show the content model.", err);
+                    errorDialog.show();
+                    return;
                 }
             }
         }
