@@ -1,10 +1,10 @@
 package org.outerj.pollo.xmleditor.view;
 
-import org.outerj.pollo.xmleditor.DisplaySpecification;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.NodeClickedEvent;
-import org.outerj.pollo.xmleditor.DisplaySpecification.ElementSpec;
-import org.outerj.pollo.xmleditor.DisplaySpecification.AttributeSpec;
+import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
+import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
+import org.outerj.pollo.xmleditor.displayspec.AttributeSpec;
 import org.outerj.pollo.xmleditor.XmlTransferable;
 // import org.outerj.pollo.xmleditor.CommandTransferable; deprecated
 
@@ -26,6 +26,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.Event;
@@ -42,11 +43,14 @@ public class ElementBlockView extends BlockView
 	protected Element element;
 	protected Shape elementShape;
 	protected ArrayList childViewList = new ArrayList(10);
-	protected DisplaySpecification displaySpec;
+	protected IDisplaySpecification displaySpec;
 
 	// everything for the attributes
+	/** To store layout information for the attributes defined in the display specification */
 	protected ArrayList attrViewInfoList = new ArrayList();
-	protected Font attributeValueFont;
+	/** To store layout information for the attributes not defined in the display specification */
+	protected ArrayList extraAttrViewInfoList;
+	protected boolean attributeLayoutUptodate = false;
 
 	// some rendering constants
 	protected static final int SPACING_VERTICAL = 5;
@@ -168,19 +172,29 @@ public class ElementBlockView extends BlockView
 		g.setFont(displaySpec.getElementNameFont());
 		g.drawString(elementName, startH + 20, baseline);
 
+		drawAttributes(g, attrViewInfoList, startH, baseline);
+		if (extraAttrViewInfoList != null)
+			drawAttributes(g, extraAttrViewInfoList, startH, baseline);
+	}
+
+	protected void drawAttributes(Graphics2D g, ArrayList myAttrViewInfoList, int startH, int baseline)
+	{
+		if (!attributeLayoutUptodate)
+			layoutAttributes();
+
 		// draw the attributes
 		// the position of the attribute names and values was already calculated in the
 		// layoutAttributes method. Here they just need to be drawn, but it is also checked
 		// if they fit on the screen, otherwise they are clipped and '...' is appended.
 		AttrViewInfo attrViewInfo;
-		int numberOfAttrs = attrViewInfoList.size();
+		int numberOfAttrs = myAttrViewInfoList.size();
 		int remainingAttrSpace; // the space remaining for attributes
 		int requiredSpace;
 		g.setFont(displaySpec.getAttributeValueFont());
 		int dotsWidth = g.getFontMetrics().stringWidth("...");
 		for (int i = 0; i < numberOfAttrs; i++)
 		{
-			attrViewInfo = (AttrViewInfo)attrViewInfoList.get(i);
+			attrViewInfo = (AttrViewInfo)myAttrViewInfoList.get(i);
 			if (attrViewInfo.visible)
 			{
 				// attribute name
@@ -218,20 +232,16 @@ public class ElementBlockView extends BlockView
 	}
 
 	/**
-	  Layouts this view (and it's children) to fit to
-	  the given width.
-
-	  @param startV is relative to the parent, thus it is 0 for the first child
-
-	  */
+	 * Layouts this view (and it's children) to fit to the given width.
+	 */
 	public void layout(int width)
 	{
 		// init
 		this.titleHeight = xmlEditor.getGraphics().getFontMetrics(displaySpec.getElementNameFont()).getHeight() + 4;
 		this.width = width;
 
-		// layout the attributes
-		layoutAttributes();
+		// mark that the attributes need layouting
+		attributeLayoutUptodate = false;
 
 		collapseSignTop = (titleHeight / 2) - 5;
 
@@ -251,39 +261,43 @@ public class ElementBlockView extends BlockView
 
 
 	/**
-	  This method calculates the positions off the attributes. Called during initial layout
-	  or when attributes have changed/removed/added.
+	 * This method calculates the positions off the attributes. Called during initial layout
+	 * or when attributes have changed/removed/added.
 	 */
 	public void layoutAttributes()
 	{
+		// Before trying to figure out this code, you should know this:
+		//   - normally it is defined in the display specification in which order
+		//     the attributes must be drawn.
+		//   - however, we also want to show the other (if any) attributes
+
 		Graphics graphics = xmlEditor.getGraphics();
 		FontMetrics attrNameFontMetrics  = graphics.getFontMetrics(displaySpec.getAttributeNameFont());
 		FontMetrics attrValueFontMetrics = graphics.getFontMetrics(displaySpec.getAttributeValueFont());
 
+		NamedNodeMap allAttributes = element.getAttributes();
+		boolean[] processed = new boolean[allAttributes.getLength()];
+
 		int elementNameWidth = graphics.getFontMetrics(displaySpec.getElementNameFont()).stringWidth(elementName);
 		int attrPos = BORDER_WIDTH + COLLAPS_ICON_WIDTH + elementNameWidth + ATTR_SPACING;
 		AttrViewInfo attrViewInfo;
+		Attr attr;
+
+		// part 1: handle the attributes defined in the display specification
 		int numberOfAttrs = attrViewInfoList.size();
 		for (int i = 0; i < numberOfAttrs; i++)
 		{
 			attrViewInfo = (AttrViewInfo)attrViewInfoList.get(i);
-			Attr attr;
-			if (attrViewInfo.attributeSpec.nsUri == null || attrViewInfo.attributeSpec.nsUri.equals(""))
-			{
-				attr = element.getAttributeNode(attrViewInfo.attributeSpec.localName);
-			}
-			else
-			{
-				attr = element.getAttributeNodeNS(attrViewInfo.attributeSpec.nsUri,
-						attrViewInfo.attributeSpec.localName);
-			}
+			int pos = findNamePoint(allAttributes, attrViewInfo.attributeSpec.nsUri,
+					attrViewInfo.attributeSpec.localName);
 
-			if (attr == null)
+			if (pos < 0)
 			{
 				attrViewInfo.visible = false;
 			}
 			else
 			{
+				attr = (Attr)allAttributes.item(pos);
 				attrViewInfo.value = attr.getValue();
 				if (attrViewInfo.name == null)
 				{
@@ -302,26 +316,96 @@ public class ElementBlockView extends BlockView
 				attrPos += attrValueFontMetrics.stringWidth(attrViewInfo.value);
 				attrPos += ATTR_SPACING;
 				attrViewInfo.visible = true;
+
+				// mark this attribute as processed
+				processed[pos] = true;
 			}
 		}
+
+		// part 2: handle the other attributes
+		if (extraAttrViewInfoList != null)
+			extraAttrViewInfoList.clear();
+
+		numberOfAttrs = allAttributes.getLength();
+		for (int i = 0; i < numberOfAttrs; i++)
+		{
+			if (processed[i] == false)
+			{
+				attr = (Attr)allAttributes.item(i);
+				AttrViewInfo extraAttrViewInfo = new AttrViewInfo();
+
+				String prefix = attr.getPrefix();
+				String qname = attr.getLocalName();
+				if (prefix != null)
+					qname = prefix + ":" + qname;
+				qname += ":"; // this is the colon seperating name and value
+				extraAttrViewInfo.name = qname;
+
+
+				extraAttrViewInfo.value = attr.getValue();
+
+				extraAttrViewInfo.namePos = attrPos;
+				attrPos += attrNameFontMetrics.stringWidth(extraAttrViewInfo.name);
+				attrPos += ATTR_NAME_VALUE_SPACING;
+				extraAttrViewInfo.valuePos = attrPos;
+				attrPos += attrValueFontMetrics.stringWidth(extraAttrViewInfo.value);
+				attrPos += ATTR_SPACING;
+
+				extraAttrViewInfo.visible = true;
+				if (extraAttrViewInfoList == null)
+					extraAttrViewInfoList = new ArrayList();
+				extraAttrViewInfoList.add(extraAttrViewInfo);
+			}
+		}
+
+		attributeLayoutUptodate = true;
+	}
+
+	/**
+	 * This method is more or less copied from the Xerces codebase.
+	 * (from the file NamedNodeMapImpl).
+	 */
+	protected int findNamePoint(NamedNodeMap nodeMap, String namespaceURI, String name)
+	{
+		int numberOfNodes = nodeMap.getLength();
+		for (int i = 0; i < numberOfNodes; i++) {
+			Node a = (Node)nodeMap.item(i);
+			String aNamespaceURI = a.getNamespaceURI();
+			String aLocalName = a.getLocalName();
+			if (namespaceURI == null) {
+				if (aNamespaceURI == null
+						&&
+						(name.equals(aLocalName)
+						 ||
+						 (aLocalName == null && name.equals(a.getNodeName()))))
+					return i;
+			} else {
+				if (namespaceURI.equals(aNamespaceURI)
+						&&
+						name.equals(aLocalName))
+					return i;
+			}
+		}
+		return -1;
 	}
 
 
 	/**
-	  Recalculates the height of this view an recursively of its parent views
-	  when the height has changed because of element removal/addition or when
-	  collapsing/expanding.
+	 * Recalculates the height of this view and recursively of its parent views
+	 * when the height has changed because of element removal/addition or when
+	 * collapsing/expanding.
 	 */
 	public void heightChanged(int amount)
 	{
-		Iterator childrenIt = childViewList.iterator();
-
-		contentHeight = contentHeight + amount;
-		if (parentView != null)
-			parentView.heightChanged(amount);
-		else
+		if (!isCollapsed())
 		{
-			resetSize();
+			contentHeight = contentHeight + amount;
+			if (parentView != null)
+				parentView.heightChanged(amount);
+			else
+			{
+				resetSize();
+			}
 		}
 	}
 
@@ -459,7 +543,7 @@ public class ElementBlockView extends BlockView
 				if (me.getTarget() == element)
 				{
 					e.stopPropagation();
-					layoutAttributes();
+					attributeLayoutUptodate = false;
 					xmlEditor.repaint(xmlEditor.getVisibleRect());
 				}
 			}
@@ -493,7 +577,7 @@ public class ElementBlockView extends BlockView
 		NodeList children = element.getChildNodes();
 		int elementChildNodeCounter = 0;
 		boolean hasChildren = childViewList.size() > 0;
-		int heightChangeAmount = 0;
+		boolean heightChanged = false;
 		int oldHeight = getHeight();
 
 		for (int i = 0; i < children.getLength(); i++)
@@ -513,18 +597,15 @@ public class ElementBlockView extends BlockView
 					View childView = xmlEditor.createView(node, this);
 					childView.layout(width - SPACING_HORIZONTAL);
 					childViewList.add(elementChildNodeCounter, childView);
-					heightChangeAmount += childView.getHeight() + SPACING_VERTICAL;
+					heightChanged = true;
 				}
 				elementChildNodeCounter++;
 			}
 		}
 
-		if (heightChangeAmount != 0)
+		if (heightChanged)
 		{
-			if (!hasChildren && childViewList.size() > 0)
-				heightChangeAmount += SPACING_VERTICAL;
-
-			contentHeight += heightChangeAmount;
+			invalidateHeight();
 			int newHeight = getHeight();
 			int diff = newHeight - oldHeight;
 			applyHeightChange(diff);
@@ -534,9 +615,9 @@ public class ElementBlockView extends BlockView
 	public void removeViewForRemovedChild(Node removedChild)
 	{
 		NodeList children = element.getChildNodes();
-		int relevantChildNodeCounter = 0; // only element and comment nodes are relevant for now
+		int relevantChildNodeCounter = 0; // only nodes that are displayed count (currently e.g. not PI's)
 		boolean hasChildren = childViewList.size() > 0;
-		int heightChangeAmount = 0;
+		boolean heightChanged = false;
 		int oldHeight = getHeight();
 
 		for (int i = 0; i < children.getLength(); i++)
@@ -545,7 +626,7 @@ public class ElementBlockView extends BlockView
 			if ((node == removedChild))
 			{
 				View correspondingView = (View)childViewList.get(relevantChildNodeCounter);
-				heightChangeAmount -= correspondingView.getHeight() + SPACING_VERTICAL;
+				heightChanged = true;
 				correspondingView.removeEventListeners();
 				childViewList.remove(relevantChildNodeCounter);
 				break;
@@ -554,20 +635,12 @@ public class ElementBlockView extends BlockView
 			if (XmlEditor.isNodeTypeSupported(node.getNodeType()))
 				relevantChildNodeCounter++;
 		}
-		if (childViewList.size() == 0)
+		if (heightChanged)
 		{
-			// if last child is removed, contentheight should become zero
-			heightChangeAmount = 0 - contentHeight;
-		}
-		if (heightChangeAmount != 0)
-		{
-			contentHeight += heightChangeAmount;
-			if (!isCollapsed())
-			{
-				int newHeight = getHeight();
-				int diff = newHeight - oldHeight;
-				applyHeightChange(diff);
-			}
+			invalidateHeight();
+			int newHeight = getHeight();
+			int diff = newHeight - oldHeight;
+			applyHeightChange(diff);
 		}
 	}
 
@@ -778,5 +851,141 @@ public class ElementBlockView extends BlockView
 		// expand myself
 		expand();
 
+	}
+
+	/**
+	 * Overidden method from BlockView class.
+	 */
+	public int getVerticalPosition(View wantedView)
+	{
+		int startV = getVerticalPosition();
+
+		Iterator childrenIt = childViewList.iterator();
+
+		if (!isCollapsed())
+		{
+			int childVertPos = startV + titleHeight + SPACING_VERTICAL;
+			while (childrenIt.hasNext())
+			{
+				View view = (View)childrenIt.next();
+				if (view == wantedView)
+					return childVertPos;
+				childVertPos += view.getHeight() + SPACING_VERTICAL;
+			}
+		}
+		else
+		{
+			throw new RuntimeException("Cannot give the position of the childview is its parent is collapsed!");
+		}
+		throw new RuntimeException("The given view is not a childview.");
+	}
+
+	/**
+	 * Overidden method from BlockView class.
+	 */
+	public int getHorizontalPosition(View wantedChildView)
+	{
+		return getHorizontalPosition() + SPACING_HORIZONTAL;
+	}
+
+	/**
+	 * Overidden method from BlockView class.
+	 */
+	public View getNextSibling(View wantedChildView)
+	{
+		Iterator childrenIt = childViewList.iterator();
+		while (childrenIt.hasNext())
+		{
+			View view = (View)childrenIt.next();
+			if (view == wantedChildView)
+			{
+				try
+				{
+					return (View)childrenIt.next();
+				}
+				catch (java.util.NoSuchElementException e)
+				{
+					return null;
+				}
+			}
+		}
+		throw new RuntimeException("The given view is not a childview.");
+	}
+
+	/**
+	 * Overidden method from BlockView class.
+	 */
+	public View getNext(boolean visible)
+	{
+		if (childViewList.size() > 0 && (visible ? !isCollapsed() : true))
+		{
+			return (View)childViewList.get(0);
+		}
+		else
+		{
+			return super.getNext(visible);
+		}
+	}
+
+	/**
+	 * Overidden method from BlockView class.
+	 */
+	public View getPreviousSibling(View wantedChildView)
+	{
+		Iterator childrenIt = childViewList.iterator();
+		View previousView = null;
+		while (childrenIt.hasNext())
+		{
+			View view = (View)childrenIt.next();
+			if (view == wantedChildView)
+			{
+				return previousView;
+			}
+			previousView = view;
+		}
+		throw new RuntimeException("The given view is not a childview.");
+	}
+
+
+	public View getLastChild(boolean visible)
+	{
+		if (isCollapsed())
+			return this;
+
+		if (childViewList.size() > 0)
+		{
+			return ((View)childViewList.get(childViewList.size() - 1)).getLastChild(visible);
+		}
+		return this;
+	}
+
+	public View findNode(Node node)
+	{
+		if (node == element)
+			return this;
+
+		Node previousParent = node;
+		while(true)
+		{
+			Node parentNode = previousParent.getParentNode();
+			if (!(parentNode instanceof Element))
+			{
+				return null;
+			}
+
+			Element parentEl = (Element)parentNode;
+			if (parentEl == element)
+			{
+				// zoek onder mijn kinderen
+				Iterator childrenIt = childViewList.iterator();
+				while (childrenIt.hasNext())
+				{
+					View view = (View)childrenIt.next();
+					if (view.getNode() == previousParent)
+						return view.findNode(node);
+				}
+			}
+			previousParent = parentEl;
+		}
 	}
 }

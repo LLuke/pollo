@@ -1,6 +1,8 @@
 package org.outerj.pollo.dialog;
 
 import org.outerj.pollo.Pollo;
+import org.outerj.pollo.config.PolloConfiguration;
+import org.outerj.pollo.config.ViewTypeConf;
 
 import java.util.Vector;
 import java.util.StringTokenizer;
@@ -48,22 +50,10 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		panel.add(caption, BorderLayout.NORTH);
 
 
-		// read all the 'viewtypes' from the properties
 		Pollo pollo = Pollo.getInstance();
-		Vector viewTypesVector = new Vector();
-		String viewtypes = pollo.getProperty("viewtypes");
-		StringTokenizer commaTokenizer = new StringTokenizer(viewtypes, ",");
+		PolloConfiguration config = pollo.getConfiguration();
 
-		while (commaTokenizer.hasMoreTokens())
-		{
-			String name = commaTokenizer.nextToken().trim();
-			String description = pollo.getProperty("viewtype." + name + ".description").trim();
-
-			ViewType viewType = new ViewType(name, description);
-			viewTypesVector.add(viewType);
-		}
-
-		viewTypesList = new JList(viewTypesVector);
+		viewTypesList = new JList(config.getViewTypes().toArray());
 		JScrollPane scrollPane = new JScrollPane(viewTypesList);
 		panel.add(scrollPane, BorderLayout.CENTER);
 
@@ -88,32 +78,6 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		Dimension dimension = getSize();
 		Dimension dimension2 = getToolkit().getScreenSize();
 		setLocation((dimension2.width - dimension.width) / 2, (dimension2.height - dimension.height) / 2);
-	}
-
-
-	/**
-	 * Combines the name and description of a viewtype.
-	 */
-	public class ViewType
-	{
-		protected String name;
-		protected String description;
-
-		public ViewType(String name, String description)
-		{
-			this.name = name;
-			this.description = description;
-		}
-
-		public String getName()
-		{
-			return name;
-		}
-
-		public String toString()
-		{
-			return description;
-		}
 	}
 
 
@@ -149,10 +113,10 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 	}
 
 	/**
-	 * Get the name of the viewtype the user selected.
+	 * Get the ViewTypeConf for the selected view type.
 	 */
-	public String getSelectedViewTypeName()
+	public ViewTypeConf getSelectedViewTypeConf()
 	{
-		return ((ViewType)viewTypesList.getSelectedValue()).getName();
+		return (ViewTypeConf)viewTypesList.getSelectedValue();
 	}
 }

@@ -7,10 +7,15 @@ import java.awt.BasicStroke;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import org.w3c.dom.Node;
+
 
 /**
-  This class contains functionality that's shared between block views
-  (such as ElementBlockView and CommentView).
+ * This class contains functionality that's shared between block views
+ * (such as ElementBlockView and CommentView).
+ *
+ * Many of the methods here are defined in the View interface, so look
+ * there for documentation.
  */
 public abstract class BlockView implements View
 {
@@ -45,7 +50,7 @@ public abstract class BlockView implements View
 	}
 
 	/**
-	  Changes the height of the editing widget
+	 * Changes the height of the editing widget
 	 */
 	protected void resetSize()
 	{
@@ -69,8 +74,8 @@ public abstract class BlockView implements View
 	}
 
 	/**
-	  Does parentView.heightChanged if the parentView is not null, otherwise
-	  resizes the JComponent (xmlEditor).
+	 * Does parentView.heightChanged if the parentView is not null, otherwise
+	 * resizes the containing JComponent (xmlEditor).
 	 */
 	public void applyHeightChange(int amount)
 	{
@@ -82,6 +87,12 @@ public abstract class BlockView implements View
 		}
 	}
 
+	/**
+	 * Marks this node as selected. This involves putting a thick
+	 * border around it, and letting the XmlEditor know that this view
+	 * is now the selected view. As a consequence, the XmlEditor will
+	 * then generated NodeSelected events.
+	 */
 	public void markAsSelected(int startH, int startV)
 	{
 		xmlEditor.setSelectedNode(getNode(), this);
@@ -116,12 +127,15 @@ public abstract class BlockView implements View
 
 	/**
 	 * Collapses this view. If the view is not hidden inside another collapsed
-	 * view, then height change caused by this collapsing will be propagated upwards
+	 * view, then the height change caused by this collapsing will be propagated upwards
 	 * in the view tree. Otherwise, {@link #invalidateHeight} is called.
 	 */
 	public void collapse()
 	{
 		if (!isCollapsable())
+			return;
+
+		if (isCollapsed())
 			return;
 
 		boolean trackHeight = (parentView == null) ||
@@ -146,6 +160,9 @@ public abstract class BlockView implements View
 		if (!isCollapsable())
 			return;
 
+		if (!isCollapsed())
+			return;
+
 		boolean trackHeight = (parentView == null) ||
 			(parentView != null && parentView.isCollapsed() != true);
 		int oldHeight = 0, newHeight = 0;
@@ -154,7 +171,10 @@ public abstract class BlockView implements View
 		isCollapsed = false;
 		if (trackHeight) newHeight = this.getHeight();
 
-		if (trackHeight) applyHeightChange(newHeight - oldHeight);
+		if (trackHeight)
+		{
+			applyHeightChange(newHeight - oldHeight);
+		}
 
 		invalidateHeight();
 	}
@@ -184,5 +204,171 @@ public abstract class BlockView implements View
 	 */
 	public void invalidateHeight()
 	{
+	}
+
+	/**
+	 * Implementation of the View inteface.
+	 */
+	public int getVerticalPosition()
+	{
+		if (parentView == null)
+		{
+			// we have reached the root
+			return 0;
+		}
+		else
+		{
+			return parentView.getVerticalPosition(this);
+		}
+	}
+
+	/**
+	 * Implementation of the View interface. Subclasses should overide
+	 * this method if applicable.
+	 */
+	public int getVerticalPosition(View wantedChildView)
+	{
+		throw new RuntimeException("The method getVerticalPosition(View) is not supported by this view type.");
+	}
+
+	/**
+	 * Implementation of the View interface.
+	 */
+	public int getHorizontalPosition()
+	{
+		if (parentView == null)
+		{
+			return 0;
+		}
+		else
+		{
+			return parentView.getHorizontalPosition(this);
+		}
+	}
+
+	/**
+	 * Implementation of the View interface. Subclasses should overide
+	 * this method if applicable.
+	 */
+	public int getHorizontalPosition(View wantedChildView)
+	{
+		throw new RuntimeException("The method getHorizontalPosition(View) is not supported by this view type.");
+	}
+
+
+	public View getNextSibling()
+	{
+		if (parentView != null)
+		{
+			View view = parentView.getNextSibling(this);
+			if (view != null)
+				return view;
+			if (view == null && parentView != null)
+				return parentView.getNextSibling();
+		}
+		return null;
+	}
+
+	public View getNextSibling(View childView)
+	{
+		throw new RuntimeException("The method getNextSibling(View) is not supported by this view type.");
+	}
+
+	/**
+	 * Returns the next View node. In this implementation it returns the next sibling,
+	 * or if it hasn't got one, it returns the next sibling of its parent.
+	 */
+	public View getNext(boolean visible)
+	{
+		return getNextButNotChild();
+	}
+
+	/**
+	 * The difference between this method and getNext() is that this
+	 * one is not overidden in ElementBlockView.
+	 */
+	public View getNextButNotChild()
+	{
+		View view = getNextSibling();
+		if (view == null)
+		{
+			if (parentView != null)
+			{
+				View view2 = parentView.getNextSibling();
+				if (view2 != null)
+					return view2;
+			}
+			return this;
+		}
+		else
+		{
+			return view;
+		}
+	}
+
+
+	public View getPreviousSibling()
+	{
+		if (parentView != null)
+		{
+			View view = parentView.getPreviousSibling(this);
+			if (view != null)
+				return view;
+		}
+		return null;
+	}
+
+	public View getPreviousSibling(View childView)
+	{
+		throw new RuntimeException("The method getPreviousSibling(View) is not supported by this view type.");
+	}
+
+	/**
+	 * Returns the previous View node. In this implementation it returns the
+	 * previous sibling, or if it hasn't got one, it returns the previous
+	 * sibling of its parent.
+	 */
+	public View getPrevious(boolean visible)
+	{
+		View view = getPreviousSibling();
+		if (view == null)
+		{
+			if (parentView != null)
+				return parentView;
+			return this;
+		}
+		return view.getLastChild(visible);
+	}
+
+
+	/**
+	 * Implementation of the View interface.
+	 */
+	public View getLastChild(boolean visible)
+	{
+		return this;
+	}
+
+	/**
+	 * Implementation of the View interface.
+	 */
+	public View findNode(Node node)
+	{
+		if (node == getNode())
+			return this;
+		else
+			return null;
+	}
+
+	/**
+	 * Implementation of the View interface.
+	 */
+	public void assureVisibility(boolean recursive)
+	{
+		if (recursive)
+			expand();
+
+		if (parentView != null)
+			parentView.assureVisibility(true);
 	}
 }

@@ -1,6 +1,5 @@
 package org.outerj.pollo.xmleditor.view;
 
-import org.outerj.pollo.xmleditor.DisplaySpecification;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.NodeClickedEvent;
 import org.outerj.pollo.xmleditor.XmlTransferable;
@@ -28,8 +27,10 @@ import org.w3c.dom.events.MutationEvent;
 
 
 /**
-  Implements an abstract base class for 'block views' (block as opposed to inline) for
-  character data nodes (textnodes, commentnodes, cdata nodes).
+ * Implements an abstract base class for 'block views' (block as opposed to inline) for
+ * character data nodes (textnodes, commentnodes, cdata nodes).
+ *
+ * @author Bruno Dumon
  */
 public abstract class CharacterDataBlockView extends BlockView
 {
@@ -269,8 +270,8 @@ public abstract class CharacterDataBlockView extends BlockView
 
 
 	/**
-	  Given a maximum allowed width (in pixels), this method calculates how much text
-	  will fit on one line, assuming that if it doesn't fit, three dots are appended (...).
+	 * Given a maximum allowed width (in pixels), this method calculates how much text
+	 * will fit on one line, assuming that if it doesn't fit, three dots are appended (...).
 	 */
 	protected int clipText(char [] text, final int offset, final int length, int maxwidth)
 	{
@@ -292,7 +293,7 @@ public abstract class CharacterDataBlockView extends BlockView
 	}
 
 	/**
-	  Counts the number of lines in the text array.
+	 * Counts the number of lines in the text array.
 	 */
 	public int countNumberOfLines(char [] text)
 	{
@@ -310,8 +311,8 @@ public abstract class CharacterDataBlockView extends BlockView
 	}
 
 	/**
-	  Finds the position of the last line break, or if the end of the array is reached,
-	  returns that position.
+	 * Finds the position of the last line break, or if the end of the array is reached,
+	 * returns that position.
 	 */
 	public int searchNextLineBreak(char [] data, int offset)
 	{

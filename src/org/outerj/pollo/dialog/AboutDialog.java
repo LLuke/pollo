@@ -45,9 +45,10 @@ public class AboutDialog extends JDialog
 
 		JTabbedPane licenseTabs = new JTabbedPane();
 		licenseTabs.add("About", createTextArea("/org/outerj/pollo/general.txt"));
-		licenseTabs.add("Pollo", createTextArea("/org/outerj/pollo/pollo_license.txt"));
-		licenseTabs.add("Xerces", createTextArea("/org/outerj/pollo/xerces_license.txt"));
-		licenseTabs.add("Xalan", createTextArea("/org/outerj/pollo/xalan_license.txt"));
+		licenseTabs.add("Pollo license", createTextArea("/org/outerj/pollo/pollo_license.txt"));
+		licenseTabs.add("Changelog", createTextArea("/org/outerj/pollo/ChangeLog"));
+		licenseTabs.add("Apache", createTextArea("/org/outerj/pollo/apache_license.txt"));
+		licenseTabs.add("Jaxen", createTextArea("/org/outerj/pollo/jaxen_license.txt"));
 		licenseTabs.add("Kunstoff", createTextArea("/org/outerj/pollo/kunststoff_license.txt"));
 		licenseTabs.add("Others", createTextArea("/org/outerj/pollo/others_license.txt"));
 

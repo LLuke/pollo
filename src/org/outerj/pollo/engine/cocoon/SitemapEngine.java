@@ -3,6 +3,10 @@ package org.outerj.pollo.engine.cocoon;
 import org.outerj.pollo.xmleditor.view.*;
 import org.outerj.pollo.xmleditor.model.*;
 import org.outerj.pollo.xmleditor.*;
+import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
+import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
+import org.outerj.pollo.config.ViewTypeConf;
 import org.outerj.pollo.ViewEngine;
 
 import org.outerj.pollo.engine.cocoon.compeditor.ComponentsEditor;
@@ -16,7 +20,12 @@ public class SitemapEngine extends ViewEngine
 {
 	public static final String COCOON_URI = "http://apache.org/cocoon/sitemap/1.0";
 
-	public SitemapEngine(XmlModel xmlModel, String engineName)
+	protected XmlEditorPanel xmlEditorPanel;
+	protected XmlEditorPanel actionsEditor;
+	protected XmlEditorPanel resourcesEditor;
+	protected XmlEditorPanel viewsEditor;
+
+	public SitemapEngine(XmlModel xmlModel, ViewTypeConf viewTypeConf)
 		throws Exception
 	{
 		super(xmlModel);
@@ -24,10 +33,15 @@ public class SitemapEngine extends ViewEngine
 		setSize(900, 600);
 		setLayout(new BorderLayout());
 
+		IDisplaySpecification displaySpec = viewTypeConf.createDisplaySpecChain();
+		ISchema schema = viewTypeConf.createSchemaChain();
+		IAttributeEditorPlugin attrEditorPlugin = viewTypeConf.createAttrEditorPluginChain(xmlModel, schema);
+
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setPreferredSize(new Dimension(900, 600));
-		tabbedPane.addTab("Pipelines", new XmlEditorPanel(xmlModel, "/map:sitemap/map:pipelines",
-					"conf/sitemapspec.xml", "conf/sitemapschema.xml"));
+		xmlEditorPanel = new XmlEditorPanel(xmlModel, "/map:sitemap/map:pipelines",
+				displaySpec, schema, attrEditorPlugin);
+		tabbedPane.addTab("Pipelines", xmlEditorPanel);
 		tabbedPane.addTab("Generators",
 				new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:generators"), "generator",
 					COCOON_URI, "src", true, xmlModel));
@@ -50,18 +64,26 @@ public class SitemapEngine extends ViewEngine
 				new ComponentsEditor(xmlModel.getNode("/map:sitemap/map:components/map:actions"), "action",
 					COCOON_URI, "src", false, xmlModel));
 
-		XmlEditorPanel actionsEditor = new XmlEditorPanel(xmlModel, "/map:sitemap/map:action-sets",
-				"conf/sitemapspec.xml", "conf/sitemapschema.xml");
+		actionsEditor = new XmlEditorPanel(xmlModel, "/map:sitemap/map:action-sets",
+				displaySpec, schema, attrEditorPlugin);
 		tabbedPane.addTab("Action sets", actionsEditor);
 
-		XmlEditorPanel resourcesEditor = new XmlEditorPanel(xmlModel, "/map:sitemap/map:resources",
-				"conf/sitemapspec.xml", "conf/sitemapschema.xml");
+		resourcesEditor = new XmlEditorPanel(xmlModel, "/map:sitemap/map:resources",
+				displaySpec, schema, attrEditorPlugin);
 		tabbedPane.addTab("Resources", resourcesEditor);
 
-		XmlEditorPanel viewsEditor = new XmlEditorPanel(xmlModel, "/map:sitemap/map:views",
-				"conf/sitemapspec.xml", "conf/sitemapschema.xml");
+		viewsEditor = new XmlEditorPanel(xmlModel, "/map:sitemap/map:views",
+				displaySpec, schema, attrEditorPlugin);
 		tabbedPane.addTab("Views", viewsEditor);
 
 		add(tabbedPane, BorderLayout.CENTER);
+	}
+
+	public void cleanup()
+	{
+		xmlEditorPanel.cleanup();
+		actionsEditor.cleanup();
+		resourcesEditor.cleanup();
+		viewsEditor.cleanup();
 	}
 }
