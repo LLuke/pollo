@@ -538,7 +538,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
     public void refreshUserPreferences()
     {
         applyUserPreferences();
-        xmlEditorPanel.getXmlEditor().invalidateView();
+        xmlEditorPanel.getXmlEditor().relayout();
         if (xmlEditorPanel.getXmlEditor().isShowing())
             xmlEditorPanel.getXmlEditor().repaint();
     }
