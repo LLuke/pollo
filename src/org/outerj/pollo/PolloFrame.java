@@ -7,14 +7,12 @@ import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.util.Utilities;
 
 import javax.swing.*;
-import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.util.ArrayList;
 
 /**
