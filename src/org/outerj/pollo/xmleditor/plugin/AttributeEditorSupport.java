@@ -121,4 +121,9 @@ public class AttributeEditorSupport
 		}
 		throw new Error("[AttributeEditorSupport] mode has incorrect value.");
 	}
+
+	public JTextField [] getTextFields()
+	{
+		return new JTextField [] { comboBoxEditor.getTextField(), textFieldEditor.getTextField() };
+	}
 }
