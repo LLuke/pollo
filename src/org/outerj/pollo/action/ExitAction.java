@@ -14,7 +14,6 @@ public class ExitAction extends AbstractAction
 
 	public ExitAction(PolloFrame polloFrame)
 	{
-		super("Exit", EmptyIcon.getInstance());
 		ResourceManager resMgr = ResourceManager.getManager(ExitAction.class);
         resMgr.configureAction(this);
 		this.polloFrame = polloFrame;

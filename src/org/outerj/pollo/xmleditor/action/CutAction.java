@@ -1,10 +1,8 @@
 package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
-import org.outerj.pollo.xmleditor.IconManager;
 import org.w3c.dom.Node;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**

@@ -15,7 +15,6 @@ public class AboutAction extends AbstractAction
 
 	public AboutAction(PolloFrame polloFrame)
 	{
-		super("About Pollo...", EmptyIcon.getInstance());
 		ResourceManager resMgr = ResourceManager.getManager(AboutAction.class);
         resMgr.configureAction(this);
 		this.polloFrame = polloFrame;

@@ -25,15 +25,10 @@ public class FileNewAction extends AbstractAction
 
 	public FileNewAction(PolloFrame polloFrame)
 	{
-		super("New...");
-
 		ResourceManager resMgr = ResourceManager.getManager(FileNewAction.class);
         resMgr.configureAction(this);
 
-
 		this.polloFrame = polloFrame;
-
-
 		this.pollo = pollo;
 	}
 

@@ -30,9 +30,7 @@
  */
 package org.outerj.pollo.util;
 
-import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -40,14 +38,10 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 import org.apache.log4j.Category;
+import org.outerj.pollo.gui.EmptyIcon;
 
 /**
  * This class is used to managed access to the resources needed by an
@@ -78,11 +72,11 @@ public class ResourceManager {
 	private ResourceBundle _resourceBundle;
 	static private Locale _locale = null;
 
-	public static final ImageIcon EMPTY16X16ICON = new EmptyImageIcon(16,16);
-    public static final ImageIcon EMPTY20X20ICON = new EmptyImageIcon(20,20);
+	public static final Icon EMPTY16X16ICON = EmptyIcon.get16Instance();
+    public static final Icon EMPTY20X20ICON = EmptyIcon.get20Instance();
 
 	/**
-	 * Protected constructor as we use a factory method getResource() to 
+	 * Protected constructor as we use a factory method {@link #getManager} to
 	 * create ResourceManager instances.
 	 * <p>
 	 * @param clazz A resouce is associated with a class.
@@ -180,8 +174,8 @@ public class ResourceManager {
 	 * @param propertyName name of property which holds the filename of the icon.
 	 * @return ImageIcon the ImageIcon or null if not found.
 	 */
-	public ImageIcon getIcon(String propertyName) {
-		ImageIcon retval = null;
+	public Icon getIcon(String propertyName) {
+		Icon retval = null;
 
 		String iconFilename = getStr(propertyName);
 		if (iconFilename!=null && !iconFilename.equals("")) {
@@ -355,7 +349,7 @@ public class ResourceManager {
 		String name = getString(propertyPrefix + Action.NAME);
 		a.putValue(Action.NAME, name);
 
-		ImageIcon smallIcon = getIcon(propertyPrefix + Action.SMALL_ICON);
+		Icon smallIcon = getIcon(propertyPrefix + Action.SMALL_ICON);
 		if (smallIcon != null) {
 			a.putValue(Action.SMALL_ICON, smallIcon);
 		}
@@ -384,7 +378,7 @@ public class ResourceManager {
 	 * <p>
 	 *  @see #configureButton(String,JButton)
 	 * <p>
-	 * @param m Button to be configured
+	 * @param b Button to be configured
 	 */
 	public void configureButton(JButton b) {
 		String propertyPrefix = "";
@@ -409,7 +403,7 @@ public class ResourceManager {
 	 * If propertyPrefix is an empty stream, then the above property names are used
 	 * without any special prefix.
 	 * <p>
-	 * @param m menu to be configured
+	 * @param b menu to be configured
 	 * @param propertyPrefix String holding the prefix the property names
 	 */
 	public void configureButton(String propertyPrefix, JButton b) {
@@ -420,7 +414,7 @@ public class ResourceManager {
 		String text = getString(propertyPrefix + "Text");
 		b.setText(text);
 
-		ImageIcon smallIcon = getIcon(propertyPrefix + Action.SMALL_ICON);
+		Icon smallIcon = getIcon(propertyPrefix + Action.SMALL_ICON);
 		if (smallIcon != null) {
 			b.setIcon(smallIcon);
 		}
@@ -474,7 +468,7 @@ public class ResourceManager {
 		String text = getString(propertyPrefix + "Text");
 		m.setText(text);
 
-		ImageIcon smallIcon = getIcon(propertyPrefix + Action.SMALL_ICON);
+		Icon smallIcon = getIcon(propertyPrefix + Action.SMALL_ICON);
 		if (smallIcon != null) {
 			m.setIcon(smallIcon);
 		}
@@ -492,7 +486,7 @@ public class ResourceManager {
 	/**
 	 * sets the mnemonic.key for a JMenu
 	 * <p>
-	 * @see #getKeyStroke(mnemonic) for how the property key is parsed.
+	 * @see #getKeyStroke(java.lang.String) for how the property key is parsed.
 	 * <p>
 	 * @param menu JMenu to set the mnemonic key
 	 * @param propertyName property name of the key stroke
@@ -600,29 +594,5 @@ public class ResourceManager {
 
 		// Returns the ResourceManager 
 		return retval;
-	}
-
-	/**
-	 * Invisible icon, size 16 x 16. Used to align menu items.
-	 */
-	private static class EmptyImageIcon extends ImageIcon {
-
-		int _width;
-		int _height;
-		public EmptyImageIcon( int width, int height )
-		{
-			_width = width;
-			_height = height;
-		}
-		public void paintIcon(Component c, Graphics g, int x, int y) {
-		}
-
-		public int getIconWidth() {
-			return _width;
-		}
-
-		public int getIconHeight() {
-			return _height;
-		}
 	}
 }

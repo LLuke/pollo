@@ -37,6 +37,8 @@ version 0.3.4
  - Included a schema for Ant 1.5
  - Removed the JavaHelp system, the content will now be on Pollo's website.
    This will make it easier to update, and easier to read.
+ - Changed the icons to the default Java L&F icons, because the ones
+   I was using previously are now covered by GPL.
 
 version 0.3.3
 =============

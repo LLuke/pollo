@@ -445,7 +445,7 @@ public class Undo implements EventListener, DomConnected
 	{
 		protected UndoAction()
 		{
-			super("Undo", IconManager.getIcon("org/outerj/pollo/resource/undo.gif"));
+			super("Undo", IconManager.getIcon("org/outerj/pollo/resource/Undo16.gif"));
 		}
 
 		public void actionPerformed(ActionEvent e)

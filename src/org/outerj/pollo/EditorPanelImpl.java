@@ -26,8 +26,6 @@ import org.xml.sax.SAXParseException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuListener;
 import javax.swing.event.MenuEvent;
 import java.awt.*;
@@ -56,6 +54,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 	protected SaveAsAction saveAsAction;
 	protected CloseAction closeAction;
 	protected CloseViewAction closeViewAction;
+    protected static ResourceManager resMgr = ResourceManager.getManager(EditorPanelImpl.class);
 
 	public EditorPanelImpl(XmlModel xmlModel, ViewTypeConf viewTypeConf, PolloFrame polloFrame)
 		throws Exception
@@ -107,8 +106,6 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 
 	protected void createMenus()
 	{
-		ResourceManager resMgr = ResourceManager.getManager(EditorPanelImpl.class);
-
 		domModeMenuBar = new JMenuBar();
 		textModeMenuBar = new JMenuBar();
 
@@ -280,8 +277,8 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		domModeToolBar.add(new ToolButton(xmlEditor.getCutAction()));
 		domModeToolBar.add(new ToolButton(xmlEditor.getCopyAction()));
 
-		PopupToolButton domPasteButton = new PopupToolButton("Paste:", "Paste", IconManager.getIcon("org/outerj/pollo/resource/paste.gif"));
-		domPasteButton.addAction(xmlEditor.getPasteBeforeAction());
+		PopupToolButton domPasteButton = new PopupToolButton("Paste:", "Paste", IconManager.getIcon("org/outerj/pollo/Paste16.gif"));
+	    domPasteButton.addAction(xmlEditor.getPasteBeforeAction());
 		domPasteButton.addAction(xmlEditor.getPasteInsideAction());
 		domPasteButton.addAction(xmlEditor.getPasteAfterAction());
 		domModeToolBar.add(domPasteButton);

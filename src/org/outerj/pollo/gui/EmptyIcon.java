@@ -8,12 +8,31 @@ import java.awt.*;
  */
 public class EmptyIcon implements Icon
 {
-	protected static final Icon instance = new EmptyIcon();
+	protected static final Icon instance16 = new EmptyIcon(16, 16);
+    protected static final Icon instance20 = new EmptyIcon(20, 20);
+    protected int width;
+    protected int height;
 
-	public static Icon getInstance()
+    public static Icon getInstance()
+    {
+        return instance16;
+    }
+
+	public static Icon get16Instance()
 	{
-		return instance;
+		return instance16;
 	}
+
+    public static Icon get20Instance()
+    {
+        return instance20;
+    }
+
+    public EmptyIcon(int height, int width)
+    {
+        this.height = height;
+        this.width = width;
+    }
 
 	public void paintIcon(Component c, Graphics g, int x, int y)
 	{
@@ -21,11 +40,11 @@ public class EmptyIcon implements Icon
 
 	public int getIconWidth()
 	{
-		return 16;
+		return width;
 	}
 
 	public int getIconHeight()
 	{
-		return 16;
+		return height;
 	}
 }

@@ -19,8 +19,6 @@ public class FileOpenAction extends AbstractAction
 
 	public FileOpenAction(PolloFrame polloFrame)
 	{
-		super("Open...");
-
 		ResourceManager resMgr = ResourceManager.getManager(FileOpenAction.class);
         resMgr.configureAction(this);
 

@@ -19,29 +19,10 @@ public class PasteAction extends AbstractAction implements SelectionListener
 
 	public PasteAction(XmlEditor xmlEditor, int behaviour)
 	{
-		super(getDisplayName(behaviour), EmptyIcon.getInstance());
-
 		this.xmlEditor = xmlEditor;
 		this.behaviour = behaviour;
 		setEnabled(false);
 		xmlEditor.getSelectionInfo().addListener(this);
-	}
-
-	protected static String getDisplayName(int behaviour)
-	{
-		if (behaviour == PASTE_BEFORE)
-		{
-			return "paste before";
-		}
-		else if (behaviour == PASTE_AFTER)
-		{
-			return "paste after";
-		}
-		else if (behaviour == PASTE_ASCHILD)
-		{
-			return "paste as child";
-		}
-		return "unkown?!";
 	}
 
 	public void actionPerformed(ActionEvent e)

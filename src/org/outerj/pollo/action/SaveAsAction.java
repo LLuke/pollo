@@ -17,7 +17,6 @@ public class SaveAsAction extends AbstractAction
 
 	public SaveAsAction(XmlModel xmlModel, PolloFrame polloFrame)
 	{
-		super("Save As...", EmptyIcon.getInstance());
 		ResourceManager resMgr = ResourceManager.getManager(SaveAsAction.class);
         resMgr.configureAction(this);
 

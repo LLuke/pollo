@@ -36,6 +36,7 @@
       <fileset defaultexcludes="true" dir="src">
         <exclude name="**/*.java"/>
       </fileset>
+	  <fileset defaultexcludes="true" dir="res"/>
     </copy>
     <copy file="ChangeLog" tofile="build/org/outerj/pollo/resource/ChangeLog"/>
   </target>

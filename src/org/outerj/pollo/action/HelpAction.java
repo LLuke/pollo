@@ -14,7 +14,6 @@ public class HelpAction extends AbstractAction
 
 	public HelpAction(PolloFrame polloFrame)
 	{
-		super("Help", EmptyIcon.getInstance());
 		ResourceManager resMgr = ResourceManager.getManager(HelpAction.class);
         resMgr.configureAction(this);
 

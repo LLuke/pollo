@@ -3,7 +3,6 @@ package org.outerj.pollo.xmleditor.action;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.view.View;
-import org.outerj.pollo.gui.EmptyIcon;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
@@ -33,31 +32,11 @@ public class CollapseExpandAction extends AbstractAction implements SelectionLis
 	 */
 	public CollapseExpandAction(XmlEditor xmlEditor, int behaviour)
 	{
-		super(getDescription(behaviour), EmptyIcon.getInstance());
 		this.behaviour = behaviour;
 		this.xmlEditor = xmlEditor;
 
 		xmlEditor.getSelectionInfo().addListener(this);
 		setEnabled(false);
-	}
-
-	private static String getDescription(int behaviour)
-	{
-		switch (behaviour)
-		{
-			case COLLAPSE:
-				return "Collapse";
-			case COLLAPSE_ALL:
-				return "Collapse All";
-			case EXPAND:
-				return "Expand";
-			case EXPAND_ALL:
-				return "Expand All";
-			case TOGGLE:
-				return "Toggle collapse/expand";
-			default:
-				throw new RuntimeException("[CollapseExpandAction] behaviour not supported: " + behaviour);
-		}
 	}
 
 	public void actionPerformed(ActionEvent e)

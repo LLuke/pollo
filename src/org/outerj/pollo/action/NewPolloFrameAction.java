@@ -19,7 +19,6 @@ public class NewPolloFrameAction extends AbstractAction
 
 	public NewPolloFrameAction()
 	{
-		super("New frame", EmptyIcon.getInstance());
 		ResourceManager resMgr = ResourceManager.getManager(NewPolloFrameAction.class);
         resMgr.configureAction(this);
 	}

@@ -15,7 +15,6 @@ public class CloseAction extends AbstractAction
 
 	public CloseAction(XmlModel xmlModel, PolloFrame polloFrame)
 	{
-		super("Close", EmptyIcon.getInstance());
 		ResourceManager resMgr = ResourceManager.getManager(CloseAction.class);
 		resMgr.configureAction(this);
 		this.xmlModel = xmlModel;
