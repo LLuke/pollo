@@ -243,6 +243,8 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		textViewMenu.add(new NewEditorPanelMenu(polloFrame));
 		domViewMenu.add(Utilities.createMenuItemFromAction(Pollo.getInstance().getNewPolloFrameAction()));
 		textViewMenu.add(Utilities.createMenuItemFromAction(Pollo.getInstance().getNewPolloFrameAction()));
+		domViewMenu.addSeparator();
+		domViewMenu.add(Utilities.createMenuItemFromAction(xmleditor.getFocusOnEditorAction()));
 
 		// help menu for the dom and text mode menu bar
 		domModeMenuBar.add(Box.createHorizontalGlue());
