@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor.model;
 
 import org.apache.xerces.parsers.DOMParser;
+import org.apache.xerces.xni.*;
 
 /**
  * A variant of the Xerces DOMParser which does not create text nodes
@@ -16,19 +17,22 @@ public class PolloDOMParser extends DOMParser
 	public PolloDOMParser()
 		throws Exception
 	{
-		super.setIncludeIgnorableWhitespace(false);
-		super.setCreateEntityReferenceNodes(false);
+        setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        setFeature("http://apache.org/xml/features/dom/include-ignorable-whitespace", false);
+        setFeature("http://xml.org/sax/features/external-general-entities", false);
+        setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 	}
 
-
-
-	public void characters(int data)
-		throws Exception
-	{
-		// ignore text consisting of whitespace only
-		if (getIncludeIgnorableWhitespace() || (fStringPool.toString(data).trim().length() > 0))
-		{
-			super.characters(data);
-		}
-	}
+    public void characters(XMLString xmlString, Augmentations augmentations) throws XNIException
+    {
+        int maxPos = xmlString.offset + xmlString.length;
+        for (int i = xmlString.offset; i < maxPos; i++)
+        {
+            if (xmlString.ch[i] != ' ' && xmlString.ch[i] != '\t' && xmlString.ch[i] != '\r' && xmlString.ch[i] != '\n')
+            {
+                super.characters(xmlString, augmentations);
+                break;
+            }
+        }
+    }
 }
