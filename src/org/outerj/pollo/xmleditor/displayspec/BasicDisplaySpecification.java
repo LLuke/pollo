@@ -30,12 +30,6 @@ public class BasicDisplaySpecification implements IDisplaySpecification
     /** Contains the instances of the ElementSpec class */
     protected NestedNodeMap elementSpecs = new NestedNodeMap();
 
-    /** Font to use for element names. */
-    protected Font elementNameFont;
-    /** Font to use for attribute names. */
-    protected Font attributeNameFont;
-    /** Font to use for attribute values. */
-    protected Font attributeValueFont;
     /** Color to use as the background of the XmlEditor. */
     protected Color backgroundColor;
 
@@ -93,22 +87,6 @@ public class BasicDisplaySpecification implements IDisplaySpecification
         ElementSpec elementSpec = (ElementSpec)elementSpecs.get(element);
         return elementSpec;
     }
-
-    public Font getAttributeNameFont()
-    {
-        return attributeNameFont;
-    }
-
-    public Font getAttributeValueFont()
-    {
-        return attributeValueFont;
-    }
-
-    public Font getElementNameFont()
-    {
-        return elementNameFont;
-    }
-
 
 
     /*

@@ -26,8 +26,6 @@ import java.awt.event.MouseEvent;
  */
 public abstract class CharacterDataBlockView extends BlockView
 {
-    protected static FontMetrics fontMetrics;
-    protected static Font font;
     protected static int lineHeight = -1;
 
     // text clipping related constants
@@ -71,7 +69,7 @@ public abstract class CharacterDataBlockView extends BlockView
     public void paint(Graphics gr, int startH, int startV)
     {
         Graphics2D g = (Graphics2D)gr;
-        g.setFont(font);
+        g.setFont(xmlEditor.getCharacterDataFont());
 
         drawFrame(g, startH, startV);
 
@@ -81,7 +79,7 @@ public abstract class CharacterDataBlockView extends BlockView
         drawCollapseSign(g, isCollapsed, startH + COLLAPSE_SIGN_LEFT_POSITION, startV + COLLAPSE_SIGN_TOP_POSITION);
 
         // draw the characterdata text
-        int verticalOffset = startV + getHeader() + fontMetrics.getAscent();
+        int verticalOffset = startV + getHeader() + xmlEditor.getCharacterDataFontMetrics().getAscent();
         // if the view is collapsed and there is a header, draw no lines, otheriwse draw 1 line
         int doHowMuchLines = isCollapsed() ? (getHeader() != 0 ? 0 : 1) : numberOfLines;
         for (int i = 0; i < doHowMuchLines; i++)
@@ -100,7 +98,7 @@ public abstract class CharacterDataBlockView extends BlockView
             {
                 g.drawChars(data, lineInfo[(i*3)], lineInfo[(i*3)+2], startH + LEFT_TEXT_MARGIN, verticalOffset);
                 g.drawString("...", startH + LEFT_TEXT_MARGIN
-                        + fontMetrics.charsWidth(data, lineInfo[(i*3)], lineInfo[(i*3)+2]), verticalOffset);
+                        + xmlEditor.getCharacterDataFontMetrics().charsWidth(data, lineInfo[(i*3)], lineInfo[(i*3)+2]), verticalOffset);
             }
             verticalOffset += lineHeight;
         }
@@ -110,22 +108,12 @@ public abstract class CharacterDataBlockView extends BlockView
       Layouts this view (and it's children) to fit to
       the given width.
 
-      @param startV is relative to the parent, thus it is 0 for the first child
-
       */
     public void layout(int width)
     {
         // initialize variables
-        if (font == null)
-            font = new Font("Monospaced", 0, 12);
-        if (fontMetrics == null)
-        {
-            Graphics graphics = xmlEditor.getGraphics();
-            graphics.setFont(font);
-            fontMetrics = graphics.getFontMetrics();
-        }
         if (lineHeight == -1)
-            lineHeight = fontMetrics.getHeight();
+            lineHeight = xmlEditor.getCharacterDataFontMetrics().getHeight();
 
         // fill the lineInfo structure
         numberOfLines = countNumberOfLines(data);
@@ -207,7 +195,7 @@ public abstract class CharacterDataBlockView extends BlockView
         if (!isCollapsed)
             return getHeader() + (numberOfLines * lineHeight) + getFooter();
         else
-            return fontMetrics.getHeight();
+            return xmlEditor.getCharacterDataFontMetrics().getHeight();
     }
 
 
@@ -283,16 +271,16 @@ public abstract class CharacterDataBlockView extends BlockView
      */
     protected int clipText(char [] text, final int offset, final int length, int maxwidth)
     {
-        if (fontMetrics.charsWidth(text, offset, length) < maxwidth)
+        if (xmlEditor.getCharacterDataFontMetrics().charsWidth(text, offset, length) < maxwidth)
             return NO_CLIPPING;
 
         final String dots = "...";
-        int totalWidth = fontMetrics.stringWidth(dots);
+        int totalWidth = xmlEditor.getCharacterDataFontMetrics().stringWidth(dots);
 
         int i = 0;
         for (; i < length; i++)
         {
-            totalWidth += fontMetrics.charWidth(text[offset + i]);
+            totalWidth += xmlEditor.getCharacterDataFontMetrics().charWidth(text[offset + i]);
             if (totalWidth > maxwidth)
                 break;
         }

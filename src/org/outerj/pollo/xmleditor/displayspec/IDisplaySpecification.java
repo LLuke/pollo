@@ -29,20 +29,4 @@ public interface IDisplaySpecification
     public ElementSpec getElementSpec(String namespaceURI, String localName, Element parent);
 
     public ElementSpec getElementSpec(Element element);
-
-    /**
-     * Get the font to be used for attribute names.
-     */
-    public Font getAttributeNameFont();
-
-    /**
-     * Get the font to be used for attribute values.
-     */
-    public Font getAttributeValueFont();
-
-    /**
-     * Get the font to be used for element names.
-     */
-    public Font getElementNameFont();
-
 }

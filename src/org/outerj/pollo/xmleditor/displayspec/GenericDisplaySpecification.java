@@ -23,12 +23,6 @@ public class GenericDisplaySpecification implements IDisplaySpecification
 {
     /** Default color for elements. */
     protected Color defaultColor;
-    /** Font to use for element names. */
-    protected Font elementNameFont;
-    /** Font to use for attribute names. */
-    protected Font attributeNameFont;
-    /** Font to use for attribute values. */
-    protected Font attributeValueFont;
     /** Color to use as the background of the XmlEditor. */
     protected Color backgroundColor = new Color(235, 235, 235); // light grey
     /** Contains the instances of the ElementSpec class */
@@ -133,9 +127,6 @@ public class GenericDisplaySpecification implements IDisplaySpecification
         throws PolloException
     {
         defaultColor = new Color(255, 255, 255);
-        elementNameFont = new Font("Default", 0, 12);
-        attributeNameFont = new Font("Default", Font.ITALIC, 12);
-        attributeValueFont = new Font("Default", 0, 12);
 
         String useRandomColorsParam = (String)initParams.get("use-random-colors");
         if (useRandomColorsParam != null && useRandomColorsParam.equals("true"))
@@ -199,21 +190,6 @@ public class GenericDisplaySpecification implements IDisplaySpecification
     public ElementSpec getElementSpec(Element element)
     {
         return getElementSpec(element.getNamespaceURI(), element.getLocalName(), null);
-    }
-
-    public Font getAttributeNameFont()
-    {
-        return attributeNameFont;
-    }
-
-    public Font getAttributeValueFont()
-    {
-        return attributeValueFont;
-    }
-
-    public Font getElementNameFont()
-    {
-        return elementNameFont;
     }
 
     public Color getBackgroundColor()

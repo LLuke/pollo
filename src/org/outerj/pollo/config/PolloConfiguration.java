@@ -41,10 +41,18 @@ public class PolloConfiguration
     protected String fileOpenDialogPath = null;
     protected String schemaOpenDialogPath = null;
 
-    protected int splitPane1Pos = 620;
-    protected int splitPane2Pos = 370;
-    protected int windowWidth = 800;
-    protected int windowHeight = 600;
+    protected int splitPane1Pos;
+    protected int splitPane2Pos;
+    protected int windowWidth;
+    protected int windowHeight;
+
+    protected int elementNameFontSize;
+    protected int elementNameFontStyle;
+    protected int attributeNameFontSize;
+    protected int attributeNameFontStyle;
+    protected int attributeValueFontSize;
+    protected int attributeValueFontStyle;
+    protected boolean textAntialiasing;
 
     public static final String USER_CONF_FILE_NAME = ".pollorc";
 
@@ -62,7 +70,15 @@ public class PolloConfiguration
     private static final String EL_SPLIT2_POS = "splitpane2-pos";
     private static final String EL_WINDOW_WIDTH = "window-width";
     private static final String EL_WINDOW_HEIGHT = "window-height";
+    private static final String ELEMENT_NAME_FONT = "element-name-font";
+    private static final String ATTRIBUTE_NAME_FONT = "attribute-name-font";
+    private static final String ATTRIBUTE_VALUE_FONT = "attribute-value-font";
+    private static final String TEXT_ANTIALIASING = "text-antialiasing";
 
+
+    public PolloConfiguration()
+    {
+    }
 
     public void addViewType(ViewTypeConf viewType)
     {
@@ -254,6 +270,76 @@ public class PolloConfiguration
         this.windowWidth = Integer.parseInt(width);
     }
 
+    public int getElementNameFontStyle()
+    {
+        return elementNameFontStyle;
+    }
+
+    public void setElementNameFontStyle(int elementNameFontStyle)
+    {
+        this.elementNameFontStyle = elementNameFontStyle;
+    }
+
+    public int getElementNameFontSize()
+    {
+        return elementNameFontSize;
+    }
+
+    public void setElementNameFontSize(int elementNameFontSize)
+    {
+        this.elementNameFontSize = elementNameFontSize;
+    }
+
+    public int getAttributeNameFontSize()
+    {
+        return attributeNameFontSize;
+    }
+
+    public void setAttributeNameFontSize(int attributeNameFontSize)
+    {
+        this.attributeNameFontSize = attributeNameFontSize;
+    }
+
+    public int getAttributeNameFontStyle()
+    {
+        return attributeNameFontStyle;
+    }
+
+    public void setAttributeNameFontStyle(int attributeNameFontStyle)
+    {
+        this.attributeNameFontStyle = attributeNameFontStyle;
+    }
+
+    public int getAttributeValueFontSize()
+    {
+        return attributeValueFontSize;
+    }
+
+    public void setAttributeValueFontSize(int attributeValueFontSize)
+    {
+        this.attributeValueFontSize = attributeValueFontSize;
+    }
+
+    public int getAttributeValueFontStyle()
+    {
+        return attributeValueFontStyle;
+    }
+
+    public void setAttributeValueFontStyle(int attributeValueFontStyle)
+    {
+        this.attributeValueFontStyle = attributeValueFontStyle;
+    }
+
+    public boolean isTextAntialiasing()
+    {
+        return textAntialiasing;
+    }
+
+    public void setTextAntialiasing(boolean textAntialiasing)
+    {
+        this.textAntialiasing = textAntialiasing;
+    }
+
     public void store()
             throws PolloConfigurationException
     {
@@ -301,57 +387,80 @@ public class PolloConfiguration
     {
         if (fileOpenDialogPath != null)
         {
-            handler.startElement(null, EL_FILE_OPEN_DIALOG_PATH, EL_FILE_OPEN_DIALOG_PATH, new AttributesImpl());
+            handler.startElement("", EL_FILE_OPEN_DIALOG_PATH, EL_FILE_OPEN_DIALOG_PATH, new AttributesImpl());
             handler.characters(fileOpenDialogPath.toCharArray(), 0, fileOpenDialogPath.length());
-            handler.endElement(null, EL_FILE_OPEN_DIALOG_PATH, EL_FILE_OPEN_DIALOG_PATH);
+            handler.endElement("", EL_FILE_OPEN_DIALOG_PATH, EL_FILE_OPEN_DIALOG_PATH);
         }
 
         if (schemaOpenDialogPath != null)
         {
-            handler.startElement(null, EL_SCHEMA_OPEN_DIALOG_PATH, EL_SCHEMA_OPEN_DIALOG_PATH, new AttributesImpl());
+            handler.startElement("", EL_SCHEMA_OPEN_DIALOG_PATH, EL_SCHEMA_OPEN_DIALOG_PATH, new AttributesImpl());
             handler.characters(fileOpenDialogPath.toCharArray(), 0, fileOpenDialogPath.length());
-            handler.endElement(null, EL_SCHEMA_OPEN_DIALOG_PATH, EL_SCHEMA_OPEN_DIALOG_PATH);
+            handler.endElement("", EL_SCHEMA_OPEN_DIALOG_PATH, EL_SCHEMA_OPEN_DIALOG_PATH);
         }
 
-        handler.startElement(null, EL_SPLIT1_POS, EL_SPLIT1_POS, new AttributesImpl());
+        handler.startElement("", EL_SPLIT1_POS, EL_SPLIT1_POS, new AttributesImpl());
         String splitPane1PosString = String.valueOf(splitPane1Pos);
         handler.characters(splitPane1PosString.toCharArray(), 0, splitPane1PosString.length());
-        handler.endElement(null, EL_SPLIT1_POS, EL_SPLIT1_POS);
+        handler.endElement("", EL_SPLIT1_POS, EL_SPLIT1_POS);
 
-        handler.startElement(null, EL_SPLIT2_POS, EL_SPLIT2_POS, new AttributesImpl());
+        handler.startElement("", EL_SPLIT2_POS, EL_SPLIT2_POS, new AttributesImpl());
         String splitPane2PosString = String.valueOf(splitPane2Pos);
         handler.characters(splitPane2PosString.toCharArray(), 0, splitPane2PosString.length());
-        handler.endElement(null, EL_SPLIT2_POS, EL_SPLIT2_POS);
+        handler.endElement("", EL_SPLIT2_POS, EL_SPLIT2_POS);
 
-        handler.startElement(null, EL_WINDOW_HEIGHT, EL_WINDOW_HEIGHT, new AttributesImpl());
+        handler.startElement("", EL_WINDOW_HEIGHT, EL_WINDOW_HEIGHT, new AttributesImpl());
         String windowHeightString = String.valueOf(windowHeight);
         handler.characters(windowHeightString.toCharArray(), 0, windowHeightString.length());
-        handler.endElement(null, EL_WINDOW_HEIGHT, EL_WINDOW_HEIGHT);
+        handler.endElement("", EL_WINDOW_HEIGHT, EL_WINDOW_HEIGHT);
 
-        handler.startElement(null, EL_WINDOW_WIDTH, EL_WINDOW_WIDTH, new AttributesImpl());
+        handler.startElement("", EL_WINDOW_WIDTH, EL_WINDOW_WIDTH, new AttributesImpl());
         String windowWidthString = String.valueOf(windowWidth);
         handler.characters(windowWidthString.toCharArray(), 0, windowWidthString.length());
-        handler.endElement(null, EL_WINDOW_WIDTH, EL_WINDOW_WIDTH);
+        handler.endElement("", EL_WINDOW_WIDTH, EL_WINDOW_WIDTH);
 
         // store recent files
         storeList(EL_RECENT_FILES, EL_RECENT_FILE, recentlyOpenedFiles, handler);
         storeList(EL_RECENT_SCHEMAS, EL_RECENT_SCHEMA, recentlyUsedSchemas, handler);
         storeList(EL_RECENT_XPATHS, EL_RECENT_XPATH, recentlyUsedXPaths, handler);
+
+        AttributesImpl elementNameFontAttrs = new AttributesImpl();
+        elementNameFontAttrs.addAttribute("", "size", "size", "CDATA", String.valueOf(getElementNameFontSize()));
+        elementNameFontAttrs.addAttribute("", "style", "style", "CDATA", String.valueOf(getElementNameFontStyle()));
+        handler.startElement("", ELEMENT_NAME_FONT, ELEMENT_NAME_FONT, elementNameFontAttrs);
+        handler.endElement("", ELEMENT_NAME_FONT, ELEMENT_NAME_FONT);
+
+        AttributesImpl attributeNameFontAttrs = new AttributesImpl();
+        attributeNameFontAttrs.addAttribute("", "size", "size", "CDATA", String.valueOf(getAttributeNameFontSize()));
+        attributeNameFontAttrs.addAttribute("", "style", "style", "CDATA", String.valueOf(getAttributeNameFontStyle()));
+        handler.startElement("", ATTRIBUTE_NAME_FONT, ATTRIBUTE_NAME_FONT, attributeNameFontAttrs);
+        handler.endElement("", ATTRIBUTE_NAME_FONT, ATTRIBUTE_NAME_FONT);
+
+        AttributesImpl attributeValueFontAttrs = new AttributesImpl();
+        attributeValueFontAttrs.addAttribute("", "size", "size", "CDATA", String.valueOf(getAttributeValueFontSize()));
+        attributeValueFontAttrs.addAttribute("", "style", "style", "CDATA", String.valueOf(getAttributeValueFontStyle()));
+        handler.startElement("", ATTRIBUTE_VALUE_FONT, ATTRIBUTE_VALUE_FONT, attributeValueFontAttrs);
+        handler.endElement("", ATTRIBUTE_VALUE_FONT, ATTRIBUTE_VALUE_FONT);
+
+        handler.startElement("", TEXT_ANTIALIASING, TEXT_ANTIALIASING, new AttributesImpl());
+        String textAntialiasingString = String.valueOf(textAntialiasing);
+        handler.characters(textAntialiasingString.toCharArray(), 0, textAntialiasingString.length());
+        handler.endElement("",TEXT_ANTIALIASING, TEXT_ANTIALIASING);
     }
 
     protected void storeList(final String listelement, final String itemelement, final List list, ContentHandler handler)
             throws SAXException
     {
-        handler.startElement(null, listelement, listelement, new AttributesImpl());
+        handler.startElement("", listelement, listelement, new AttributesImpl());
         Iterator iterator = list.iterator();
         while (iterator.hasNext())
         {
             String item = (String) iterator.next();
-            handler.startElement(null, itemelement, itemelement, new AttributesImpl());
+            handler.startElement("", itemelement, itemelement, new AttributesImpl());
             handler.characters(item.toCharArray(), 0, item.length());
-            handler.endElement(null, itemelement, itemelement);
+            handler.endElement("", itemelement, itemelement);
         }
-        handler.endElement(null, EL_RECENT_FILES, EL_RECENT_FILES);
+        handler.endElement("", EL_RECENT_FILES, EL_RECENT_FILES);
     }
 
     public class RecentlyUsedModel extends AbstractListModel implements ComboBoxModel

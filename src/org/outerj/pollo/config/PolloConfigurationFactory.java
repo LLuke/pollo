@@ -1,9 +1,11 @@
 package org.outerj.pollo.config;
 
 import org.apache.commons.digester.Digester;
+import org.apache.avalon.framework.configuration.*;
 import org.outerj.pollo.xmleditor.exception.PolloConfigurationException;
 
 import java.io.File;
+import java.awt.*;
 
 /**
  * Reads the pollo configuration file and builds the configuration object
@@ -19,7 +21,7 @@ public class PolloConfigurationFactory
     public static PolloConfiguration loadConfiguration()
         throws PolloConfigurationException
     {
-        PolloConfiguration polloConfiguration = new PolloConfiguration();
+        final PolloConfiguration polloConfiguration = new PolloConfiguration();
 
         Digester digester = new Digester();
         digester.push(polloConfiguration);
@@ -90,20 +92,48 @@ public class PolloConfigurationFactory
         File file = new File(System.getProperty("user.home"), PolloConfiguration.USER_CONF_FILE_NAME);
         if (file.exists())
         {
-            digester.push(polloConfiguration);
-            digester.addCallMethod("pollo/file-open-dialog-path", "setFileOpenDialogPath", 0);
-            digester.addCallMethod("pollo/schema-open-dialog-path", "setSchemaOpenDialogPath", 0);
-            digester.addCallMethod("pollo/splitpane1-pos", "setSplitPane1Pos", 0);
-            digester.addCallMethod("pollo/splitpane2-pos", "setSplitPane2Pos", 0);
-            digester.addCallMethod("pollo/window-height", "setWindowHeight", 0);
-            digester.addCallMethod("pollo/window-width", "setWindowWidth", 0);
-            digester.addCallMethod("pollo/recent-files/recent-file", "putRecentlyOpenedFile", 0);
-            digester.addCallMethod("pollo/recent-xpaths/recent-xpath", "putRecentlyUsedXPath", 0);
-            digester.addCallMethod("pollo/recent-schemas/recent-schema", "putRecentlyUsedSchema", 0);
-
             try
             {
-                digester.parse(file);
+                Configuration config = new DefaultConfigurationBuilder().buildFromFile(file);
+
+                String fileOpenDialogPath = config.getChild("file-open-dialog-path").getValue(null);
+                if (fileOpenDialogPath != null)
+                    polloConfiguration.setFileOpenDialogPath(fileOpenDialogPath);
+
+                String schemaOpenDialogPath = config.getChild("schema-open-dialog-path").getValue(null);
+                if (schemaOpenDialogPath != null)
+                    polloConfiguration.setSchemaOpenDialogPath(schemaOpenDialogPath);
+
+                polloConfiguration.setSplitPane1Pos(config.getChild("splitpane1-pos").getValueAsInteger(620));
+                polloConfiguration.setSplitPane2Pos(config.getChild("splitpane2-pos").getValueAsInteger(370));
+                polloConfiguration.setWindowHeight(config.getChild("window-height").getValueAsInteger(600));
+                polloConfiguration.setWindowWidth(config.getChild("window-width").getValueAsInteger(800));
+
+                Configuration[] recentFileConfs = config.getChild("recent-files").getChildren("recent-file");
+                for (int i = 0; i < recentFileConfs.length; i++)
+                    polloConfiguration.putRecentlyOpenedFile(recentFileConfs[i].getValue(""));
+
+                Configuration[] recentXPathConfs = config.getChild("recent-xpaths").getChildren("recent-xpath");
+                for (int i = 0; i < recentXPathConfs.length; i++)
+                    polloConfiguration.putRecentlyUsedXPath(recentXPathConfs[i].getValue(""));
+
+                Configuration[] recentSchemaConfs = config.getChild("recent-schemas").getChildren("recent-schema");
+                for (int i = 0; i < recentSchemaConfs.length; i++)
+                    polloConfiguration.putRecentlyUsedSchema(recentSchemaConfs[i].getValue(""));
+
+                Configuration elementNameFontConf = config.getChild("element-name-font");
+                polloConfiguration.setElementNameFontSize(elementNameFontConf.getAttributeAsInteger("size", 12));
+                polloConfiguration.setElementNameFontStyle(elementNameFontConf.getAttributeAsInteger("style", 0));
+
+                Configuration attributeNameFontConf = config.getChild("attribute-name-font");
+                polloConfiguration.setAttributeNameFontSize(attributeNameFontConf.getAttributeAsInteger("size", 12));
+                polloConfiguration.setAttributeNameFontStyle(attributeNameFontConf.getAttributeAsInteger("style", Font.ITALIC));
+
+                Configuration attributeValueFontConf = config.getChild("attribute-value-font");
+                polloConfiguration.setAttributeValueFontSize(attributeValueFontConf.getAttributeAsInteger("size", 12));
+                polloConfiguration.setAttributeValueFontStyle(attributeValueFontConf.getAttributeAsInteger("style", 0));
+
+                polloConfiguration.setTextAntialiasing(config.getChild("text-antialiasing").getValueAsBoolean(false));
             }
             catch (Exception e)
             {

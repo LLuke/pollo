@@ -9,7 +9,6 @@ import org.outerj.pollo.xmleditor.action.*;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.model.InvalidXmlException;
 import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.view.*;
 import org.w3c.dom.*;
 import org.w3c.dom.events.Event;
@@ -52,12 +51,20 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
     protected int height = 0;
     protected XmlModel xmlModel;
     protected IDisplaySpecification displaySpec;
-    protected ISchema schema;
-    protected boolean antialiasing = false;
+    protected boolean antialiasing;
     protected LinkedList nodeClickedListenerList = new LinkedList();
     protected DragSource dragSource;
     protected String xpathForRoot;
     protected Element rootNodeDisplayed;
+
+    protected Font elementNameFont;
+    protected Font attributeNameFont;
+    protected Font attributeValueFont;
+    protected Font characterDataFont;
+    protected FontMetrics characterDataFontMetrics;
+    protected FontMetrics elementNameFontMetrics;
+    protected FontMetrics attributeNameFontMetrics;
+    protected FontMetrics attributeValueFontMetrics;
 
     // actions
     protected CopyAction copyAction;
@@ -210,6 +217,13 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
         actionMap.put("toggle",               toggleAction);
         actionMap.put("collapse-all",         collapseAllAction);
         actionMap.put("expand-all",           expandAllAction);
+
+        // init fonts
+        elementNameFont = new Font("Default", 0, 12);
+        attributeNameFont = new Font("Default", Font.ITALIC, 12);
+        attributeValueFont = new Font("Default", 0, 12);
+        characterDataFont = new Font("Monospaced", 0, 12);
+        antialiasing = false;
     }
 
     /**
@@ -239,6 +253,18 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
         if (antialiasing)
         {
             ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        }
+
+        if (characterDataFontMetrics == null)
+        {
+            g.setFont(characterDataFont);
+            characterDataFontMetrics = g.getFontMetrics();
+            g.setFont(elementNameFont);
+            elementNameFontMetrics = g.getFontMetrics();
+            g.setFont(attributeNameFont);
+            attributeNameFontMetrics = g.getFontMetrics();
+            g.setFont(attributeValueFont);
+            attributeValueFontMetrics = g.getFontMetrics();
         }
 
         if (xmlModel == null)
@@ -1146,8 +1172,83 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
         selectionInfo.reconnectToDom();
     }
 
-    public ISchema getSchema()
+    public Font getElementNameFont()
     {
-        return schema;
+        return elementNameFont;
+    }
+
+    public void setElementNameFont(Font elementNameFont)
+    {
+        this.elementNameFont = elementNameFont;
+    }
+
+    public Font getAttributeNameFont()
+    {
+        return attributeNameFont;
+    }
+
+    public void setAttributeNameFont(Font attributeNameFont)
+    {
+        this.attributeNameFont = attributeNameFont;
+    }
+
+    public Font getAttributeValueFont()
+    {
+        return attributeValueFont;
+    }
+
+    public void setAttributeValueFont(Font attributeValueFont)
+    {
+        this.attributeValueFont = attributeValueFont;
+    }
+
+    public Font getCharacterDataFont()
+    {
+        return characterDataFont;
+    }
+
+    /**
+     * Font used in all characterd data kind of nodes such as text nodes, comments, ...
+     * This MUST be a non-proportional font.
+     */
+    public void setCharacterDataFont(Font characterDataFont)
+    {
+        this.characterDataFont = characterDataFont;
+        this.characterDataFontMetrics = null;
+    }
+
+    public FontMetrics getCharacterDataFontMetrics()
+    {
+        return characterDataFontMetrics;
+    }
+
+    public View getMainView()
+    {
+        return mainView;
+    }
+
+    public FontMetrics getElementNameFontMetrics()
+    {
+        return elementNameFontMetrics;
+    }
+
+    public FontMetrics getAttributeNameFontMetrics()
+    {
+        return attributeNameFontMetrics;
+    }
+
+    public FontMetrics getAttributeValueFontMetrics()
+    {
+        return attributeValueFontMetrics;
+    }
+
+    public boolean isAntialiasing()
+    {
+        return antialiasing;
+    }
+
+    public void setAntialiasing(boolean antialiasing)
+    {
+        this.antialiasing = antialiasing;
     }
 }

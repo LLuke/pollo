@@ -6,6 +6,7 @@
     <pathelement location="lib/endorsed/dom3-xmlParserAPIs.jar"/>
     <pathelement location="lib/endorsed/dom3-xercesImpl.jar"/>
     <pathelement location="lib/commons-digester.jar"/>
+    <pathelement location="lib/avalon-configuration.jar"/>
     <pathelement location="lib/commons-collections.jar"/>
     <pathelement location="lib/commons-beanutils.jar"/>
     <pathelement location="lib/log4j-core.jar"/>

@@ -45,18 +45,18 @@ public class PIView extends CharacterDataBlockView
         g.setStroke(BlockView.STROKE_LIGHT);
 
         // draw the PI target
-        g.drawString(title, startH + LEFT_TEXT_MARGIN, startV + fontMetrics.getAscent());
+        g.drawString(title, startH + LEFT_TEXT_MARGIN, startV + xmlEditor.getCharacterDataFontMetrics().getAscent());
 
         if (!isCollapsed())
         {
-            int linepos = startV + fontMetrics.getHeight();
+            int linepos = startV + xmlEditor.getCharacterDataFontMetrics().getHeight();
             g.drawLine(startH, linepos, startH + width, linepos);
         }
     }
 
     public int getHeader()
     {
-        return fontMetrics.getHeight();
+        return xmlEditor.getCharacterDataFontMetrics().getHeight();
     }
 
     public int getFooter()

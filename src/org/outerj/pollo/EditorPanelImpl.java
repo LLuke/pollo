@@ -5,6 +5,7 @@ import org.outerj.pollo.action.SaveAction;
 import org.outerj.pollo.action.SaveAsAction;
 import org.outerj.pollo.action.CloseViewAction;
 import org.outerj.pollo.config.ViewTypeConf;
+import org.outerj.pollo.config.PolloConfiguration;
 import org.outerj.pollo.gui.*;
 import org.outerj.pollo.plugin.IActionPlugin;
 import org.outerj.pollo.texteditor.XmlTextEditorPanel;
@@ -70,6 +71,16 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         xmlEditorPanel = new XmlEditorPanel(xmlModel, null, idisplayspecification, ischema, iattributeeditorplugin);
         xmlTextEditorPanel = new XmlTextEditorPanel(xmlModel, ischema);
 
+        // configure xmlEditorPanel
+        Pollo pollo = Pollo.getInstance();
+        PolloConfiguration configuration = pollo.getConfiguration();
+        xmlEditorPanel.getXmlEditor().setElementNameFont(new Font("Default", configuration.getElementNameFontStyle(),
+            configuration.getElementNameFontSize()));
+        xmlEditorPanel.getXmlEditor().setAttributeNameFont(new Font("Default", configuration.getAttributeNameFontStyle(),
+            configuration.getAttributeNameFontSize()));
+        xmlEditorPanel.getXmlEditor().setAttributeValueFont(new Font("Default", configuration.getAttributeValueFontStyle(),
+            configuration.getAttributeValueFontSize()));
+        xmlEditorPanel.getXmlEditor().setAntialiasing(configuration.isTextAntialiasing());
 
         // no borders
         xmlTextEditorPanel.setBorder(BorderFactory.createEmptyBorder());
@@ -132,6 +143,10 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         textFileMenu.add(Utilities.createMenuItemFromAction(saveAction));
         domFileMenu.add(Utilities.createMenuItemFromAction(saveAsAction));
         textFileMenu.add(Utilities.createMenuItemFromAction(saveAsAction));
+        domFileMenu.addSeparator();
+        textFileMenu.addSeparator();
+        domFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getUserPreferencesAction()));
+        textFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getUserPreferencesAction()));
         domFileMenu.addSeparator();
         textFileMenu.addSeparator();
         domFileMenu.add(Utilities.createMenuItemFromAction(polloFrame.getExitAction()));
@@ -208,7 +223,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         JMenu schemaMenu = new JMenu("Schema");
         resMgr.configureMenu("schemaMenu", schemaMenu);
         schemaMenu.add(Utilities.createMenuItemFromAction(xmlEditorPanel.getValidateAction()));
-        schemaMenu.add(Utilities.createMenuItemFromAction(new org.outerj.pollo.xmleditor.action.ShowContentModelAction(xmleditor)));
+        schemaMenu.add(Utilities.createMenuItemFromAction(new org.outerj.pollo.xmleditor.action.ShowContentModelAction(xmlEditorPanel)));
         domModeMenuBar.add(schemaMenu);
 
         // edit menu for the text menu bar

@@ -44,6 +44,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
     protected Action exitAction;
     protected Action helpAction;
     protected Action aboutAction;
+    protected Action userPreferencesAction;
 
     public PolloFrame()
     {
@@ -74,6 +75,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
         helpAction = new HelpAction(this);
         aboutAction = new AboutAction(this);
         exitAction = new ExitAction(this);
+        userPreferencesAction = new UserPreferencesAction(this, pollo.getConfiguration());
 
         // create and display menu bar
         createNoEditorPanelsMenuBar();
@@ -109,6 +111,8 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
         fileMenu.addSeparator();
         fileMenu.add(Utilities.createMenuItemFromAction(getFileOpenAction()));
         fileMenu.add(new RecentlyOpenedFilesMenu(this));
+        fileMenu.addSeparator();
+        fileMenu.add(Utilities.createMenuItemFromAction(getUserPreferencesAction()));
         fileMenu.addSeparator();
         fileMenu.add(Utilities.createMenuItemFromAction(getExitAction()));
 
@@ -171,6 +175,10 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
         return helpAction;
     }
 
+    public Action getUserPreferencesAction()
+    {
+        return userPreferencesAction;
+    }
 
     /**
      * Implementation of EditorPanelListener interface.

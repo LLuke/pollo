@@ -59,37 +59,4 @@ public class ChainedDisplaySpecification implements IDisplaySpecification
         }
         return null;
     }
-
-    public Font getAttributeNameFont()
-    {
-        for (int i = 0; i < displaySpecs.size(); i++)
-        {
-            Font result = ((IDisplaySpecification)displaySpecs.get(i)).getAttributeNameFont();
-            if (result != null)
-                return result;
-        }
-        return null;
-    }
-
-    public Font getAttributeValueFont()
-    {
-        for (int i = 0; i < displaySpecs.size(); i++)
-        {
-            Font result = ((IDisplaySpecification)displaySpecs.get(i)).getAttributeValueFont();
-            if (result != null)
-                return result;
-        }
-        return null;
-    }
-
-    public Font getElementNameFont()
-    {
-        for (int i = 0; i < displaySpecs.size(); i++)
-        {
-            Font result = ((IDisplaySpecification)displaySpecs.get(i)).getElementNameFont();
-            if (result != null)
-                return result;
-        }
-        return null;
-    }
 }

@@ -114,9 +114,11 @@ public class ElementBlockView extends ChildrenBlockView
             super.paint(gr, startH, startV);
         }
 
-        int baseline = startV + g.getFontMetrics(displaySpec.getElementNameFont()).getAscent() + 2;
+        int baseline = startV + max(xmlEditor.getElementNameFontMetrics().getAscent(),
+                xmlEditor.getAttributeNameFontMetrics().getAscent(),
+                xmlEditor.getAttributeValueFontMetrics().getAscent()) + 2;
         // draw the element name
-        g.setFont(displaySpec.getElementNameFont());
+        g.setFont(xmlEditor.getElementNameFont());
         g.drawString(elementName, startH + 20, baseline);
 
         drawAttributes(g, attrViewInfoList, startH, baseline);
@@ -204,7 +206,7 @@ public class ElementBlockView extends ChildrenBlockView
         int numberOfAttrs = myAttrViewInfoList.size();
         int remainingAttrSpace; // the space remaining for attributes
         int requiredSpace;
-        g.setFont(displaySpec.getAttributeValueFont());
+        g.setFont(xmlEditor.getAttributeValueFont());
         int dotsWidth = g.getFontMetrics().stringWidth("...");
         for (int i = 0; i < numberOfAttrs; i++)
         {
@@ -212,7 +214,7 @@ public class ElementBlockView extends ChildrenBlockView
             if (attrViewInfo.visible)
             {
                 // attribute name
-                g.setFont(displaySpec.getAttributeNameFont());
+                g.setFont(xmlEditor.getAttributeNameFont());
                 remainingAttrSpace = width - attrViewInfo.namePos;
                 requiredSpace = g.getFontMetrics().stringWidth(attrViewInfo.name) + dotsWidth;
                 if (requiredSpace > remainingAttrSpace)
@@ -228,7 +230,7 @@ public class ElementBlockView extends ChildrenBlockView
                 }
 
                 // attribute value
-                g.setFont(displaySpec.getAttributeValueFont());
+                g.setFont(xmlEditor.getAttributeValueFont());
                 remainingAttrSpace = width - attrViewInfo.valuePos;
                 requiredSpace = g.getFontMetrics().stringWidth(attrViewInfo.value) + dotsWidth;
                 if (requiredSpace > (remainingAttrSpace - ATTR_SPACING))
@@ -251,7 +253,9 @@ public class ElementBlockView extends ChildrenBlockView
     public void layout(int width)
     {
         // init
-        this.titleHeight = xmlEditor.getGraphics().getFontMetrics(displaySpec.getElementNameFont()).getHeight() + 4;
+        this.titleHeight = max(xmlEditor.getElementNameFontMetrics().getHeight(),
+                xmlEditor.getAttributeNameFontMetrics().getHeight(), xmlEditor.getAttributeValueFontMetrics().getHeight())
+                + 4;
         this.width = width;
 
         // mark that the attributes need layouting
@@ -261,6 +265,16 @@ public class ElementBlockView extends ChildrenBlockView
 
         // layout the children of this view
         super.layout(width);
+    }
+
+    private int max(int val1, int val2, int val3)
+    {
+        if (val1 > val2 && val1 > val3)
+            return val1;
+        else if (val2 > val1 && val2 > val3)
+            return val2;
+        else
+            return val3;
     }
 
 
@@ -275,14 +289,13 @@ public class ElementBlockView extends ChildrenBlockView
         //     the attributes must be drawn.
         //   - however, we also want to show the other (if any) attributes
 
-        Graphics graphics = xmlEditor.getGraphics();
-        FontMetrics attrNameFontMetrics  = graphics.getFontMetrics(displaySpec.getAttributeNameFont());
-        FontMetrics attrValueFontMetrics = graphics.getFontMetrics(displaySpec.getAttributeValueFont());
+        FontMetrics attrNameFontMetrics  = xmlEditor.getAttributeNameFontMetrics();
+        FontMetrics attrValueFontMetrics = xmlEditor.getAttributeValueFontMetrics();
 
         NamedNodeMap allAttributes = element.getAttributes();
         boolean[] processed = new boolean[allAttributes.getLength()];
 
-        int elementNameWidth = graphics.getFontMetrics(displaySpec.getElementNameFont()).stringWidth(elementName);
+        int elementNameWidth = xmlEditor.getElementNameFontMetrics().stringWidth(elementName);
         int attrPos = BORDER_WIDTH + COLLAPS_ICON_WIDTH + elementNameWidth + ATTR_SPACING;
         AttrViewInfo attrViewInfo;
         Attr attr;

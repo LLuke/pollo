@@ -68,9 +68,9 @@ public class DocumentBlockView extends ChildrenBlockView
             super.paint(gr, startH, startV);
         }
 
-        int baseline = startV + g.getFontMetrics(displaySpec.getElementNameFont()).getAscent() + 2;
+        int baseline = startV + xmlEditor.getElementNameFontMetrics().getAscent() + 2;
         // draw the element name
-        g.setFont(displaySpec.getElementNameFont());
+        g.setFont(xmlEditor.getElementNameFont());
         g.setColor(Color.white);
         g.drawString(title, startH + 20, baseline);
     }
@@ -78,7 +78,7 @@ public class DocumentBlockView extends ChildrenBlockView
     public void layout(int width)
     {
         // init
-        this.titleHeight = xmlEditor.getGraphics().getFontMetrics(displaySpec.getElementNameFont()).getHeight() + 4;
+        this.titleHeight = xmlEditor.getElementNameFontMetrics().getHeight() + 4;
         this.width = width;
 
         // layout the children of this view
