@@ -8,7 +8,6 @@ import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.schema.ISchema;
-import org.outerj.pollo.xmleditor.util.FocusBorder;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
