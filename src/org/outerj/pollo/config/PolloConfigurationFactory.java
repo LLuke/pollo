@@ -90,6 +90,9 @@ public class PolloConfigurationFactory
 			digester.push(polloConfiguration);
 			digester.addCallMethod("pollo/file-open-dialog-path", "setFileOpenDialogPath", 0);
 			digester.addCallMethod("pollo/schema-open-dialog-path", "setSchemaOpenDialogPath", 0);
+			digester.addCallMethod("pollo/recent-files/recent-file", "putRecentlyOpenedFile", 0);
+			digester.addCallMethod("pollo/recent-xpaths/recent-xpath", "putRecentlyUsedXPath", 0);
+			digester.addCallMethod("pollo/recent-schemas/recent-schema", "putRecentlyUsedSchema", 0);
 
 			try
 			{
