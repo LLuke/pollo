@@ -204,12 +204,6 @@
 		<template description="Empty Ant build file" factory="org.outerj.pollo.template.FileTemplateFactory">
           <parameter name="source" value="classpath:/template/build.xml"/>
 		</template>
-		<template description="Cocoon 2.02 Sitemap" factory="org.outerj.pollo.template.FileTemplateFactory">
-          <parameter name="source" value="classpath:/template/sitemap.xmap"/>
-		</template>
-		<template description="Cocoon 2.02 Subsitemap" factory="org.outerj.pollo.template.FileTemplateFactory">
-          <parameter name="source" value="classpath:/template/subsitemap.xmap"/>
-		</template>
 		<template description="XML Schema" factory="org.outerj.pollo.template.FileTemplateFactory">
           <parameter name="source" value="classpath:/template/schema.xsd"/>
 		</template>
