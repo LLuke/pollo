@@ -12,11 +12,11 @@
     - Apache's Xerces for XML Parsing and it's DOM implementation.
       (Xerces' support for mutation events is essential to Pollo).
     - Log4j for logging (not used much yet).
-    - Apache Jakarta's Commons Digester for building the configuration
-      objects from XML files.
     - Sun's excellent Multi Schema Validator (MSV) for support of
       XML Schema, RELAX-NG, DTD, etc.
     - Jaxen to evaluate XPath expressions.
+    - XPP pull parser for reading configuration files
+    - Jakarta Commons Lang for nested exceptions.
 
    See the online help for the licenses of these libraries.
 
