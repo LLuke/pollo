@@ -128,7 +128,7 @@
 
 		<viewtype>
 			<name>sitemap</name>
-			<description>Cocoon 2.02 Sitemap</description>
+			<description>Cocoon 2.0x Sitemap</description>
 
 			<schemas>
 				<schema>
