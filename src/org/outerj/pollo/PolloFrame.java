@@ -58,10 +58,14 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 		editorPanelTabs = new DnDTabbedPane();
 		editorPanelTabs.addChangeListener(this);
 
-		// no border and dark background
-		editorPanelTabs.setBorder(new EmptyBorder(0, 0, 0, 0));
-		editorPanelTabs.setBackground(new Color(153, 153, 153));
-		editorPanelTabs.setOpaque(true);
+        //check it's not a mac (returns string if it's a mac, null otherwise)
+        if (System.getProperty("mrj.version") == null)
+        {
+            // no border and dark background
+            editorPanelTabs.setBorder(new EmptyBorder(0, 0, 0, 0));
+            editorPanelTabs.setBackground(new Color(153, 153, 153));
+            editorPanelTabs.setOpaque(true);
+        }
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(editorPanelTabs, BorderLayout.CENTER);

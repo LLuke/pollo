@@ -66,7 +66,11 @@ public class Pollo implements XmlModelListener
 		// initialize actions
 		newPolloFrameAction = new NewPolloFrameAction();
 
-		UIManager.setLookAndFeel(new PolloLookAndFeel());
+        //check it's not a mac (returns string if it's a mac, null otherwise)
+        if (System.getProperty("mrj.version") == null)
+        {
+               UIManager.setLookAndFeel(new PolloLookAndFeel());
+        }
 
 		// show a PolloFrame
 		PolloFrame polloFrame = new PolloFrame();
