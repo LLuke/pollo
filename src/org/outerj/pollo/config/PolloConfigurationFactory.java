@@ -90,69 +90,64 @@ public class PolloConfigurationFactory
         //
 
         File file = new File(System.getProperty("user.home"), PolloConfiguration.USER_CONF_FILE_NAME);
-        if (file.exists())
+        Configuration config = null;
+        try
         {
-            try
-            {
-                Configuration config = new DefaultConfigurationBuilder().buildFromFile(file);
-
-                String fileOpenDialogPath = config.getChild("file-open-dialog-path").getValue(null);
-                if (fileOpenDialogPath != null)
-                    polloConfiguration.setFileOpenDialogPath(fileOpenDialogPath);
-
-                String schemaOpenDialogPath = config.getChild("schema-open-dialog-path").getValue(null);
-                if (schemaOpenDialogPath != null)
-                    polloConfiguration.setSchemaOpenDialogPath(schemaOpenDialogPath);
-
-                polloConfiguration.setSplitPane1Pos(config.getChild("splitpane1-pos").getValueAsInteger(620));
-                polloConfiguration.setSplitPane2Pos(config.getChild("splitpane2-pos").getValueAsInteger(370));
-                polloConfiguration.setWindowHeight(config.getChild("window-height").getValueAsInteger(600));
-                polloConfiguration.setWindowWidth(config.getChild("window-width").getValueAsInteger(800));
-
-                Configuration[] recentFileConfs = config.getChild("recent-files").getChildren("recent-file");
-                for (int i = 0; i < recentFileConfs.length; i++)
-                    polloConfiguration.putRecentlyOpenedFile(recentFileConfs[i].getValue(""));
-
-                Configuration[] recentXPathConfs = config.getChild("recent-xpaths").getChildren("recent-xpath");
-                for (int i = 0; i < recentXPathConfs.length; i++)
-                    polloConfiguration.putRecentlyUsedXPath(recentXPathConfs[i].getValue(""));
-
-                Configuration[] recentSchemaConfs = config.getChild("recent-schemas").getChildren("recent-schema");
-                for (int i = 0; i < recentSchemaConfs.length; i++)
-                    polloConfiguration.putRecentlyUsedSchema(recentSchemaConfs[i].getValue(""));
-
-                Configuration elementNameFontConf = config.getChild("element-name-font");
-                polloConfiguration.setElementNameFontSize(elementNameFontConf.getAttributeAsInteger("size", 12));
-                polloConfiguration.setElementNameFontStyle(elementNameFontConf.getAttributeAsInteger("style", 0));
-
-                Configuration attributeNameFontConf = config.getChild("attribute-name-font");
-                polloConfiguration.setAttributeNameFontSize(attributeNameFontConf.getAttributeAsInteger("size", 12));
-                polloConfiguration.setAttributeNameFontStyle(attributeNameFontConf.getAttributeAsInteger("style", Font.ITALIC));
-
-                Configuration attributeValueFontConf = config.getChild("attribute-value-font");
-                polloConfiguration.setAttributeValueFontSize(attributeValueFontConf.getAttributeAsInteger("size", 12));
-                polloConfiguration.setAttributeValueFontStyle(attributeValueFontConf.getAttributeAsInteger("style", 0));
-
-                Configuration textFontConf = config.getChild("text-font");
-                polloConfiguration.setTextFontSize(textFontConf.getAttributeAsInteger("size", 12));
-
-                polloConfiguration.setTextAntialiasing(config.getChild("text-antialiasing").getValueAsBoolean(false));
-            }
-            catch (Exception e)
-            {
-                logcat.error("PolloConfiguration: exception parsing the user configuration file", e);
-                throw new PolloConfigurationException("Exception parsing the user configuration file.", e);
-            }
-            finally
-            {
-                digester.clear();
-            }
-
+            if (file.exists())
+                config = new DefaultConfigurationBuilder().buildFromFile(file);
+            else
+                logcat.info("No user configuration file found at: " + file);
         }
-        else
+        catch (Exception e)
         {
-            logcat.info("No user configuration file found at: " + file);
+            logcat.error("PolloConfiguration: exception parsing the user configuration file", e);
+            throw new PolloConfigurationException("Exception parsing the user configuration file.", e);
         }
+
+        if (config == null)
+            config = new DefaultConfiguration("dummy", "-");
+
+        String fileOpenDialogPath = config.getChild("file-open-dialog-path").getValue(null);
+        if (fileOpenDialogPath != null)
+            polloConfiguration.setFileOpenDialogPath(fileOpenDialogPath);
+
+        String schemaOpenDialogPath = config.getChild("schema-open-dialog-path").getValue(null);
+        if (schemaOpenDialogPath != null)
+            polloConfiguration.setSchemaOpenDialogPath(schemaOpenDialogPath);
+
+        polloConfiguration.setSplitPane1Pos(config.getChild("splitpane1-pos").getValueAsInteger(620));
+        polloConfiguration.setSplitPane2Pos(config.getChild("splitpane2-pos").getValueAsInteger(370));
+        polloConfiguration.setWindowHeight(config.getChild("window-height").getValueAsInteger(600));
+        polloConfiguration.setWindowWidth(config.getChild("window-width").getValueAsInteger(800));
+
+        Configuration[] recentFileConfs = config.getChild("recent-files").getChildren("recent-file");
+        for (int i = 0; i < recentFileConfs.length; i++)
+            polloConfiguration.putRecentlyOpenedFile(recentFileConfs[i].getValue(""));
+
+        Configuration[] recentXPathConfs = config.getChild("recent-xpaths").getChildren("recent-xpath");
+        for (int i = 0; i < recentXPathConfs.length; i++)
+            polloConfiguration.putRecentlyUsedXPath(recentXPathConfs[i].getValue(""));
+
+        Configuration[] recentSchemaConfs = config.getChild("recent-schemas").getChildren("recent-schema");
+        for (int i = 0; i < recentSchemaConfs.length; i++)
+            polloConfiguration.putRecentlyUsedSchema(recentSchemaConfs[i].getValue(""));
+
+        Configuration elementNameFontConf = config.getChild("element-name-font");
+        polloConfiguration.setElementNameFontSize(elementNameFontConf.getAttributeAsInteger("size", 13));
+        polloConfiguration.setElementNameFontStyle(elementNameFontConf.getAttributeAsInteger("style", Font.BOLD));
+
+        Configuration attributeNameFontConf = config.getChild("attribute-name-font");
+        polloConfiguration.setAttributeNameFontSize(attributeNameFontConf.getAttributeAsInteger("size", 12));
+        polloConfiguration.setAttributeNameFontStyle(attributeNameFontConf.getAttributeAsInteger("style", Font.BOLD));
+
+        Configuration attributeValueFontConf = config.getChild("attribute-value-font");
+        polloConfiguration.setAttributeValueFontSize(attributeValueFontConf.getAttributeAsInteger("size", 12));
+        polloConfiguration.setAttributeValueFontStyle(attributeValueFontConf.getAttributeAsInteger("style", 0));
+
+        Configuration textFontConf = config.getChild("text-font");
+        polloConfiguration.setTextFontSize(textFontConf.getAttributeAsInteger("size", 12));
+
+        polloConfiguration.setTextAntialiasing(config.getChild("text-antialiasing").getValueAsBoolean(false));
 
         return polloConfiguration;
     }
