@@ -8,7 +8,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -256,7 +255,7 @@ public class PolloConfiguration
 	}
 
 	public void store()
-		throws PolloConfigurationException
+			throws PolloConfigurationException
 	{
 		File file = new File(System.getProperty("user.home"), USER_CONF_FILE_NAME);
 		FileOutputStream fos = null;
@@ -286,12 +285,19 @@ public class PolloConfiguration
 		}
 		finally
 		{
-			if (fos != null) try { fos.close(); } catch (Exception e) {};
+			if (fos != null) try
+			{
+				fos.close();
+			}
+			catch (Exception e)
+			{
+			}
+			;
 		}
 	}
 
 	public void store(ContentHandler handler)
-		throws SAXException
+			throws SAXException
 	{
 		if (fileOpenDialogPath != null)
 		{
@@ -328,60 +334,65 @@ public class PolloConfiguration
 		handler.endElement(null, EL_WINDOW_WIDTH, EL_WINDOW_WIDTH);
 
 		// store recent files
-        storeList(EL_RECENT_FILES, EL_RECENT_FILE, recentlyOpenedFiles, handler);
+		storeList(EL_RECENT_FILES, EL_RECENT_FILE, recentlyOpenedFiles, handler);
 		storeList(EL_RECENT_SCHEMAS, EL_RECENT_SCHEMA, recentlyUsedSchemas, handler);
 		storeList(EL_RECENT_XPATHS, EL_RECENT_XPATH, recentlyUsedXPaths, handler);
 	}
 
 	protected void storeList(final String listelement, final String itemelement, final List list, ContentHandler handler)
-		throws SAXException
+			throws SAXException
 	{
-		handler.startElement(null, listelement,  listelement, new AttributesImpl());
+		handler.startElement(null, listelement, listelement, new AttributesImpl());
 		Iterator iterator = list.iterator();
 		while (iterator.hasNext())
 		{
-			String item = (String)iterator.next();
-			handler.startElement(null, itemelement,  itemelement, new AttributesImpl());
+			String item = (String) iterator.next();
+			handler.startElement(null, itemelement, itemelement, new AttributesImpl());
 			handler.characters(item.toCharArray(), 0, item.length());
 			handler.endElement(null, itemelement, itemelement);
 		}
 		handler.endElement(null, EL_RECENT_FILES, EL_RECENT_FILES);
 	}
 
-    public class RecentlyUsedModel extends AbstractListModel implements ComboBoxModel
-    {
-        ArrayList list;
-		Object selected;
+	public class RecentlyUsedModel extends AbstractListModel implements ComboBoxModel
+	{
+		ArrayList list;
+		Object selectedObject;
 
-        public RecentlyUsedModel(ArrayList list)
-        {
-            this.list = list;
-        }
-
-        public void setSelectedItem(Object selected)
+		public RecentlyUsedModel(ArrayList list)
 		{
-			this.selected = selected;
-        }
+			this.list = list;
+		}
 
-        public int getSize()
+		public void setSelectedItem(Object object)
 		{
-            return list.size();
-        }
+			if ((this.selectedObject != null && !selectedObject.equals(object)) ||
+					selectedObject == null && object != null)
+			{
+				selectedObject = object;
+				fireContentsChanged(this, -1, -1);
+			}
+		}
 
-        public Object getSelectedItem()
+		public int getSize()
 		{
-            return selected;
-        }
+			return list.size();
+		}
 
-        public Object getElementAt(int index)
+		public Object getSelectedItem()
 		{
-            return list.get(getSize() - index - 1);
-        }
+			return selectedObject;
+		}
+
+		public Object getElementAt(int index)
+		{
+			return list.get(getSize() - index - 1);
+		}
 
 		public void fireChanged()
 		{
 			fireContentsChanged(this, 0, 10);
 		}
 
-    }
+	}
 }
