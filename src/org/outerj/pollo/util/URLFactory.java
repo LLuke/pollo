@@ -21,6 +21,11 @@ public class URLFactory
 			{
 				return URLFactory.class.getClassLoader().getResource(spec.substring(11, spec.length()));
 			}
+            else if (spec.charAt(0) == '/')
+            {
+                // something starting with a / is always a file path, even if :/ occurs within it
+                return new File(spec).toURL();
+            }
 			else if (spec.indexOf(":/") != -1)
 			{
 				return new URL(spec);
