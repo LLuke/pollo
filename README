@@ -10,3 +10,9 @@ How to run Pollo:
   commands.
 
   If java is not in your PATH, you'll have to modify the startup scripts.
+ 
+
+How to build Pollo source (when using source download/CVS)
+  - Install Apache Jakarta Ant (http://jakarta.apache.org)
+  - type "ant" in the pollo directory
+  - start pollo in the usual way
