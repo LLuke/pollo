@@ -20,8 +20,27 @@ version 0.4
    DisplaySpecificationToZeroDotFour. If you need help on using
    this, just ask on the mailing list.
 
+ - Added "Close All" and "Close All Except This" actions to the file menu.
+ - Made the splitpane containing the node editor and help panel
+   "one touch expandable".
+ - Added context menu on the file tabs containing "Close view" and
+   "Close All Except This" options.
+ - Made the size of the undo stack configurable through the user preferences
+   dialog (previously it was always unlimitted). Default is 50.
  - handle corrupted .pollorc file gracefully
  - don't do text-wrapping when saving a file
+ - Added a Cocoon 2.1 sitemap schema & display spec. This is only
+   a first go at it. It includes the following changes: addition of
+   map:flow, map:script, map:pipes, map:pipe, map:call/@function,
+   map:call/@continuation, map:act/@name, map:match/@name,
+   map:generate/@hint, map:transform/@hint, map:serialize/@hint,
+   map:redirect-to/@global, map:redirect-to/@permanent,
+   map:component-configuration. I've also added help texts here and
+   there, but currently only a very small number of elements and
+   attributes have them.
+ - removed the display specification editor tool, which was only
+   an experiment. There is now a view-type for editing the
+   display specfication files.
  - all kind of miscellaneous small stuff
 
 version 0.3.6
