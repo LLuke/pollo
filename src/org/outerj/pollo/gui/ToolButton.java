@@ -13,6 +13,7 @@ public class ToolButton extends JButton
 	{
 		super(action);
 		setText(null);
+		setMnemonic('\0');
 		setRequestFocusEnabled(false);
 	}
 
