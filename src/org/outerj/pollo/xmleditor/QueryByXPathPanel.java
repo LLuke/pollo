@@ -136,7 +136,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 				// as context for resolving namespace prefixes, the root node displayed
 				// in the XmlEditor widget is used
 				SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
-				namespaceContext.addElementNamespaces(xpath.getNavigator(), xmlEditor.getRootElement() instanceof Document ? xmlEditor.getXmlModel().getDocument().getDocumentElement() : xmlEditor.getRootElement());
+				namespaceContext.addElementNamespaces(xpath.getNavigator(), xmlEditor.getXmlModel().getDocument().getDocumentElement());
 				xpath.setNamespaceContext(namespaceContext);
 
 				resultList = xpath.selectNodes(xmlEditor.getRootElement());
