@@ -6,13 +6,11 @@ import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.IconManager;
 import org.outerj.pollo.util.Valuable;
 import org.outerj.pollo.util.ColorFormat;
-import org.outerj.pollo.gui.ColorSelector;
 import org.outerj.pollo.PolloFrame;
 import org.w3c.dom.Element;
 
 import javax.swing.table.TableCellEditor;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -66,19 +64,5 @@ public class DisplaySpecAttrEditorPlugin implements IAttributeEditorPlugin
         }
 
         return editorSupport.getEditor();
-    }
-
-    public static class ColorSelectionDialog extends JDialog
-    {
-        public ColorSelectionDialog()
-        {
-            JPanel content = new JPanel();
-            setContentPane(content);
-
-            content.setBorder(new EmptyBorder(12, 12, 12, 12));
-            content.setLayout(new BorderLayout(12, 12));
-
-            content.add(new ColorSelector(new Color(40, 199, 220)), BorderLayout.CENTER);
-        }
     }
 }
