@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+   
+  <link rel="stylesheet" type="text/css" href="pollo.css">
+  <title>Pollo: miscellaneous notes</title>
+</head>
+ <body>
+<h1>Pollo: miscellaneous notes<br>
+</h1>
+<h2>Whitespace handling, reformat when saving</h2>
+<p>When Pollo opens a file, it will strip all text nodes that consist of
+only whitespace (spaces, tabs, newlines). Otherwise a lot of white boxes
+would be displayed in the tree for these nodes.<br>
+</p>
+<p>When saving a file, Pollo will do some pretty-serializing of the file.
+The way this is done will become configurable in a future release.<br>
+</p>
+<h2>User preferences file (.pollorc)</h2>
+<p>When Pollo exits, it saves a file called ".pollorc" in your home directory.
+This file contains stuff like recently opened files and the location and
+size of Pollo's window.</p>
+<h2>Opening non-well-formed XML files</h2>
+<p>When you open a file in Pollo that cannot be parsed, Pollo will display
+it in <a href="textview.html">text view</a>. In that case, the file will
+be opened with Java's default encoding (which depends on the platform).<br>
+</p>
+<h2>Changing the encoding of a file</h2>
+<p>To change the encoding of a file, switch to text mode and change it there
+in the XML declaration.<br>
+</p>
+<h2>Reusing Pollo's tree widget</h2>
+<p>I'll write about this later. If you are interested in this, please let
+me know.<br>
+</p>
+@footer@<br>
+<br>
+</body>
+</html>

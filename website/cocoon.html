@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+                   
+  <link rel="stylesheet" type="text/css" href="pollo.css">
+  <title>Pollo: Cocoon features</title>
+      
+  <meta name="author" content="Bruno Dumon">
+   
+  <meta name="description"
+ content="Description of the features in Pollo for editing Cocoon Sitemap files">
+</head>
+  <body>
+       
+<h1>Pollo: Cocoon features</h1>
+       
+<p><a href="http://xml.apache.org/cocoon"><img src="cocoon.gif"
+ alt="Cocoon logo" width="300" height="49" border="0">
+    <br>
+    </a><br>
+    Pollo includes a customized environment for editing&nbsp; <a
+ href="http://xml.apache.org/cocoon">Cocoon</a> Sitemap files. It consists
+  of a custom display specification, a schema, an attribute editor plugin
+and  action plugins.<br>
+    </p>
+       
+<p>At the time of this writing, it was tailored towards Cocoon 2.02, but
+it won't do any damage to sitemap files for other Cocoon versions.<br>
+    </p>
+       
+<h2>Activating the sitemap support</h2>
+    After you select a file in the file dialog, you are presented with a
+ 'view  type' selection dialog. Here it is important to choose for 'Cocoon
+2.02', otherwise you won't see the special features described below.<br>
+       
+<h2>The sitemap schema</h2>
+ 
+<p>The schema is responsible for letting Pollo know what elements are available, 
+and what attributes can occur on the elements. It also defines things like 
+selection lists for attribute values, sometimes dynamically generated. In 
+the screenshot below, the selection list for the 'type' attribute is dynamically 
+composed from the generators defined in the map:components section of the 
+sitemap.</p>
+ <img src="cocoonschemaattribute.png"
+ alt="Screenshot of Pollo showing the dynamically generated attribute selectionlist"
+ width="813" height="344">
+ <br>
+ 
+<p>The same schema as used inside Pollo (with the same colors) is also <a
+ href="http://outerthought.net/sitemap/">available as a poster diagram</a> 
+to stick on your wall.<br>
+ </p>
+       
+<h2>The action plugins</h2>
+       
+<h3>Matchers overview</h3>
+     
+<p>To get a quick overview of all matcher patterns in a document, choose 'Plugin
+actions | Goto matcher ...' in the menubar. You will get a dialog like this:</p>
+ <img src="cocoonmatcherdialog.png"
+ alt="Screenshot of Cocoon's matcher dialog" width="232" height="319">
+ 
+<p>Selecting a pattern and clicking 'Goto' will bring you to the location 
+in the document where that pattern is used.<br>
+ </p>
+ 
+<p>This feature looks in the map:components section of the sitemap to know 
+what matcher types have been defined, what their names are, and what the default
+one is. If you are editing a subsitemap which does not have these declarations
+(because they are inherited from the parent sitemap), this feature will not
+work. The work-around is to redefine the matchers in the subsitemap.<br>
+ </p>
+ 
+<h3>Edit generator/transformer source</h3>
+ When you have selected a map:generate or map:transform element, you can
+open the file referred to by their 'src' attribute by choosing 'Plugin actions 
+| Edit [generator/transformer] source' in the menubar. If the filename in 
+the src attribute is a relative file path, it will be resolved relative to 
+the location of the sitemap file being edited.<br>
+ 
+<h3>Goto component declaration</h3>
+ When you have selected a component instance in the sitemap (a map:generate, 
+map:transform, map:act, and so on), you can choose 'Plugin actions | Goto 
+component declaration'. This will jump to the element in the map:components 
+section where the type of that component is declared.<br>
+       
+<h2>The attribute editor plugins</h2>
+ 
+<p>While entering a reference to a substitution parameter (i.e. something 
+between { and } ), Pollo will show a hint displaying from what component the
+parameters will be substituted.<br>
+ </p>
+ <img src="cocoonattributeeditorhints.png"
+ alt="Screenshot showing the hints you get while inputing parameter references"
+ width="813" height="313">
+ <br>
+ 
+<p>As can also be seen in the above screenshot, in the attribute editor field 
+there are little buttons on the right. The first one will show a file dialog 
+to browse for a filename which will then be inserted in the attribute value. 
+The second one will show a dialog with the nearest wildcard URI matcher pattern, 
+in which you can then click on any of the stars to insert a reference to them:<br>
+ </p>
+ <img src="cocoonmatcherhelper.png"
+ alt="Screenshot showing the Cocoon URI matcher helper." width="473"
+ height="166">
+ <br>
+ <br>
+  @footer@<br>
+ <br>
+</body>
+</html>

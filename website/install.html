@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+               
+  <link rel="stylesheet" type="text/css" href="pollo.css">
+  <title>Pollo: downloading and installing</title>
+                 
+  <meta name="author" content="Bruno Dumon">
+       
+  <meta name="description"
+ content="Installation (install) instructions for Pollo">
+</head>
+  <body>
+     
+<h1>Pollo: downloading and installing</h1>
+      
+<ol>
+     <li>Make sure you have a recent Java version installed, 1.3.1 or (preferably) 
+ 1.4.<br>
+     </li>
+     <li>Download the most recent Pollo release <a
+ href="http://sourceforge.net/project/showfiles.php?group_id=30952">from here</a>.
+You only need to download the file ending on <code>-bin.zip</code>. The other
+file contains Pollo's source code.</li>
+     <li>Extract the zip file.</li>
+     <li>Go to the <code>bin</code> subdirectory in the pollo directory</li>
+     <li>Depending on the platform, execute either <code>pollo.bat</code> 
+or      <code>pollo.sh</code></li>
+     
+</ol>
+   Notes:<br>
+     
+<ul>
+     <li>The pollo.bat and pollo.sh files assume that the right version of
+ the java executable is available in your PATH. Try <code>java -version</code> 
+if unsure.</li>
+     <li>On some older Windows system, you may get an error like 'Out of
+environment  space'. This is because the pollo.bat sets a quite large environment
+variable  (Java's classpath). To solve this, enlarge the environment space
+(consult  your documentation or the internet if you don't know how).</li>
+     <li>If you don't have an unzip utility, but you have the Java JDK installed, 
+ you can use the jar utility to unzip the file: <code>jar xvf pollo-[version]-bin.zip</code><br>
+     </li>
+     <li>If you can't get Pollo running, send a message to <a
+ href="mailto:pollo-development@lists.sourceforge.net">pollo-development@lists.sourceforge.net</a><br>
+     </li>
+     
+</ul>
+   @footer@<br>
+    <br>
+ <br>
+</body>
+</html>

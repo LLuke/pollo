@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+                               
+  <link rel="stylesheet" type="text/css" href="pollo.css">
+  <title>Pollo: supported schema languages</title>
+                  
+  <meta name="author" content="Bruno Dumon">
+       
+  <meta name="description" content="Pollo supported schema languages">
+</head>
+  <body>
+             
+<h1>Pollo: supported schema languages</h1>
+             
+<p>Pollo supports schema languages to help you edit your documents.</p>
+             
+<p>For those who don't know what a schema language is: a schema languages 
+   defines the allowed structure of an XML document. It does this by specifying 
+the   set of valid element names, their attributes, and the content allowed 
+in  the elements. A document can then be validated against the schema, to 
+check  if the document conforms to the structure described in the schema.<br>
+       </p>
+             
+<h2>History<br>
+       </h2>
+             
+<p>Pollo needed a schema language that supports namespaces. Yet that schema
+   language should be very simple, so that it could &nbsp;be implemented
+in   a matter of hours. Or there should be a library available to quickly
+embed   support for that schema language in Pollo. XML DTD's, although relatively
+  simple, don't support namespaces. So I decided to invent my own little
+schema   language.</p>
+       Since then, support for mainstream schema languages has been added 
+(XML   Schema, DTD, Relax NG, some others), although maybe in a controversial
+ manner   (see further on).<br>
+       <br>
+             
+<h2>Pollo's schema language</h2>
+       With Pollo's schema language the following properties can be defined 
+for an element (optionally when occuring nested in another element): 
+<ul>
+          <li>a list of child elements (this is just an enumeration, not
+a  real   content model).<br>
+          </li>
+                     
+</ul>
+ 
+<ul>
+          <li>the attributes that can appear on the element</li>
+                     
+</ul>
+ 
+<ul>
+          <li>for those attributes, an enumeration of possible attribute
+values    can be defined, either as a fixed list, or dynamically composed
+&nbsp;by   evaluating an XPath expression on the document you're editing</li>
+                     
+</ul>
+             
+<p>The above features are thought out to be usefull for editing documents,
+   and not for validating a document against it.<br>
+      </p>
+           
+<p>Here's a small extract from the Cocoon Sitemap schema as an example:<br>
+ </p>
+ 
+<pre>&lt;schema xmlns:map="http://apache.org/cocoon/sitemap/1.0"&gt;<br>    &lt;element name="map:generate"&gt;<br>        &lt;attributes&gt;<br>            &lt;attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:generators/map:generator/@name"/&gt;<br>            &lt;attribute name="src"/&gt;<br>            &lt;attribute name="label"/&gt;<br>        &lt;/attributes&gt;<br>        &lt;allowedsubelements names="map:parameter"/&gt;<br>    &lt;/element&gt;<br>    &lt;element name="map:action-set/map:act"&gt;<br>        &lt;attributes&gt;<br>            &lt;attribute name="type" readvaluesfrom="/map:sitemap/map:components/map:actions/map:action/@name"/&gt;<br>            &lt;attribute name="src"/&gt;<br>            &lt;attribute name="action"/&gt;<br>        &lt;/attributes&gt;<br>        &lt;allowedsubelements names=""/&gt;<br>    &lt;/element&gt;<br>    [...]<br>&lt;/schema&gt;<br></pre>
+ 
+<p>Notice that the second element definition only applies to map:act elements 
+occuring as child of map:action-set</p>
+ 
+<p>The syntax of Pollo's schema language may be a bit ugly, but that's because
+   it was created (and implemented) in just a couple of hours. If someone 
+wants   to improve it, feel free.<br>
+   </p>
+     
+<p>It is not possible to validate a document against a Pollo schema, Pollo 
+ schemas can only be used to guide editing.<br>
+      </p>
+            
+<div class="code">  </div>
+         
+<h2>Other schema languages (XML Schema, Relax NG, DTD, ...)</h2>
+             
+<p>Pollo supports a range of schema languages through the <a
+ href="http://wwws.sun.com/software/xml/developers/multischema/">"Multi Schema
+   Validator" library from Sun</a>. More precisely the following languages 
+should work: XML Schema, DTD, Relax NG, Relax Core, Relax ns and Trex.<br>
+       </p>
+             
+<p>These schema languages can be used in Pollo both to guide you while editing 
+ (i.e. to show the available elements and attributes), and to validate your 
+ document against it.<br>
+   </p>
+     
+<p>One important thing about schema languages like XML Schema and Relax NG 
+ is that they allow you to reuse the same element name in different places 
+ On each place the element name is used, it is possible to specify different 
+ attributes and a different content model. While this is a powerfull feature, 
+ it makes things a lot harder for XML editors. After all, the editor cannot 
+ determine from the element name alone what attributes it can have, but it 
+ should look in what context the element occurs. But while you're editing 
+a document, the document may be in an invalid state making it impossible to
+determine the right type of the element. Pollo works around this by looking 
+ only at the element name, and by showing all elements that can be inserted 
+ and showing all attributes that can occur on the element with that name, 
+regardless of the context in which the element is used.<br>
+   </p>
+     
+<p>If you want to see precisely what can occur inside the element, or what 
+ attributes it can have, select that element, and then choose 'Schema | Show 
+ Content Model' in the menubar. This will validate the document up to the 
+selected element, and then asks the validator what content it expects there, 
+which is then displayed. (This is an experimental feature).<br>
+   </p>
+     
+<p>To validate your document against the schema, choose 'Schema | Validate 
+ document' in the menubar. If the document is valid, a message box will be 
+displayed to let you know it is. If any validation errors occured, a panel 
+will be displayed to  show them. By double clicking on an item in the validation 
+error list, you  will jump to the location in the document where that error 
+was detected.  <br>
+ </p>
+ 
+<p><img src="validation_screenshot.png" alt="validation screenshot"
+ width="537" height="210">
+ <br>
+ </p>
+             
+<h2>About DTD's</h2>
+<p>Pollo will not automatically use the DTD declared using DOCTYPE in your
+document.</p>
+<p>Pollo does however support using DTD's through MSV, just select them in
+the 'View Type' dialog you get after opening a file. There's one important
+limitation though: you cannot use DTD's if you use namespaces.<br>
+</p>
+<h2>Further possibilities</h2>
+     
+<h3>Alternative implementations</h3>
+   Pollo allows new schema implementations to be plugged in, without changing 
+ anything in Pollo itself. &nbsp;This could be used to bring support for new
+ schema languages (or alternative implementations) to Pollo, or to write the
+ validation logic directly in Java (for things that can't be expressed in
+schemas).<br>
+     
+<h3>Chaining schemas</h3>
+   Another feature of Pollo is to chain multiple schemas together. This could 
+ be used when constructing documents that contain elements from different 
+schemas. For example, to combine a WSDL schema with an XML Schema schema. 
+This functionality is available but currently not demonstrated in the default
+configuration that comes with Pollo, and neither really tested.<br>
+   <br>
+   @footer@       <br>
+ <br>
+</body>
+</html>

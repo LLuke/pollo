@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+                           
+  <link rel="stylesheet" type="text/css" href="pollo.css">
+  <title>Pollo: Customizability and View Type configuration</title>
+    
+</head>
+ <body>
+           
+<h1>Pollo: Customizability and View Type configuration</h1>
+           
+<h2>Customizability</h2>
+<p>Pollo can be tailored towards editing a certain type of XML file through
+the following mechanisms:<br>
+</p>
+<ul>
+  <li>schemas</li>
+  <li>display specifications</li>
+  <li>action plugins</li>
+  <li>attribute editor plugins</li>
+</ul>
+<p>These together are combined in a so-called "View Type"</p>
+<h2>View Types</h2>
+<p>Right after a file is opened, Pollo shows the View Types Dialog. This
+dialog contains some predefined view types. A view type defines some properties
+of the new view to be opened: what schema to use, what display specification
+   to use, and what plugins to use.</p>
+      The viewtypes are defines in the file <code>conf/pollo_conf.xml</code>. 
+  The basic definition of a view type looks as follows:      
+<pre>&lt;viewtype&gt;<br>  &lt;name&gt;foo&lt;/name&gt;<br>  &lt;description&gt;Foo Bar files&lt;/description&gt;<br><br>  &lt;schemas&gt;<br>   ...<br>  &lt;/schemas&gt;<br><br>  &lt;display-specifications&gt;<br>   ...<br>  &lt;/display-specifications&gt;<br><br>  &lt;attribute-editor-plugins&gt;<br>   ...<br>  &lt;/attribute-editor-plugins&gt;<br><br>  &lt;action-plugins&gt;<br>   ...<br>  &lt;/action-plugins&gt;<br>&lt;/viewtype&gt;<br></pre>
+         
+<p>The element <code>name</code> should contain a unique name for this view 
+  type. This name is for internal use, it is not shown to the user. The element
+<code>description</code> contains   the name of the view type as shown to
+the user. The elements <code>attribute-editor-plugins</code>   and <code>action-plugins</code>
+are optional, the other ones are required.<br>
+     </p>
+         
+<h3>Defining the schema</h3>
+     The <code>schemas</code>-element contains the definition of the schema 
+ to  use. Here's an example:     
+<pre>&lt;schemas&gt;<br>  &lt;schema&gt;<br>    &lt;factory-class&gt;org.outerj.pollo.xmleditor.schema.BasicSchemaFactory&lt;/factory-class&gt;<br>    &lt;init-param&gt;<br>      &lt;param-name&gt;source&lt;/param-name&gt;<br>      &lt;param-value&gt;classpath:/schema/sitemapschema.xml&lt;/param-value&gt;<br>    &lt;/init-param&gt;<br>  &lt;/schema&gt;<br>&lt;/schemas&gt;<br></pre>
+       
+<p>The schema defintion consists of a factory class name and zero or more
+  init parameters. The following implementations are available:<br>
+    </p>
+       
+<ul>
+    <li><code>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</code>:
+ use this for schemas in Pollo's own schema format. It takes an init parameter
+     <code>source</code> specifiying the path to the schema file. </li>
+   
+</ul>
+   
+<ul>
+    <li><code>org.outerj.pollo.xmleditor.schema.MsvSchemaFactory</code>:
+use  this for schemas in one of the formats supported by MSV (XML Schemas,
+Relax  NG, TREX, Relax core, Relax ns, DTD). The init parameters are:</li>
+       
+  <ul>
+      <li><code>source</code>: file name for the schema.</li>
+      <li><code>type</code>: for DTD's, set this to 'dtd'. Other schema types
+ will be autodetected by MSV and do not require this parameter. If the schema
+ filename has the extension .dtd, it will also be autodetected.</li>
+       
+  </ul>
+    <li><code>org.outerj.pollo.xmleditor.schema.GenericSchemaFactory</code>:
+ use this if you don't have a schema. All element and attributes lists will
+ then be blank. This one takes no init parameters.</li>
+   
+</ul>
+   
+<p>It is possible to implement a completely new schema type by implementing
+ the interfaces ISchema and ISchemaFactory.</p>
+   
+<p>It is possible to define more than one schema. These schema's will then
+ be chained together. This is functionality that's currently not exploited
+ in Pollo, and remains unverified. In the future, this will allow to combine
+ e.g. XSLT and HTML to edit XSL files containing HTML tags.<br>
+ </p>
+ 
+<h3>Defining the display specification</h3>
+ The <code>display-specifications</code> element contains the display specifications 
+to use. Here's an example: 
+<pre>&lt;display-specification&gt;<br>  &lt;factory-class&gt;org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory&lt;/factory-class&gt;<br>  &lt;init-param&gt;<br>    &lt;param-name&gt;source&lt;/param-name&gt;<br>    &lt;param-value&gt;classpath:/displayspec/sitemapspec.xml&lt;/param-value&gt;<br>  &lt;/init-param&gt;<br>&lt;/display-specification&gt;<br>&lt;display-specification&gt;<br>  &lt;factory-class&gt;org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory&lt;/factory-class&gt;<br>&lt;/display-specification&gt;<br></pre>
+<p>As you can see in the example, two display-specifications are specified.
+These are chained together: if the first one doesn't know about an element,
+then the next one is queried about it. Since Pollo can't handle the case
+that the display specification returns a null, you should always end with
+a 'GenericDisplaySpecFactory'.<br>
+</p>
+<p>The GenericDisplaySpecFactory can either work in a fixed-color mode, in
+which case it always returns the same color to use for elements, or it can
+assign values from an internal color table (in which case the same color
+is always used for the same element, it is not completely random). For this
+last one, supply an init parameter called 'use-random-colors' with the value
+'true'. To use a fixed color, either specify no parameter to use the default
+color, or use the parameter 'fixed-color' with as value e.g. '123,233,17'
+(= the red, green and blue values).<br>
+</p>
+<h3>Plugins</h3>
+In Pollo you can create two types of plugins: attribute editor plugins, that
+supply custom attribute editors, or action plugins, which add actions to
+a plugin menu.<br>
+<p>If you're interested in creating such beasts, take a look at the Cocoon
+or Ant examples included in Pollo. The short story is: create both a plugin
+(implement IAttributeEditorPlugin or IActionPlugin) and a factory for them
+(implement IAttributeEditorPluginFactory or IActionPluginFactory). Multiple
+action or attribute editor plugins can be chained. For attribute editor plugins,
+this means that if the first one returns null, the next one is asked for
+an attribute editor, and so on. For action plugins, all off the action plugins
+in the chain will be able to add actions to the plugin menu. Note that API's
+of these plugins could change in the future. But then again, everything can
+change in the future.<br>
+</p>
+@footer@<br>
+            
+</body>
+</html>

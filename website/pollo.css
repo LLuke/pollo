@@ -1,0 +1,36 @@
+h1
+{
+	font: bold x-large Arial, Helvetica, sans-serif;
+	color: #5c897c;
+}
+
+h2
+{
+	font: bold large Arial, Helvetica, sans-serif;
+	color: #90af4b;
+}
+
+h3
+{
+	font: bold 105% Arial, Helvetica, sans-serif;
+	color: #bfaa78;
+}
+
+table.menu
+{
+	background-color: #d8fff4;
+	font: bold 110% Arial, Helvetica, sans-serif;
+	color: #5c897c;
+}
+
+.license
+{
+	background-color: lightgrey;
+	border: 1px solid black;
+}
+
+p.warning:before
+{
+	content: "Warning: ";
+	font: bold;
+}
