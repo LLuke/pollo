@@ -1,0 +1,410 @@
+<book>
+	<title>Pollo help</title>
+
+	<chapter>
+		<title>Features overview</title>
+
+		<para>Below is a list of the features Pollo provides.</para>
+
+		<itemizedlist>
+			<listitem><para>MIT license (open source, free for personal or commercial (re)use).</para></listitem>
+			<listitem><para>Java based, thus cross platform (Java 1.3/1.4, tested on Windows and Linux with Sun JDK's).</para></listitem>
+			<listitem><para>Provides a special colored tree-view on the file. (Not the standard Swing JTree, but one written completely from scratch).</para></listitem>
+			<listitem><para>Unlimited undo (should in fact be limited, that's a little bug).</para></listitem>
+			<listitem><para>Drag and drop, in the same file or between files.</para></listitem>
+			<listitem><para>Open multiple views on the same file. (Thus the internal design is completely model-view based).</para></listitem>
+			<listitem><para>The editor can be customised for a particular file type by the use of a schema, a display specification, and plugins. Pollo comes with support for the Cocoon Sitemap, Ant build files, and some others. Pollo can however edit any well-formed XML file out of the box.</para></listitem>
+			<listitem><para>Pollo can use either its own little schema language, or since version 0.3.3, also has supported for RELAX NG, TREX, XML Schema, DTD and others through Sun's MSV.</para></listitem>
+			<listitem><para>You can execute XPath queries on the document and the result is either shown immeditaly (for non-node set results) or you can jump from node to node (for node-set results). This makes Pollo suited as an XPath learning tool. (XPath engine is Jaxen).</para></listitem>
+			<listitem><para>Pollo has also a textview with syntax highlighting (jedit syntax package), but that doesn't provide any further features for now.</para></listitem>
+			<listitem><para>For editing attribute values, plugins can be developed, examples are inluded for Cocoon and Ant. It is also possible to create 'Action Plugins', which add extra functionality to an action menu.</para></listitem>
+		</itemizedlist>
+
+		<para>Things that Pollo explictely does not support:</para>
+
+		<itemizedlist>
+			<listitem><para>Pollo has no support for entities, they are expanded upon parsing.</para></listitem>
+			<listitem><para>Pollo has no special support for internal DTD subsets, though they will not be removed.</para></listitem>
+			<listitem><para>Tabs in text nodes are not rendered correctly. Will eventually be fixed.</para></listitem>
+		</itemizedlist>
+	</chapter>
+
+	<chapter>
+		<title>Keyboard shortcuts</title>
+		
+		<itemizedlist>
+			<listitem><para>arrow up (or k): select previous node</para></listitem>
+			<listitem><para>arrow down (or j): select next node</para></listitem>
+			<listitem><para>ctrl+c: copy selected node</para></listitem>
+			<listitem><para>ctrl+x: cut selected node</para></listitem>
+			<listitem><para>ctrl+v: paste clipboard contents after selected node</para></listitem>
+			<listitem><para>ctrl+z: undo</para></listitem>
+			<listitem><para>&lt;delete&gt; deletes the selected node</para></listitem>
+			<listitem><para>o: moves focus to the 'insert after' list</para></listitem>
+			<listitem><para>O (capital o): moves focus to the 'insert before' list</para></listitem>
+			<listitem><para>i: moves focus to the 'insert inside' list</para></listitem>
+			<listitem><para>when in the insert after/before/inside list: press
+					enter to insert an item, after pressing enter the focus
+					moves to the main view again</para></listitem>
+			<listitem><para>when on an element or text/comment node, press enter to
+					move the attribute/text editor</para></listitem>
+			<listitem><para>minus and plus: collapse and expand</para></listitem>
+		</itemizedlist>
+	</chapter>
+
+
+	<chapter>
+		<title>Schemas</title>
+
+		<sect1>
+			<title>Pollo schema</title>
+
+			<simplesect>
+				<title>Motivation</title>
+
+				<para>Pollo has its own little schema language. The reason is that implementing
+					that schema language only took a couple of hours, while implementing other schema
+					languages would have taken days, at least. DTD's could not be used because
+					it needed to be namespace aware.</para>
+			</simplesect>
+
+			<simplesect>
+				<title>Features</title>
+
+				<para>Pollo's schema language does not provide content models etc. It is limited
+					to the following features:</para>
+
+				<itemizedlist>
+					<listitem><para>An element can be defined with the attributes and subelements
+							it can have.</para></listitem>
+					<listitem><para>For attributes, a value pick-list can be defined. This list
+							can be defined using an xpath expression that is evaluated on the
+							document being edited (very usefull).</para></listitem>
+					<listitem><para>It is namespace aware.</para></listitem>
+				</itemizedlist>
+
+				<para>These features are enough for e.g. Cocoon sitemap files
+					or Ant build files.</para>
+			</simplesect>
+
+			<simplesect>
+				<title>File format</title>
+				
+				<para>The file format is quite easy, for an example look at the sitemapschema.xml
+					file included in pollo.jar. Note that the schema parser in Pollo is quite dumb
+					and hasn't much error handling in case the schema contains errors.</para>
+			</simplesect>
+		</sect1>
+
+		<sect1>
+			<title>MSV</title>
+
+			<para>From version 0.3.3, Pollo has support for multiple schema languages through
+				Sun's MSV (Multi Schema Validator) library. MSV supports XML Schema, RELAX NG,
+				Relax Core, Relax Namespace, TREX and DTD.</para>
+
+			<para>Some things you should know about how and what Pollo supports:</para>
+
+			<itemizedlist>
+				<listitem><para>The element picklists show all elements that can
+						be inserted as child of another element, based on the element name of
+						the parent element. Other content model constraints such as element
+						order or occurence constraints are ignored.
+						The lists are filled based on element names, not a the true
+						element type. (but see the next point).</para></listitem>
+				<listitem><para>There is however a possiblity to show the precise content model
+						of an element (in the menu: Schema | Show Content Model). 
+						What this actually does is validate the document up to the selected
+						element and then asks the validator (MSV) what it expects as content
+						model for this element. If there are errors in the document before
+						the selected element, this can give strange results.</para></listitem>
+				<listitem><para>It is possible to validate the document against the schema
+						(in the menu: Schema | Validate). If there were no errors, a message
+						will be shown. If there were validation errors, a new panel will be shown
+						with the error descriptions. Double click on an error to goto the location
+						where the error occured.</para></listitem>
+				<listitem><para>DTD's can only be used to validate non-namespace documents.
+						For example, it is not possible to use a DTD to validate (or create)
+						a Cocoon sitemap.</para></listitem>
+			</itemizedlist>
+
+		</sect1>
+	</chapter>
+
+	<chapter>
+		<title>Display specification</title>
+
+		<para>The tree-display of Pollo can be configured by using a display specification.
+			The display specification's purpose can be compared to what CSS means for web pages.</para>
+
+		<para>Currently, two things can be specified: the colors to use for elements,
+			and the order in which attributes must be shown. That last one is necessary
+			because DOM has no notion of attribute ordering, but it is often convenient
+			to see attributes always in the same order.</para>
+
+		<para>Pollo also includes a generic display specification implementation, that
+			either always shows elements in the same color or assigns colors to elements itself.</para>
+	</chapter>
+
+	<chapter>
+		<title>Namespaces</title>
+
+		<para>Here comes a little warning related to namespaces and Pollo. Pollo is internally
+			DOM-based. In the DOM each element or attribute remembers its own namespace, prefix
+			and local name, independent of the 'xmlns' attributes that you define.</para>
+
+
+		<para>This means that if you drag around nodes in a document (or between documents),
+			to locations where namespaces prefixes are bound to other namespaces, or where
+			there is no declaration for the namespace prefix, or there is another default
+			namespace, you may create an invalid XML document.</para>
+
+		<para>If you define all your namespaces on the document element (which is often the case),
+			you should not run into problems.</para>
+
+		<para>Pollo could automatically check these issues, but that's currently not the case.</para>
+	</chapter>
+
+	<chapter>
+		<title>Attribute editor plugins</title>
+
+		<para>Pollo provides the possibility to provide custom Swing components
+			for editing attribute values. Examples are included for Ant build files
+			and Cocoon's sitemap. See the section on defining new view types for
+			more information on how to add your own ones.</para>
+	</chapter>
+
+	<chapter>
+		<title>Defining new View Types</title>
+
+		<para>
+			Right after a file is opened, Pollo shows the View Types Dialog. This dialog
+			contains some predefined view types. A view type defines some properties of
+			the new view to be opened: what schema to use, what display specification to use,
+			and what plugins to use.
+		</para>
+
+		<para>
+			The viewtypes are defines in the file <literal>conf/pollo_conf.xml</literal>.
+			The basic definition of a view type looks as follows:
+		</para>
+
+		<programlisting><![CDATA[<viewtype>
+  <name>foo</name>
+  <description>Foo Bar files</description>
+
+  <schemas>
+   ...
+  </schemas>
+
+  <display-specifications>
+   ...
+  </display-specifications>
+
+  <attribute-editor-plugins>
+   ...
+  </attribute-editor-plugins>
+
+  <action-plugins>
+   ...
+  </action-plugins>
+</viewtype>]]></programlisting>
+
+		<para>
+			The element <literal>name</literal> should contain a unique name
+			for this view type (not shown to the user). The element <literal>description</literal>
+			contains the name of the view type as shown to the user.
+			The elements <literal>attribute-editor-plugins</literal> and
+			<literal>action-plugins</literal> are optional, the other ones
+			are required.
+		</para>
+
+		<simplesect>
+			<title>Defining the schema</title>
+
+			<para>The <literal>schemas</literal>-element contains the definition of the
+				schema to use. Here's an example:</para>
+
+			<programlisting><![CDATA[<schemas>
+  <schema>
+    <factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
+    <init-param>
+      <param-name>source</param-name>
+      <param-value>classpath:/schema/sitemapschema.xml</param-value>
+    </init-param>
+  </schema>
+</schemas>]]></programlisting>
+
+			<para>
+				The schema defintion consists of a factory class name and zero or more
+				init parameters. The following implementations are available:
+			</para>
+
+			<itemizedlist>
+				<listitem><para><literal>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</literal>:
+						use this for schemas in Pollo's own schema format. It takes an init parameter
+						<literal>source</literal> specifiying the path to the schema file.</para></listitem>
+				<listitem><para><literal>org.outerj.pollo.xmleditor.schema.MsvSchemaFactory</literal>:
+						use this for schemas in one of the formats supported by MSV (XML Schemas, Relax NG,
+						TREX, Relax core, Relax ns, DTD). The init parameters are:</para>
+					<itemizedlist>
+						<listitem><para><literal>source</literal>: file name for the schema.</para></listitem>
+						<listitem><para><literal>type</literal>: for DTD's, set this to 'dtd'. Other
+								schema types will be autodetected by MSV and do not require this parameter. If
+								the schema filename has the extension .dtd, it will also be autodetected.</para></listitem>
+					</itemizedlist>
+				</listitem>
+				<listitem><para><literal>org.outerj.pollo.xmleditor.schema.GenericSchemaFactory</literal>:
+						use this if you don't have a schema. All element and attributes lists will then
+						be blank. This one takes no init parameters.</para></listitem>
+			</itemizedlist>
+
+			<note>
+				<para>
+					It is possible to implement a completely new schema type by implementing the interfaces
+					ISchema and ISchemaFactory.
+				</para>
+			</note>
+			<note>
+				<para>
+					It is possible to define more then one schema. These schema's will then be
+					chained together. This is functionality that's currently not exploited in
+					Pollo, and remains unverified. In the future, this will allow to combine e.g. XSLT
+					and HTML to edit XSL files containing HTML tags.
+				</para>
+			</note>
+		</simplesect>
+
+		<simplesect>
+			<title>Defining the display specification</title>
+
+			<para>
+				The <literal>display-specifications</literal> element contains the display
+				specifications to use. Here's an example:
+			</para>
+
+			<programlisting><![CDATA[<display-specification>
+  <factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
+  <init-param>
+    <param-name>source</param-name>
+    <param-value>classpath:/displayspec/sitemapspec.xml</param-value>
+  </init-param>
+</display-specification>
+<display-specification>
+  <factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
+</display-specification>]]></programlisting>
+
+			<para>As you can see in the example, two display-specifications are specified. These
+				are chained together: if the first one doesn't know about an element, then the
+				next one is queried about it. Since Pollo can't handle the case that the display
+				specification returns a null, you should always end with a 'GenericDisplaySpecFactory'.
+			</para>
+
+			<para>
+				The GenericDisplaySpecFactory can either work in a fixed-color mode, in which
+				case it always returns the same color to use for elements, or it can assign
+				values from in an internal color table (in which case the same color is always
+				used for the same element, it is not completely random). For this last one,
+				supply an init parameter called 'use-random-colors' with the value 'true'.
+				To use a fixed color, either specify no parameter to use Pollo's default
+				color, or use the parameter 'fixed-color' with as value e.g. '123,233,17' (= the
+				red, green and blue values).
+			</para>
+		</simplesect>
+
+		<simplesect>
+			<title>Plugins</title>
+
+			<para>
+				In Pollo you can create two types of plugins: attribute editor plugins, that
+				supply custom attribute editors, or action plugins, which add actions to a plugin
+				menu.
+			</para>
+
+			<para>
+				If you're interested in creating such beasts, take a look at the Cocoon or Ant
+				examples included in Pollo. The short story is: create both a plugin (implement
+				IAttributeEditorPlugin or IActionPlugin) and a factory for them
+				(implement IAttributeEditorPluginFactory or IActionPluginFactory).
+				Multiple action or attribute editor plugins can be chained. For attribute editor
+				plugins, this means that if the first one returns null, the next one is asked
+				for an attribute editor, and so on. For action plugins, all off the action
+				plugins in the chain will be able to add actions to the plugin menu.
+				Note that API's of these plugins could change in the future. But then again,
+				everything can change in the future.
+			</para>
+		</simplesect>
+
+	</chapter>
+
+	<chapter>
+		<title>XPath support</title>
+
+		<para>XPath support is provided through the Jaxen library. Jaxen itself is
+			still in development and hence contains bugs.</para>
+
+		<para>Nodes are not returned in document order by Jaxen, which can be a bit odd.</para>
+
+		<para>In XPath expressions you can use all the namespace prefixes defined on the document
+			element (aka root element).</para>
+	</chapter>
+
+	<chapter>
+		<title>The text editor</title>
+
+		<para>The textmode editor of Pollo is based on the jedit syntax package.
+			It doesn't really do anything special right now, it needs yet to be
+			further developed.</para>
+	</chapter>
+
+	<chapter>
+		<title>Cocoon</title>
+
+		<para>This section contains information on Pollo's support for Cocoon Sitemap files.
+			Cocoon is a powerfull XML publishing framework, for more information see
+			http://xml.apache.org/cocoon</para>
+
+		<para>To make use of the Cocoon support, you should select the 'Cocoon 2.0 Sitemap'
+			viewtype in the View Types Dialog (that's the dialog shown right after you
+			open a file).
+		</para>
+
+		<para>
+			First of all there's a sitemap schema (in Pollo's own format) that defines
+			picklists for various attribute values. For example, on all elements with a
+			type attribute, the value of the type attribute can be selected from a list
+			that is dynamically generated based on the component types currently defined
+			in your sitemap.
+		</para>
+
+		<para>
+			Additional features provided by an attribute editor plugin:
+		</para>
+
+		<itemizedlist>
+			<listitem><para>On elements with a 'src' attribute, there is a browse button (visible
+					when editing the attribute value) to browse for file names using a filechooser.</para></listitem>
+			<listitem><para>For all attributes there's a button labeled '{1}' that launches a
+					dialog showing the closest wildcard URI matcher pattern (if there is one).
+					It is then possible to click on the wildcards to insert references to them
+					in the attribute value.</para></listitem>
+		</itemizedlist>
+
+		<para>
+			Additional features provided by action plugins (see the 'Plugin actions' menu):
+		</para>
+
+		<itemizedlist>
+			<listitem><para>To get a quick overview of matcher patterns, select
+					Plugin actions | Goto matcher.</para></listitem>
+			<listitem><para>When an element such as map:generate, map:transform, etc is selected,
+					you can quickly jump to the declaration of the component type by selecting
+					Plugin actions | Goto component declaration.</para></listitem>
+			<listitem><para>To edit the file referenced by the 'src' attribute of a generator
+					or transformer, select Plugin actions | Edit generator/transformer source.
+					The location of the filename is interpreted relative to the location of the open sitemap.</para></listitem>
+		</itemizedlist>
+
+	</chapter>
+
+</book>
