@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.outerj.pollo.xmleditor.attreditor.AttributesTableModel.TempAttrEditInfo;
 import org.outerj.pollo.xmleditor.IconManager;
+import org.outerj.pollo.gui.EmptyIcon;
 
 import java.awt.*;
 
@@ -19,6 +20,8 @@ public class AttributeTableCellRenderer extends DefaultTableCellRenderer
     protected TempAttrEditInfo taei = null;
     protected int column = 0;
     protected Icon requiredAttributeIcon = IconManager.getIcon("org/outerj/pollo/xmleditor/attreditor/required_attribute.gif");
+    protected Icon unrequiredAttributeSpacerIcon = new EmptyIcon(requiredAttributeIcon.getIconHeight(), requiredAttributeIcon.getIconWidth());
+    protected Color disabledForeground = UIManager.getColor("Label.disabledForeground");
 
     public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int row, int column)
@@ -35,23 +38,25 @@ public class AttributeTableCellRenderer extends DefaultTableCellRenderer
             case 0:
                 setText(taei.getLabel());
                 if (taei.value == null)
-                    setEnabled(false);
+                    setForeground(disabledForeground);
                 else
-                    setEnabled(true);
+                    setForeground(Color.black);
 
                 if (taei.attrSchema != null && taei.attrSchema.required)
                     setIcon(requiredAttributeIcon);
+                else
+                    setIcon(unrequiredAttributeSpacerIcon);
 
                 break;
             case 1:
                 if (taei.value == null)
                 {
-                    setEnabled(false);
+                    setForeground(disabledForeground);
                     setText(" - ");
                 }
                 else
                 {
-                    setEnabled(true);
+                    setForeground(Color.black);
                     setText(taei.value);
                 }
                 break;
