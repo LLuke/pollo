@@ -1,9 +1,7 @@
 package org.outerj.pollo.xmleditor.plugin;
 
 import org.w3c.dom.Element;
-import org.outerj.pollo.util.ComboBoxValuable;
-import org.outerj.pollo.util.TextFieldValuable;
-import org.outerj.pollo.util.CustomTableCellEditor;
+import org.outerj.pollo.util.*;
 import org.outerj.pollo.xmleditor.schema.ISchema;
 
 import javax.swing.table.TableCellEditor;
@@ -27,11 +25,8 @@ import java.awt.*;
  */
 public class AttributeEditorSupport
 {
-	protected TextFieldValuable textFieldValuable = null;
-	protected ComboBoxValuable comboBoxValuable = null;
-
-	protected TableCellEditor textFieldEditor = null;
-	protected TableCellEditor comboBoxEditor = null;
+	protected ExtendedTextFieldTableCellEditor textFieldEditor = null;
+	protected ExtendedComboBoxTableCellEditor comboBoxEditor = null;
 
 	protected Box extraTextFieldComponents = null;
 	protected Box extraComboBoxComponents = null;
@@ -47,20 +42,12 @@ public class AttributeEditorSupport
 		this.schema = schema;
 
 		// create the textfield editor
-		textFieldValuable = new TextFieldValuable();
-		Box box = new Box(BoxLayout.X_AXIS);
-		box.add(textFieldValuable);
 		extraTextFieldComponents = new Box(BoxLayout.X_AXIS);
-		box.add(extraTextFieldComponents);
-		textFieldEditor = new CustomTableCellEditor(box, textFieldValuable);
+		textFieldEditor = new ExtendedTextFieldTableCellEditor(extraTextFieldComponents);
 
 		// create the combobox editor
-		comboBoxValuable = new ComboBoxValuable();
-		box = new Box(BoxLayout.X_AXIS);
-		box.add(comboBoxValuable);
 		extraComboBoxComponents = new Box(BoxLayout.X_AXIS);
-		box.add(extraComboBoxComponents);
-		comboBoxEditor = new CustomTableCellEditor(box, comboBoxValuable);
+		comboBoxEditor = new ExtendedComboBoxTableCellEditor(extraComboBoxComponents);
 	}
 
 	/**
@@ -76,7 +63,7 @@ public class AttributeEditorSupport
 		String [] values = schema.getPossibleAttributeValues(element, namespaceURI, localName);
 		if (values != null)
 		{
-			comboBoxValuable.setModel(new DefaultComboBoxModel(values));
+			comboBoxEditor.setModel(new DefaultComboBoxModel(values));
 			mode = COMBOBOX_MODE;
 		}
 		else
@@ -89,14 +76,14 @@ public class AttributeEditorSupport
 	 * Returns the 'Valuable', this is needed to change the text in either the
 	 * textfield or the combobox. This method should be called after the reset method.
 	 */
-	public CustomTableCellEditor.Valuable getValuable()
+	public Valuable getValuable()
 	{
 		switch (mode)
 		{
 			case COMBOBOX_MODE:
-				return comboBoxValuable;
+				return comboBoxEditor.getValuable();
 			case TEXTFIELD_MODE:
-				return textFieldValuable;
+				return textFieldEditor.getValuable();
 		}
 		throw new Error("[AttributeEditorSupport] mode has incorrect value.");
 	}

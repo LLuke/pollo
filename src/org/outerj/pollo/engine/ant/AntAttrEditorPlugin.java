@@ -1,6 +1,7 @@
 package org.outerj.pollo.engine.ant;
 
 import org.outerj.pollo.util.CustomTableCellEditor;
+import org.outerj.pollo.util.Valuable;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.AttributeEditorSupport;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
@@ -26,7 +27,7 @@ public class AntAttrEditorPlugin implements IAttributeEditorPlugin
 	protected PropertiesDialog propDialog;
 	protected AttributeEditorSupport editorSupport;
 	protected JButton propButton;
-	protected CustomTableCellEditor.Valuable currentValuable;
+	protected Valuable currentValuable;
 
 	public void init(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
 	{
