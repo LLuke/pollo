@@ -3,9 +3,20 @@ package org.outerj.pollo.util;
 import javax.swing.table.TableCellEditor;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+/**
+ * A TableCellEditor that consists of a combobox with (optionally) some
+ * extra components next to it (e.g. a button to browse for a file name, etc.).
+ * The extra components are placed left of the dropdown button.
+ *
+ * <p>Using the methods in the Valuable interface, the contents of the textfield
+ * can be manipulated in a uniform way as for the ExtendedTextFieldCellEditor.
+ *
+ * @author Bruno Dumon
+ */
 public class ExtendedComboBoxTableCellEditor extends AbstractCellEditor implements TableCellEditor
 {
 	protected ExtendedComboBox comboBox;
@@ -45,13 +56,12 @@ public class ExtendedComboBoxTableCellEditor extends AbstractCellEditor implemen
 
 	protected class ExtendedComboBox extends JComboBox implements Valuable
 	{
-		protected JTextField textField;
+		protected PublicKeyBindingTextField textField = new PublicKeyBindingTextField();
 		protected ExtendedComboBoxPanel textFieldContainer;
 
 		public ExtendedComboBox(Component extraStuff)
 		{
 			setEditable(true);
-			textField = new JTextField("");
 			textField.setBorder(null);
 			textFieldContainer = new ExtendedComboBoxPanel();
 			textFieldContainer.setLayout(new BoxLayout(textFieldContainer, BoxLayout.X_AXIS));
@@ -59,13 +69,13 @@ public class ExtendedComboBoxTableCellEditor extends AbstractCellEditor implemen
 			textFieldContainer.add(extraStuff);
 			setEditor(textFieldContainer);
 
-			addActionListener( new ActionListener() {
+			textField.addActionListener( new ActionListener() {
 				public void actionPerformed(ActionEvent e)
 				{
 					ExtendedComboBoxTableCellEditor.this.fireEditingStopped();
-					comboBox.actionPerformed(new ActionEvent(textFieldContainer, 0, ""));
 				}
 			});
+
 		}
 
 		public void setValue(String value)
@@ -128,6 +138,21 @@ public class ExtendedComboBoxTableCellEditor extends AbstractCellEditor implemen
 				textField.removeActionListener(listener);
 			}
 
+			public void requestFocus()
+			{
+				textField.requestFocus();
+			}
+
+		}
+
+
+		protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
+											int condition, boolean pressed)
+		{
+			if (textField.processKeyBindingPublic(ks, e, condition, pressed))
+				return true;
+			else
+				return super.processKeyBinding(ks, e, condition, pressed);
 		}
 	}
 }
