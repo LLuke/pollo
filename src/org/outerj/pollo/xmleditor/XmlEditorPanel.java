@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 
 /**
@@ -120,17 +122,16 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		xpathAndXmlEditorContainer.add(scrollPane, BorderLayout.CENTER);
 
 		// create first split pane (xmlEditor - nodeInsertionPanel)
-		nodeInsertionPanel.setPreferredSize(new Dimension(180, 100 /* height doesn't matter */));
 		xmlEditorAndNodeInsertPanelSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, xpathAndXmlEditorContainer, nodeInsertionPanel);
 		xmlEditorAndNodeInsertPanelSplit.setResizeWeight(1); // xml content editor gets extra space
-		//splitPane1.setDividerLocation(-1);
+		xmlEditorAndNodeInsertPanelSplit.setDividerLocation(620);
+		xmlEditorAndNodeInsertPanelSplit.setOneTouchExpandable(true);
 
 		// create second splitpane (first split pane - attributesPanel)
-		nodeDetailsPanel.setPreferredSize(new Dimension(200 /* width doesn't matter */, 100));
-		xmlEditorAndNodeInsertPanelSplit.setPreferredSize(new Dimension(200 /* width doesn't matter */, 400));
 		JSplitPane splitPane2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, xmlEditorAndNodeInsertPanelSplit, nodeDetailsPanel);
 		splitPane2.setResizeWeight(1); // xml content editor gets extra space
-		//splitPane2.setDividerLocation(-1);
+		splitPane2.setDividerLocation(370);
+		splitPane2.setOneTouchExpandable(true);
 		add(splitPane2, BorderLayout.CENTER);
 
 		NodePathBar nodePathBar = new NodePathBar(xmlEditor, attrPanel);
@@ -166,6 +167,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		{
 			xmlEditorAndValidationErrorsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 			xmlEditorAndValidationErrorsSplit.setResizeWeight(1); // xml content editor gets extra space
+			xmlEditorAndValidationErrorsSplit.setDividerLocation(0.7);
 		}
 
 		getValidationErrorsPanel(); // to be sure that the panel gets instantiated
@@ -197,7 +199,6 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		if (validationErrorsPanel == null)
 		{
 			validationErrorsPanel = new ValidationErrorsPanel(this, attrPanel);
-			validationErrorsPanel.setPreferredSize(new Dimension(200 /* width doesn't matter */, 200));
 		}
 		return validationErrorsPanel;
 	}

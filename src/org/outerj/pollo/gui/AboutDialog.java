@@ -25,7 +25,7 @@ public class AboutDialog extends JDialog
 
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.insets = new Insets(12, 12, 12, 12);
-		JLabel logo = new JLabel(new ImageIcon(getClass().getResource("/org/outerj/pollo/dialog/logo.png")));
+		JLabel logo = new JLabel(new ImageIcon(getClass().getResource("/org/outerj/pollo/gui/logo.png")));
 		layout.setConstraints(logo, constraints);
 		getContentPane().add(logo);
 

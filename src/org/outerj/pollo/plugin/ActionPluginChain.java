@@ -20,13 +20,13 @@ public class ActionPluginChain implements IActionPlugin
 		this.actionPlugins.add(actionPlugin);
 	}
 
-	public void addActionsToPluginMenu(JMenu menu, Node selectedNode, XmlModel xmlModel, PolloFrame polloFrame)
+	public void addActionsToPluginMenu(JMenu menu, Node selectedNode)
 	{
 		Iterator it = actionPlugins.iterator();
 		while (it.hasNext())
 		{
 			IActionPlugin actionPlugin = (IActionPlugin)it.next();
-			actionPlugin.addActionsToPluginMenu(menu, selectedNode, xmlModel, polloFrame);
+			actionPlugin.addActionsToPluginMenu(menu, selectedNode);
 		}
 	}
 

@@ -75,7 +75,7 @@ public class MsvSchema implements ISchema
 			else
 			{
 				// let MSV autodetect
-				grammar = GrammarLoader.loadSchema(source, new PolloMsvController(), saxParserFactory);
+				grammar = GrammarLoader.loadSchema(inputSource, new PolloMsvController(), saxParserFactory);
 			}
 
 			if (grammar == null)

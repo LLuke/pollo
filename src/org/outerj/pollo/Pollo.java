@@ -59,6 +59,11 @@ public class Pollo implements XmlModelListener
 		// initialize actions
 		newPolloFrameAction = new NewPolloFrameAction();
 
+		// set some better swing defaults
+        System.setProperty("swing.plaf.metal.controlFont", "Dialog-PLAIN-12");
+		System.setProperty("swing.plaf.metal.systemFont", "Dialog-PLAIN-12");
+		System.setProperty("swing.plaf.metal.userFont", "Dialog-PLAIN-12");
+
 		// show a PolloFrame
 		PolloFrame polloFrame = new PolloFrame();
 		manageFrame(polloFrame);

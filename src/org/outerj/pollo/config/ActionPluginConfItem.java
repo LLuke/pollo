@@ -4,6 +4,8 @@ import org.outerj.pollo.plugin.IActionPlugin;
 import org.outerj.pollo.plugin.IActionPluginFactory;
 import org.outerj.pollo.xmleditor.ComponentManager;
 import org.outerj.pollo.xmleditor.exception.PolloException;
+import org.outerj.pollo.PolloFrame;
+import org.outerj.pollo.EditorPanel;
 
 public class ActionPluginConfItem extends ConfItem
 {
@@ -14,14 +16,14 @@ public class ActionPluginConfItem extends ConfItem
 	{
 	}
 
-	public IActionPlugin createActionPlugin()
+	public IActionPlugin createActionPlugin(EditorPanel editorPanel, PolloFrame polloFrame)
 		throws PolloException
 	{
 		IActionPlugin actionPlugin = null;
 		try
 		{
 			IActionPluginFactory actionPluginFactory = (IActionPluginFactory)ComponentManager.getFactoryInstance(getFactoryClass());
-			actionPlugin = actionPluginFactory.getActionPlugin(getInitParams());
+			actionPlugin = actionPluginFactory.getActionPlugin(getInitParams(), editorPanel, polloFrame);
 		}
 		catch (Exception e)
 		{

@@ -12,7 +12,7 @@ public class SaveAsAction extends AbstractAction
 	private XmlModel xmlModel;
 	protected PolloFrame polloFrame;
 
-	public SaveAsAction(XmlModel model, PolloFrame polloFrame)
+	public SaveAsAction(XmlModel xmlModel, PolloFrame polloFrame)
 	{
 		super("Save As...");
 		this.xmlModel = xmlModel;

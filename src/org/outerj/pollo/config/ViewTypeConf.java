@@ -10,6 +10,8 @@ import org.outerj.pollo.xmleditor.plugin.AttrEditorPluginChain;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.schema.ChainedSchema;
 import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.PolloFrame;
+import org.outerj.pollo.EditorPanel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -125,7 +127,7 @@ public class ViewTypeConf
 		return attrEditorPluginChain;
 	}
 
-	public IActionPlugin createActionPlugins()
+	public IActionPlugin createActionPlugins(EditorPanel editorPanel, PolloFrame polloFrame)
 		throws PolloException
 	{
 		ActionPluginChain actionPluginChain = new ActionPluginChain();
@@ -134,7 +136,7 @@ public class ViewTypeConf
 		while (it.hasNext())
 		{
 			ActionPluginConfItem conf = (ActionPluginConfItem)it.next();
-			actionPluginChain.add(conf.createActionPlugin());
+			actionPluginChain.add(conf.createActionPlugin(editorPanel, polloFrame));
 		}
 
 		return actionPluginChain;

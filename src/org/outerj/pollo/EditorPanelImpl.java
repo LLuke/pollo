@@ -63,7 +63,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		IDisplaySpecification idisplayspecification = viewTypeConf.createDisplaySpecChain();
 		ISchema ischema = viewTypeConf.createSchemaChain();
 		IAttributeEditorPlugin iattributeeditorplugin = viewTypeConf.createAttrEditorPluginChain(xmlModel, ischema);
-		actionPlugin = viewTypeConf.createActionPlugins();
+		actionPlugin = viewTypeConf.createActionPlugins(this, polloFrame);
 
 		xmlEditorPanel = new XmlEditorPanel(xmlModel, null, idisplayspecification, ischema, iattributeeditorplugin);
 		xmlTextEditorPanel = new XmlTextEditorPanel(xmlModel, ischema);
@@ -459,8 +459,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 			if (visible)
 			{
 				removeAll();
-				actionPlugin.addActionsToPluginMenu(this, xmlEditorPanel.getXmlEditor().getSelectedNode(),
-					xmlEditorPanel.getXmlModel(), polloFrame);
+				actionPlugin.addActionsToPluginMenu(this, xmlEditorPanel.getXmlEditor().getSelectedNode());
 				if (getMenuComponentCount() == 0)
 				{
 					JMenuItem menuItem = new JMenuItem("No plugin actions available");
