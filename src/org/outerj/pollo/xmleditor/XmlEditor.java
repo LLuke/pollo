@@ -162,8 +162,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 		// init actions
 		copyAction                = new CopyAction(this);
+		resMgr.configureAction("copyAction", copyAction);
 		cutAction                 = new CutAction(this);
+		resMgr.configureAction("cutAction", cutAction);
 		removeAction              = new RemoveAction(this);
+		resMgr.configureAction("removeAction", removeAction);
 		
 		pasteBeforeAction         = new PasteAction(this, PasteAction.PASTE_BEFORE);
 		resMgr.configureAction("pasteBeforeAction", pasteBeforeAction);

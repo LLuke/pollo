@@ -21,9 +21,6 @@ public class CutAction extends RemoveAction
 	public CutAction(XmlEditor xmlEditor)
 	{
 		super(xmlEditor);
-		putValue(Action.SMALL_ICON, IconManager.getIcon("org/outerj/pollo/resource/cut.gif"));
-		putValue(Action.NAME, "Cut");
-		putValue(Action.SHORT_DESCRIPTION, "Cut selected node");
 	}
 
 	public void actionPerformed(ActionEvent e)

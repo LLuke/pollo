@@ -23,8 +23,8 @@ public class CopyAction extends AbstractAction implements SelectionListener
 
 	public CopyAction(XmlEditor xmlEditor)
 	{
-		super("Copy", IconManager.getIcon("org/outerj/pollo/resource/copy.gif"));
-		putValue(Action.SHORT_DESCRIPTION, "Copy selected node");
+		super("Copy");
+
 		this.xmlEditor = xmlEditor;
 		xmlEditor.getSelectionInfo().addListener(this);
 		setEnabled(false);
