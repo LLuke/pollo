@@ -2,9 +2,9 @@ package org.outerj.pollo.xmleditor.attreditor;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.event.TableModelEvent;
-import org.outerj.pollo.xmleditor.model.Schema.ElementSchema;
-import org.outerj.pollo.xmleditor.model.Schema.AttributeSchema;
-import org.outerj.pollo.xmleditor.model.Schema;
+import org.outerj.pollo.xmleditor.schema.ElementSchema;
+import org.outerj.pollo.xmleditor.schema.AttributeSchema;
+import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.util.QuickSort;
 import org.outerj.pollo.xmleditor.util.DomUtils;
@@ -29,12 +29,12 @@ import org.w3c.dom.events.MutationEvent;
   attribute an instance of {@link org.outerj.pollo.xmleditor.AttributesTableModel.TempAttrEditInfo TempAttrEditInfo}
   is created. These are put in an ArrayList.
   <p>
+  One of the reasons for working this way is because the attributes of an
+  element have no sequence.
+  <p>
   Appart from the attributes that exist on the element, the schema is also
   checked to see what attributes this element can have, and for these also
   TempAttrEditInfo's are created.
-  <p>
-  One of the reasons for working this way is because the attributes of an
-  element have no sequence.
   <p>
   If the AttributeTableModel is no longer needed, setElement(null) should be
   called so that the DOM event listener is removed.
@@ -50,7 +50,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 	/** Flag indicating that DOM change events should be ignored because they are coming from us. */
 	protected boolean doingApplyChanges = false;
 	/** Reference to the schema. */
-	protected Schema schema;
+	protected ISchema schema;
 	protected XmlModel xmlModel;
 	protected QuickSort sorter = new QuickSort(new TempAttrEditInfoComparator());
 
@@ -60,7 +60,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 	 *
 	 * @param schema The schema to use.
 	 */
-	public AttributesTableModel(Schema schema, XmlModel xmlModel)
+	public AttributesTableModel(ISchema schema, XmlModel xmlModel)
 	{
 		this.schema = schema;
 		this.xmlModel = xmlModel;
@@ -105,10 +105,14 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 
 	public void setValueAt(Object value, int row, int column)
 	{
+		TempAttrEditInfo taei = (TempAttrEditInfo)attributes.get(row);
+
+		if (taei.value == null && value == null || value.equals(""))
+			return;
+
 		if (value == null)
 			value = "";
 
-		TempAttrEditInfo taei = (TempAttrEditInfo)attributes.get(row);
 		if (taei.value == null || !taei.value.equals(value))
 		{
 			taei.value = (String)value;
@@ -181,7 +185,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 
 			attributes.add(taei);
 
-			attrNames.add((taei.uri != null ? taei.uri : "") + taei.name);
+			attrNames.add(taei.uri + taei.name);
 		}
 
 		// get all possible attributes from the Schema, and merge them
@@ -244,7 +248,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 		{
 			TempAttrEditInfo taei = (TempAttrEditInfo)attributesIt.next();
 			if (((taei.uri == null && namespaceURI == null)
-						|| (namespaceURI != null && taei.uri.equals(namespaceURI)))
+						|| (namespaceURI != null && namespaceURI.equals(taei.uri)))
 					&& taei.name.equals(localName))
 			{
 				System.out.println("This attribute already exists, so I'm not going to add it.");
@@ -329,6 +333,14 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 			// the DOM implementation, so if we don't print a message here we
 			// might not even know an exception occured.
 			System.out.println("Error in AttributesTableModel.handleEvent: " + e);
+		}
+	}
+
+	public void cleanup()
+	{
+		if (this.element != null)
+		{
+			((EventTarget)this.element).removeEventListener("DOMAttrModified", this, false);
 		}
 	}
 }

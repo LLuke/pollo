@@ -1,8 +1,11 @@
 package org.outerj.pollo.xmleditor.attreditor;
 
 import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.model.Schema;
+import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
+import org.outerj.pollo.xmleditor.util.FocusBorder;
+import org.outerj.pollo.xmleditor.Cleanable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,7 +45,7 @@ import org.w3c.dom.Element;
  *
  * @author Bruno Dumon
  */
-public class AttributesPanel extends JPanel implements ActionListener, SelectionListener
+public class AttributesPanel extends JPanel implements ActionListener, SelectionListener, Cleanable
 {
 	protected JTable attributesTable;
 	protected AttributesTableModel attributesTableModel;
@@ -50,12 +53,14 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 	protected JButton addAttrButton;
 	protected JButton deleteAttrButton;
 	protected XmlModel xmlModel;
-	protected Schema schema;
+	protected ISchema schema;
+	protected IAttributeEditorPlugin attrEditorPlugin;
 
-	public AttributesPanel(XmlModel xmlModel, Schema schema)
+	public AttributesPanel(XmlModel xmlModel, ISchema schema, IAttributeEditorPlugin attrEditorPlugin)
 	{
 		this.xmlModel = xmlModel;
 		this.schema = schema;
+		this.attrEditorPlugin = attrEditorPlugin;
 
 		// construct the interface components
 		attributesTableModel = new AttributesTableModel(schema, xmlModel);
@@ -70,6 +75,7 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 		column.setPreferredWidth(300);
 
 		JScrollPane scrollPane = new JScrollPane(attributesTable);
+		attributesTable.addFocusListener(new FocusBorder(scrollPane));
 
 		setLayout(new BorderLayout());
 		add(scrollPane, BorderLayout.CENTER);
@@ -204,9 +210,9 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 	 */
 	public class AttributesTable extends JTable
 	{
-		protected Schema schema;
+		protected ISchema schema;
 
-		public AttributesTable(AttributesTableModel model, Schema schema)
+		public AttributesTable(AttributesTableModel model, ISchema schema)
 		{
 			super(model);
 			this.schema = schema;
@@ -219,6 +225,13 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 			// or otherwise show the default cell editor.
 			AttributesTableModel model = (AttributesTableModel)getModel();
 			AttributesTableModel.TempAttrEditInfo taei = model.getTempAttrEditInfo(row);
+			TableCellEditor editor = attrEditorPlugin.getAttributeEditor(model.getElement(), taei.uri, taei.name);
+			if (editor != null)
+				return editor;
+			else
+				return super.getCellEditor(row, column);
+
+			/*
 			String [] values = schema.getPossibleAttributeValues(model.getElement(), taei.uri, taei.name);
 			if (values != null)
 			{
@@ -226,7 +239,7 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 				combo.setEditable(true);
 				return new DefaultCellEditor(combo);
 			}
-			return super.getCellEditor(row, column);
+			*/
 		}
 
 		public TableCellRenderer getCellRenderer(int row, int column)
@@ -246,4 +259,30 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 		deleteAttrButton.setEnabled(enabled);
 	}
 
+	public void requestFocus()
+	{
+		attributesTable.requestFocus();
+	}
+
+	public boolean highlightAttribute(String namespaceURI, String localName)
+	{
+		int maxAttrs = attributesTableModel.getRowCount();
+		for (int i = 0; i < maxAttrs; i++)
+		{
+			AttributesTableModel.TempAttrEditInfo taei = attributesTableModel.getTempAttrEditInfo(i);
+			if (((taei.uri == null && namespaceURI == null)
+						|| (namespaceURI != null && namespaceURI.equals(taei.uri)))
+					&& taei.name.equals(localName))
+			{
+				attributesTable.changeSelection(i, 0, false, false);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void cleanup()
+	{
+		attributesTableModel.cleanup();
+	}
 }

@@ -14,5 +14,11 @@ public interface XmlModelListener
 	 * mean a class implementing the interface
 	 * {@link org.outerj.pollo.xmleditor.model.View}).
 	 */
-	public void lastViewClosed(XmlModel xmlModel);
+	public void lastViewClosed(XmlModel sourceXmlModel);
+
+	/**
+	 * Called when the filename of this xml model changes. This is when
+	 * the user used 'save as'.
+	 */
+	public void fileNameChanged(XmlModel sourceXmlModel);
 }

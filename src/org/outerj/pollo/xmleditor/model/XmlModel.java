@@ -10,12 +10,12 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+//import javax.xml.transform.TransformerFactory;
+//import javax.xml.transform.Transformer;
+//import javax.xml.transform.TransformerConfigurationException;
+//import javax.xml.transform.TransformerException;
+//import javax.xml.transform.dom.DOMSource;
+//import javax.xml.transform.stream.StreamResult;
 
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
@@ -29,18 +29,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashMap;
 
-import org.apache.xpath.XPathAPI;
+import org.jaxen.dom.XPath;
+import org.jaxen.SimpleNamespaceContext;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 
 
 /**
-  DOM-based model for an xml file. This class adds:
-  <ul>
-    <li>loading/saving of the XML file</li>
-	<li>functions for: prefix to namespace, namespace to prefix, finding default namespace.</li>
-	<li>function for getting an element based on an xpath expression</li>
-  </ul>
+ * DOM-based model for an xml file. This class adds:
+ * <ul>
+ * <li>loading/saving of the XML file</li>
+ * <li>functions for: prefix to namespace, namespace to prefix, finding default namespace.</li>
+ * <li>function for getting an element based on an xpath expression</li>
+ * </ul>
+ *
+ * @author Bruno Dumon
  */
 public class XmlModel
 {
@@ -72,8 +75,7 @@ public class XmlModel
 			document = documentBuilder.parse(new InputSource(file.getAbsolutePath()));
 			*/
 			PolloDOMParser parser = new PolloDOMParser();
-			parser.setFeature("http://apache.org/xml/features/dom/defer-node-expansion",false);
-			parser.setFeature("http://xml.org/sax/features/namespaces", true);
+			setFeatures(parser);
 			parser.parse(new InputSource(file.getAbsolutePath()));
 			document = parser.getDocument();
 		}
@@ -87,6 +89,34 @@ public class XmlModel
 		saveAction.setEnabled(false);
 	}
 
+	public XmlModel(InputSource inputSource)
+		throws InvalidXmlException
+	{
+		this.file = null;
+		try
+		{
+			PolloDOMParser parser = new PolloDOMParser();
+			setFeatures(parser);
+			parser.parse(inputSource);
+			document = parser.getDocument();
+		}
+		catch (Exception e)
+		{
+			throw new InvalidXmlException("Error occured during parsing xml: " + e.getMessage());
+		}
+		undo = new Undo(this);
+
+		modified = true;
+		saveAction.setEnabled(true);
+	}
+
+	public void setFeatures(PolloDOMParser parser)
+		throws Exception
+	{
+		parser.setFeature("http://apache.org/xml/features/dom/defer-node-expansion",false);
+		parser.setFeature("http://xml.org/sax/features/namespaces", true);
+	}
+
 	public Document getDocument()
 	{
 		return document;
@@ -96,9 +126,9 @@ public class XmlModel
 		throws Exception
 		//throws TransformerConfigurationException, TransformerException
 	{
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
 		/*
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer serializer = transformerFactory.newTransformer();
 		serializer.setOutputProperty("method", "xml");
 		serializer.setOutputProperty("indent", "yes");
@@ -297,18 +327,22 @@ public class XmlModel
 		return null;
 	}
 
-	public Element getNode(String xpath)
+	public Element getNode(String xpathExpr)
 	{
 		try
 		{
-			Element el =  (Element)XPathAPI.selectSingleNode(document.getDocumentElement(), xpath);
+			XPath xpath = new XPath(xpathExpr);
+			SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
+			namespaceContext.addElementNamespaces(xpath.getNavigator(), document.getDocumentElement());
+			xpath.setNamespaceContext(namespaceContext);
+			Element el =  (Element)xpath.selectSingleNode(document.getDocumentElement());
 			if (el == null)
-				System.out.println("xpath returned null: " + xpath);
+				System.out.println("xpath returned null: " + xpathExpr);
 			return el;
 		}
 		catch (Exception e)
 		{
-			System.out.println("error executing xpath: " + xpath);
+			System.out.println("error executing xpath: " + xpathExpr);
 			return null;
 		}
 	}
@@ -373,6 +407,16 @@ public class XmlModel
 		}
 	}
 
+	public void notifyFileNameChanged()
+	{
+		Iterator xmlModelListenersIt = xmlModelListeners.iterator();
+		while (xmlModelListenersIt.hasNext())
+		{
+			XmlModelListener listener = (XmlModelListener)xmlModelListenersIt.next();
+			listener.fileNameChanged(this);
+		}
+	}
+
 	public void save()
 		throws Exception
 	{
@@ -400,7 +444,10 @@ public class XmlModel
 				break;
 		}
 		if (file != null)
+		{
+			notifyFileNameChanged();
 			save();
+		}
 	}
 
 	public boolean closeAllViews()
@@ -431,8 +478,11 @@ public class XmlModel
 	{
 		if (modified)
 		{
-			switch (JOptionPane.showConfirmDialog(null, "The file " + file.getAbsolutePath() + " was modified. Save it?",
-						"Pollo message", JOptionPane.YES_NO_CANCEL_OPTION))
+			String message = "This file is not yet saved. Save it before closing?";
+			if (file != null)
+				message = "The file " + file.getAbsolutePath() + " was modified. Save it?";
+			switch (JOptionPane.showConfirmDialog(null, message, "Pollo message",
+						JOptionPane.YES_NO_CANCEL_OPTION))
 			{
 				case JOptionPane.YES_OPTION:
 					save();
