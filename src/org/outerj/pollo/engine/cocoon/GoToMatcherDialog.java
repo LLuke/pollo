@@ -45,7 +45,7 @@ public class GoToMatcherDialog extends JDialog
 		matchersList = new JList();
 		JScrollPane scrollPane = new JScrollPane(matchersList);
 		scrollPane.setPreferredSize(new Dimension(200, 200));
-		add(scrollPane, BorderLayout.CENTER);
+		panel.add(scrollPane, BorderLayout.CENTER);
 
 
 		Box buttonBox = new Box(BoxLayout.X_AXIS);
