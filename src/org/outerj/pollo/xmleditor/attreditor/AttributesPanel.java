@@ -24,7 +24,7 @@ import java.awt.event.KeyEvent;
  * A Panel containing a JTable to edit attribute values, together with
  * buttons to add/delete attributes.
  * <p>
- * The JTable uses an {@link org.outerj.pollo.xmleditor.AttributesTableModel AttributesTableModel}
+ * The JTable uses an {@link org.outerj.pollo.xmleditor.attreditor.AttributesTableModel AttributesTableModel}
  * to show the attributes.
  *
  * @author Bruno Dumon
@@ -39,12 +39,18 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 	protected XmlModel xmlModel;
 	protected ISchema schema;
 	protected IAttributeEditorPlugin attrEditorPlugin;
+    protected JComponent parentFocusComponent;
 
-	public AttributesPanel(XmlModel xmlModel, ISchema schema, IAttributeEditorPlugin attrEditorPlugin)
+    /**
+     * @param parentFocusComponent a component to which to move the focus after pressing escape. Can be null.
+     */
+	public AttributesPanel(XmlModel xmlModel, ISchema schema, IAttributeEditorPlugin attrEditorPlugin,
+                           JComponent parentFocusComponent)
 	{
 		this.xmlModel = xmlModel;
 		this.schema = schema;
 		this.attrEditorPlugin = attrEditorPlugin;
+        this.parentFocusComponent = parentFocusComponent;
 
 		// construct the interface components
 		attributesTableModel = new AttributesTableModel(schema, xmlModel);
@@ -214,6 +220,17 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 			//setSurrendersFocusOnKeystroke(true);
 			// Ooops.. this method is not available in java 1.3, therefore overided
 			//  processKeyBinding instead (see below)
+
+            // move focus back to the main editor widget when escape is pressed. Normally this would not
+            // be needed here, but apparently JTable does not propagate event further.
+            getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "movefocustomain");
+            getActionMap().put("movefocustomain", new AbstractAction() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    if (parentFocusComponent !=  null)
+                        parentFocusComponent.requestFocus();
+                }
+            });
 		}
 
 		

@@ -69,7 +69,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
 		xmlEditor.getSelectionInfo().addListener(nodeDetailsPanel);
 		nodeDetailsPanel.setBorder(ShadowBorder.getInstance());
 
-		attrPanel = new AttributesPanel(model, schema, attrEditorPlugin);
+		attrPanel = new AttributesPanel(model, schema, attrEditorPlugin, xmlEditor);
 		xmlEditor.getSelectionInfo().addListener(attrPanel);
 		nodeDetailsPanel.add(Node.ELEMENT_NODE, attrPanel);
 

@@ -96,6 +96,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	protected CollapseExpandAction expandAction;
 
 	protected RenderViewToFileAction renderViewToFileAction;
+	protected FocusOnEditorAction focusOnEditorAction;
 
 	protected static final int MARGIN_LEFT  = 0;
 	protected static final int MARGIN_TOP   = 0;
@@ -224,6 +225,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 		renderViewToFileAction = new RenderViewToFileAction(this);
 		resMgr.configureAction("renderViewToFileAction", renderViewToFileAction);
+		focusOnEditorAction = new FocusOnEditorAction(this);
+		resMgr.configureAction("focusOnEditorAction", focusOnEditorAction);
 
 		// init keymap and actionmap
 		setInputMap(WHEN_FOCUSED, inputMap);
@@ -1106,6 +1109,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	public RenderViewToFileAction getRenderViewToFileAction()
 	{
 		return renderViewToFileAction;
+	}
+
+	public FocusOnEditorAction getFocusOnEditorAction()
+	{
+		return focusOnEditorAction;
 	}
 
 	public SelectionInfo getSelectionInfo()
