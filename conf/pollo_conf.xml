@@ -85,6 +85,48 @@
 		</viewtype>
 
 		<viewtype>
+			<name>ant15</name>
+			<description>Ant 1.5</description>
+
+			<schemas>
+				<schema>
+					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>classpath:/schema/antschema_1_5.xml</param-value>
+					</init-param>
+				</schema>
+			</schemas>
+
+			<display-specifications>
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>classpath:/displayspec/antspec_1_5.xml</param-value>
+					</init-param>
+				</display-specification>
+				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>use-random-colors</param-name>
+						<param-value>true</param-value>
+					</init-param>
+				</display-specification>
+			</display-specifications>
+
+			<attribute-editor-plugins>
+				<attribute-editor-plugin>
+					<factory-class>org.outerj.pollo.engine.ant.AntAttrEditorPluginFactory</factory-class>
+				</attribute-editor-plugin>
+				<attribute-editor-plugin>
+					<factory-class>org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPluginFactory</factory-class>
+				</attribute-editor-plugin>
+			</attribute-editor-plugins>
+		</viewtype>
+
+		<viewtype>
 			<name>sitemap</name>
 			<description>Cocoon 2.02 Sitemap</description>
 
@@ -208,11 +250,19 @@
 			</init-param>
 		</template>
 		<template>
-			<description>Cocoon Sitemap</description>
+			<description>Cocoon 2.02 Sitemap</description>
 			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
 			<init-param>
 				<param-name>source</param-name>
 				<param-value>classpath:/template/sitemap.xmap</param-value>
+			</init-param>
+		</template>
+		<template>
+			<description>Cocoon 2.02 Subsitemap</description>
+			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
+			<init-param>
+				<param-name>source</param-name>
+				<param-value>classpath:/template/subsitemap.xmap</param-value>
 			</init-param>
 		</template>
 		<template>
@@ -259,9 +309,16 @@
 			<expression>count(//foo)</expression>
 		</query>
 		<query>
-			<description>Find all targets in an Ant file</description>
+			<description>[ANT] Find all targets in an Ant file</description>
 			<expression>/project/target</expression>
 		</query>
+		<query>
+			<description>[ANT] Find all targets that depend upon target foo</description>
+			<expression>/project/target[contains(@depends,'foo')]</expression>
+		</query>
+		<query>
+			<description>[COCOON] Find all usages of resource foo</description>
+			<expression>//map:call[@resource='foo']</expression>
+		</query>
 	</xpath-queries>
-
 </pollo>
