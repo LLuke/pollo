@@ -37,7 +37,7 @@ import java.util.HashSet;
  *  <li>Inserting a reference to a wildcard matcher pattern
  * </ul>
  *
- * @author Al Byers, Bruno Dumon
+ * @author Bruno Dumon, Al Byers (initial file dialog code)
  */
 public class CocoonAttrEditorPlugin implements IAttributeEditorPlugin, Disposable
 {
@@ -194,6 +194,11 @@ public class CocoonAttrEditorPlugin implements IAttributeEditorPlugin, Disposabl
 		JTextField textField;
 		boolean popupVisible = false;
 
+		static final int BEGIN = 0;
+		static final int FIRST_DOT = 1;
+		static final int SECOND_DOT = 2;
+		static final int SLASH = 3;
+
 		public CocoonContextPopup(JTextField textField)
 		{
 			this.textField = textField;
@@ -246,11 +251,6 @@ public class CocoonAttrEditorPlugin implements IAttributeEditorPlugin, Disposabl
 					if (foundpos != -1)
 					{
 						int state = 0;
-						int BEGIN = 0;
-						int FIRST_DOT = 1;
-						int SECOND_DOT = 2;
-						//int TWO_DOTS = 5;
-						int SLASH = 3;
 						int level = 0;
 						int documentLength = document.getLength();
 						for (int i = foundpos + 1; i < documentLength; i++)
