@@ -212,17 +212,18 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		uncommentAction           = new UncommentAction(this);
 
 		collapseAllAction         = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE_ALL);
-			resMgr.configureAction("collapseAllAction", collapseAllAction);
+		resMgr.configureAction("collapseAllAction", collapseAllAction);
 		expandAllAction           = new CollapseExpandAction(this, CollapseExpandAction.EXPAND_ALL);
-			resMgr.configureAction("expandAllAction", expandAllAction);
+		resMgr.configureAction("expandAllAction", expandAllAction);
 		collapseAction            = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE);
-			resMgr.configureAction("collapseAction", collapseAction);
+		resMgr.configureAction("collapseAction", collapseAction);
 		expandAction              = new CollapseExpandAction(this, CollapseExpandAction.EXPAND);
-			resMgr.configureAction("expandAction", expandAction);
+		resMgr.configureAction("expandAction", expandAction);
 		toggleAction              = new CollapseExpandAction(this, CollapseExpandAction.TOGGLE);
-			resMgr.configureAction("toggleAction", toggleAction);
+		resMgr.configureAction("toggleAction", toggleAction);
 
 		renderViewToFileAction = new RenderViewToFileAction(this);
+		resMgr.configureAction("renderViewToFileAction", renderViewToFileAction);
 
 		// init keymap and actionmap
 		setInputMap(WHEN_FOCUSED, inputMap);
