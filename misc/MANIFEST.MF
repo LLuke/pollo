@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: xerces.jar kunststoff.jar commons-digester.jar commons-beanutils.jar commons-collections.jar log4j-core.jar jaxen-core.jar jaxen-dom.jar saxpath.jar
-Main-Class: org.outerj.pollo.Pollo
