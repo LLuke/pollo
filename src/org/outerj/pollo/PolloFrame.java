@@ -468,6 +468,9 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
                     }
                 }
             }
+            // make sure the correct toolbars and menu items are shown -- apparently this can get
+            // messed up while removing the editorpanels.
+            stateChanged(null);
         }
     }
 }
