@@ -12,15 +12,20 @@
     <pathelement location="lib/jaxen-dom.jar"/>
 	<pathelement location="lib/saxpath.jar"/>
 	<pathelement location="lib/dtdparser.jar"/>
+	<pathelement location="lib/isorelax.jar"/>
+	<pathelement location="lib/msv.jar"/>
+	<pathelement location="lib/relaxngDatatype.jar"/>
+	<pathelement location="lib/xsdlib.jar"/>
+	<pathelement location="lib/jhbasic.jar"/>
   </path>
-  <property name="version" value="0.3.1"/>
+  <property name="version" value="0.3.3"/>
   <!--<taskdef name="polloantstructure" classname="org.outerj.pollo.engine.ant.PolloAntStructure"/>
 <target name="polloantstructure">
    <polloantstructure output="antschema.xml"/>
 </target>-->
   <target name="compile">
     <mkdir dir="build"/>
-    <javac destdir="build" srcdir="src">
+    <javac destdir="build" srcdir="src" debug="true">
       <classpath refid="classpath"/>
     </javac>
     <copy todir="build">
@@ -28,10 +33,25 @@
         <exclude name="**/*.java"/>
       </fileset>
     </copy>
-	<copy file="ChangeLog" tofile="build/org/outerj/pollo/ChangeLog"/>
+	<copy file="ChangeLog" tofile="build/org/outerj/pollo/resource/ChangeLog"/>
   </target>
   <target depends="compile" name="run">
-    <java classname="org.outerj.smeditor.SitemapEditor" fork="true">
+	  <java classname="org.outerj.pollo.Pollo" fork="true">
+      <classpath refid="classpath"/>
+    </java>
+  </target>
+  <target depends="compile" name="msvtest">
+    <java classname="org.outerj.pollo.xmleditor.schema.XsdSchema" fork="true">
+      <classpath refid="classpath"/>
+    </java>
+  </target>
+  <target depends="compile" name="msvtest2">
+    <java classname="org.outerj.pollo.xmleditor.schema.MsvSchema" fork="true">
+      <classpath refid="classpath"/>
+    </java>
+  </target>
+  <target depends="compile" name="msvtest3">
+    <java classname="org.outerj.pollo.xmleditor.schema.msv.MsvTest" fork="true">
       <classpath refid="classpath"/>
     </java>
   </target>

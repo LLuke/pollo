@@ -1,3 +1,31 @@
+version 0.3.3
+=============
+ - Added support for various schema languages through Sun's Multi Schema
+   Validator (XML Schema, RELAX-NG, and others are supported). The boxes
+   for selecting elements just show all elements allowed as child of their
+   parent elements, they are not content-model sensitive (might come in
+   a later version).
+   You can view the allowed content model though using the menu option
+   Schema -> Show Content Model. It is of course also possible to validate
+   the document against the schema in use (menu: Schema -> Validate).
+   A lot of credit for this work goes to Al Byers, who got me started on
+   this.
+ - The dialog box for selecting the view type is extended so that
+   you can choose the schema to use etc. These settings cannot be saved
+   yet however.
+   Making a user interface to manage the view types is a high priority.
+ - The welcome dialog box has been dropped, it is now possible to open
+   multiple files in one window with a tabbed interface. It is still
+   possible to create multiple windows and mulitple views on the same
+   file. It's a bit like in Mozilla and Opera.
+ - There's a cool new action plugin framework: it is possible to write
+   plugins that provide additional actions under an action menu.
+   Once again inspired by Al Byers.
+ - In many situations pollo didn't provide a parent frame when showing modal
+   dialog boxes, which could lead to trouble when a modal dialog box
+   dissappaerd under the main frame (especially in Windows). A lot of these
+   situations should now be fixed.
+ - Added some initial online help.
 
 version 0.3.2
 =============
