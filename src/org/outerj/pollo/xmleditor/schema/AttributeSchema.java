@@ -2,7 +2,8 @@ package org.outerj.pollo.xmleditor.schema;
 
 import org.jaxen.NamespaceContext;
 import org.jaxen.dom.DocumentNavigator;
-import org.jaxen.dom.XPath;
+import org.jaxen.dom.DOMXPath;
+import org.jaxen.XPath;
 import org.jaxen.function.StringFunction;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,7 +47,7 @@ public final class AttributeSchema
 			List nodes;
 			try
 			{
-				XPath xpath = new XPath(xpathExpr);
+				XPath xpath = new DOMXPath(xpathExpr);
 				xpath.setNamespaceContext(namespaceContext);
 				nodes = xpath.selectNodes(element);
 			}

@@ -1,7 +1,8 @@
 package org.outerj.pollo.xmleditor;
 
 import org.jaxen.SimpleNamespaceContext;
-import org.jaxen.dom.XPath;
+import org.jaxen.XPath;
+import org.jaxen.dom.DOMXPath;
 import org.outerj.pollo.Pollo;
 import org.outerj.pollo.gui.SmallButton;
 import org.outerj.pollo.config.PolloConfiguration;
@@ -137,7 +138,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener, Disposa
 			String xpathString = (String)xpathCombo.getEditor().getItem();
 			try
 			{
-				xpath = new XPath(xpathString);
+				xpath = new DOMXPath(xpathString);
 			}
 			catch (Exception e)
 			{

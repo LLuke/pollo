@@ -2,8 +2,9 @@ package org.outerj.pollo.engine.cocoon;
 
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.w3c.dom.Element;
-import org.jaxen.dom.XPath;
+import org.jaxen.XPath;
 import org.jaxen.SimpleNamespaceContext;
+import org.jaxen.dom.DOMXPath;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -81,7 +82,7 @@ public class GoToMatcherDialog extends JDialog
 		try
 		{
 			String matcherTypesExpr = "/map:sitemap/map:components/map:matchers/map:matcher";
-			XPath matcherTypesXPath = new XPath(matcherTypesExpr);
+			XPath matcherTypesXPath = new DOMXPath(matcherTypesExpr);
 			matcherTypesXPath.setNamespaceContext(namespaceContext);
 
 			java.util.List list = matcherTypesXPath.selectNodes(xmlModel.getDocument().getDocumentElement());
@@ -133,7 +134,7 @@ public class GoToMatcherDialog extends JDialog
 				try
 				{
 					String matchersExpr = "/map:sitemap/map:pipelines//map:match[@type='" + selected.getTypeName() + "'" + (selected.isDefault()? " or not(@type) " : "") + "]";
-					XPath matchersXPath = new XPath(matchersExpr);
+					XPath matchersXPath = new DOMXPath(matchersExpr);
 					matchersXPath.setNamespaceContext(namespaceContext);
 					java.util.List list = matchersXPath.selectNodes(xmlModel.getDocument().getDocumentElement());
 

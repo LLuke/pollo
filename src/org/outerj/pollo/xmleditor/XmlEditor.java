@@ -1,7 +1,8 @@
 package org.outerj.pollo.xmleditor;
 
 import org.jaxen.SimpleNamespaceContext;
-import org.jaxen.dom.XPath;
+import org.jaxen.XPath;
+import org.jaxen.dom.DOMXPath;
 import org.outerj.pollo.DomConnected;
 import org.outerj.pollo.gui.EmptyIcon;
 import org.outerj.pollo.xmleditor.action.*;
@@ -834,7 +835,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 				try
 				{
 					Element documentElement = xmlModel.getDocument().getDocumentElement();
-					XPath xpath = new XPath(xpathForRoot);
+					XPath xpath = new DOMXPath(xpathForRoot);
 					SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
 					namespaceContext.addElementNamespaces(xpath.getNavigator(), documentElement);
 					xpath.setNamespaceContext(namespaceContext);

@@ -13,8 +13,9 @@ import org.outerj.pollo.xmleditor.view.View;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Attr;
-import org.jaxen.dom.XPath;
+import org.jaxen.XPath;
 import org.jaxen.SimpleNamespaceContext;
+import org.jaxen.dom.DOMXPath;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -168,7 +169,7 @@ public class CocoonActionPlugin implements IActionPlugin
 				{
 					// find out what the default type is
 					String typeXPathString = "/map:sitemap/map:components/map:" + componentDeclartionName + "s/@default";
-					XPath xpath = new XPath(typeXPathString);
+					XPath xpath = new DOMXPath(typeXPathString);
 					xpath.setNamespaceContext(namespaceContext);
 					Attr attr = (Attr)xpath.selectSingleNode(xmlModel.getDocument().getDocumentElement());
 					if (attr != null)
@@ -181,7 +182,7 @@ public class CocoonActionPlugin implements IActionPlugin
 				}
 
 				String declarationXPathString = "/map:sitemap/map:components/map:" + componentDeclartionName + "s/map:" + componentDeclartionName + "[@name='" + componentType + "']";
-				XPath xpath = new XPath(declarationXPathString);
+				XPath xpath = new DOMXPath(declarationXPathString);
 				xpath.setNamespaceContext(namespaceContext);
 				Element foundElement = (Element)xpath.selectSingleNode(xmlModel.getDocument().getDocumentElement());
 				if (foundElement != null)

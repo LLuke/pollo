@@ -3,7 +3,8 @@ package org.outerj.pollo.xmleditor.model;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.jaxen.SimpleNamespaceContext;
-import org.jaxen.dom.XPath;
+import org.jaxen.XPath;
+import org.jaxen.dom.DOMXPath;
 import org.outerj.pollo.texteditor.XMLTokenMarker;
 import org.outerj.pollo.texteditor.XmlTextDocument;
 import org.w3c.dom.*;
@@ -480,7 +481,7 @@ public class XmlModel
 
 		try
 		{
-			XPath xpath = new XPath(xpathExpr);
+			XPath xpath = new DOMXPath(xpathExpr);
 			SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
 			namespaceContext.addElementNamespaces(xpath.getNavigator(), domDocument.getDocumentElement());
 			xpath.setNamespaceContext(namespaceContext);

@@ -3,7 +3,8 @@ package org.outerj.pollo.engine.cocoon;
 import org.w3c.dom.Element;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.jaxen.SimpleNamespaceContext;
-import org.jaxen.dom.XPath;
+import org.jaxen.XPath;
+import org.jaxen.dom.DOMXPath;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -170,7 +171,7 @@ public class SelectWildcardDialog extends JDialog
 		try
 		{
 			String matcherDeclExpr = "/map:sitemap/map:components/map:matchers/map:matcher[@src='org.apache.cocoon.matching.WildcardURIMatcher']";
-			XPath matcherDeclXPath = new XPath(matcherDeclExpr);
+			XPath matcherDeclXPath = new DOMXPath(matcherDeclExpr);
 			matcherDeclXPath.setNamespaceContext(namespaceContext);
 			Object object = matcherDeclXPath.selectSingleNode(xmlModel.getDocument().getDocumentElement());
 			if (object instanceof Element)
