@@ -9,7 +9,7 @@ public class PolloTheme extends DefaultMetalTheme
 {
 	private final ColorUIResource primary1 = new ColorUIResource(102, 102, 153);
 	private final ColorUIResource primary2 = new ColorUIResource(153, 153, 204);
-	private final ColorUIResource primary3 = new ColorUIResource(232, 228, 223);
+	private final ColorUIResource primary3 = new ColorUIResource(245, 216, 153);
 
 	private final ColorUIResource secondary1 = new ColorUIResource(102, 102, 102);
 	private final ColorUIResource secondary2 = new ColorUIResource(153, 153, 153);
