@@ -192,7 +192,7 @@ public class DocumentBlockView extends ChildrenBlockView
 
 			xmlEditor.setDropData(xmlEditor.DROP_ACTION_APPEND_CHILD, document);
 			if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor))
-				event.acceptDrag(DnDConstants.ACTION_MOVE);
+				event.acceptDrag(event.getDropAction());
 			/* CommandTransferable -- deprecated.
 			else if (event.isDataFlavorSupported(CommandTransferable.commandFlavor))
 				event.acceptDrag(DnDConstants.ACTION_MOVE);

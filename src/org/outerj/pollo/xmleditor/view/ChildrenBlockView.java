@@ -364,8 +364,7 @@ public abstract class ChildrenBlockView extends BlockView
 			}
 			else if (p.getY() > (childVertPos - SPACING_VERTICAL) && p.getY() < childVertPos)
 			{
-				if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor) /* || deprecated
-																			  event.isDataFlavorSupported(CommandTransferable.commandFlavor)*/)
+				if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor))
 				{
 					// draw drag over effect
 					Rectangle rect = new Rectangle(startH + getLeftMargin(), childVertPos - 3, width, 2);
@@ -381,11 +380,7 @@ public abstract class ChildrenBlockView extends BlockView
 								childView.getNode().getParentNode());
 				}
 				if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor))
-					event.acceptDrag(DnDConstants.ACTION_MOVE);
-				/* CommandTransferable is deprecated
-				   else if (event.isDataFlavorSupported(CommandTransferable.commandFlavor))
-				   event.acceptDrag(DnDConstants.ACTION_MOVE);
-				   */
+					event.acceptDrag(event.getDropAction());
 				return;
 			}
 			else

@@ -137,7 +137,7 @@ public abstract class BlockView implements View
 		boolean trackHeight = (parentView == null) ||
 			(parentView != null && parentView.isCollapsed() != true);
 		int oldHeight = 0, newHeight = 0;
-		
+
 		if (trackHeight) oldHeight = this.getHeight();
 		isCollapsed = true;
 		if (trackHeight) newHeight = this.getHeight();

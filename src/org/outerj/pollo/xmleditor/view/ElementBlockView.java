@@ -124,7 +124,7 @@ public class ElementBlockView extends ChildrenBlockView
 			g.setStroke(BlockView.STROKE_LIGHT);
 
 		g.draw(elementShape);
-	
+
 		g.setStroke(BlockView.STROKE_LIGHT);
 		if (hasChildren())
 		{
@@ -373,7 +373,7 @@ public class ElementBlockView extends ChildrenBlockView
 		{
 			NodeClickedEvent nce = new NodeClickedEvent(element, e);
 			xmlEditor.fireNodeClickedEvent(nce);
-			
+
 			// make that the current element is indicated
 			markAsSelected(startH, startV);
 		}
@@ -442,9 +442,17 @@ public class ElementBlockView extends ChildrenBlockView
 				// the mainView may not be dragged
 				return;
 			}
-			xmlEditor.setDraggingNode(element);
-			xmlEditor.getDragSource().startDrag(event, DragSource.DefaultMoveDrop,
-					new XmlTransferable(createDocumentFragment(element)), xmlEditor);
+			xmlEditor.setDraggingNode(element, event.getDragAction() == DnDConstants.ACTION_MOVE ? true : false);
+			if(event.getDragAction()== DnDConstants.ACTION_COPY)
+			{
+				xmlEditor.getDragSource().startDrag(event, DragSource.DefaultCopyDrop,
+						new XmlTransferable(createDocumentFragment(element)), xmlEditor);
+			}
+			else
+			{
+				xmlEditor.getDragSource().startDrag(event, DragSource.DefaultMoveDrop,
+						new XmlTransferable(createDocumentFragment(element)), xmlEditor);
+			}
 		}
 		else
 		{
@@ -484,7 +492,7 @@ public class ElementBlockView extends ChildrenBlockView
 
 			xmlEditor.setDropData(xmlEditor.DROP_ACTION_APPEND_CHILD, element);
 			if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor))
-				event.acceptDrag(DnDConstants.ACTION_MOVE);
+				event.acceptDrag(event.getDropAction());
 			/* CommandTransferable -- deprecated.
 			else if (event.isDataFlavorSupported(CommandTransferable.commandFlavor))
 				event.acceptDrag(DnDConstants.ACTION_MOVE);

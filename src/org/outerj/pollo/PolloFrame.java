@@ -5,6 +5,7 @@ import org.outerj.pollo.gui.RecentlyOpenedFilesMenu;
 import org.outerj.pollo.xmleditor.IconManager;
 
 import javax.swing.*;
+import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -33,7 +34,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 	protected Pollo pollo = Pollo.getInstance();
 
 	/** A tabbed pane containing the editorpanel instances */
-	protected JTabbedPane editorPanelTabs;
+	protected DnDTabbedPane editorPanelTabs;
 
 	/** The currently visible toolbar */
 	protected JToolBar currentToolBar;
@@ -49,7 +50,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 		super("Pollo");
         setIconImage(IconManager.getIcon("org/outerj/pollo/resource/pollo_icon.gif").getImage());
 
-		editorPanelTabs = new JTabbedPane();
+		editorPanelTabs = new DnDTabbedPane();
 		editorPanelTabs.addChangeListener(this);
 
 		// no border and dark background
@@ -300,4 +301,42 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 			exception.printStackTrace();
 		}
 	}
+
+    public class DnDTabbedPane extends JTabbedPane implements java.awt.dnd.DropTargetListener
+    {
+        public DnDTabbedPane()
+        {
+            super();
+            java.awt.dnd.DropTarget dropTarget = new java.awt.dnd.DropTarget(this, this);
+        }
+
+        public void dragEnter(java.awt.dnd.DropTargetDragEvent dropTargetDragEvent)
+        {
+        }
+
+        public void dragExit(java.awt.dnd.DropTargetEvent dropTargetEvent)
+        {
+        }
+
+        public void dragOver(java.awt.dnd.DropTargetDragEvent dropTargetDragEvent)
+        {
+			// the line below works only from java 1.4
+			//int index = indexAtLocation((int)dropTargetDragEvent.getLocation().getX(), (int)dropTargetDragEvent.getLocation().getY());
+
+			int index =  getUI().tabForCoordinate(this, (int)dropTargetDragEvent.getLocation().getX(), (int)dropTargetDragEvent.getLocation().getY());
+            if(index >= 0 && index<getTabCount() && index != getSelectedIndex())
+            {
+                setSelectedIndex(index);
+            }
+        }
+
+        public void drop(java.awt.dnd.DropTargetDropEvent dropTargetDropEvent)
+        {
+        }
+
+        public void dropActionChanged(java.awt.dnd.DropTargetDragEvent dropTargetDragEvent)
+        {
+        }
+
+    }
 }

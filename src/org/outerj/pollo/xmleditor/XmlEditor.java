@@ -43,6 +43,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	protected Node dropNode;
 	protected int dropAction;
 	protected Node draggingNode;
+	protected boolean removeDraggingNode; // is true when moving, false when copying
 
 	// clipboard -- static field for now
 	protected static DocumentFragment clipboard;
@@ -151,7 +152,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 		// init drag-and-drop
 		dragSource = new DragSource();
-		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, this);
+		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
 		DropTarget dropTarget = new DropTarget(this, this);
 		setAutoscrolls(true); // this doesn't help anything i think
 
@@ -447,7 +448,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		if (mainView != null)
 			mainView.dragGestureRecognized(event, MARGIN_LEFT, MARGIN_TOP);
 	}
-	
+
 	public void showContextMenu(Node node, int x, int y)
 	{
 		if (node instanceof Document)
@@ -609,8 +610,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		{
 			if ( event.getDropSuccess() )
 			{
-				Node parent = draggingNode.getParentNode();
-				parent.removeChild(draggingNode);
+				if(removeDraggingNode)
+				{
+					Node parent = draggingNode.getParentNode();
+					parent.removeChild(draggingNode);
+				}
 				xmlModel.getUndo().endUndoTransaction();
 			}
 		}
@@ -705,7 +709,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 						if (draggingNode != null)
 							xmlModel.getUndo().startUndoTransaction("Drag-and-drop");
 						parent.insertBefore(newNode, dropNode);
-						event.acceptDrop(DnDConstants.ACTION_MOVE);
+						event.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 						event.getDropTargetContext().dropComplete(true);
 					}
 					else if (dropAction == DROP_ACTION_APPEND_CHILD)
@@ -731,7 +735,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 						if (draggingNode != null)
 							xmlModel.getUndo().startUndoTransaction("Drag-and-drop");
 						dropNode.appendChild(newNode);
-						event.acceptDrop(DnDConstants.ACTION_MOVE);
+						event.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 						event.getDropTargetContext().dropComplete(true);
 					}
 				}
@@ -762,7 +766,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	// -- end drop target listener methods
 
 	// autoscroll interface
-	
+
 
 	public void autoscroll(Point cursorLocation)
 	{
@@ -777,7 +781,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		scrollRectToVisible(rect);
 	}
 
-	public Insets getAutoscrollInsets() 
+	public Insets getAutoscrollInsets()
 	{
 		Rectangle rect = ((JViewport)getParent()).getViewRect();
 		return new Insets(rect.y + AUTOSCROLL_REGION, 0,
@@ -805,9 +809,10 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		this.dragOverEffectRedraw = rect;
 	}
 
-	public void setDraggingNode(Node node)
+	public void setDraggingNode(Node node, boolean move)
 	{
 		this.draggingNode = node;
+		this.removeDraggingNode = move;
 	}
 
 	public void setDropData(int dropAction, Node node)

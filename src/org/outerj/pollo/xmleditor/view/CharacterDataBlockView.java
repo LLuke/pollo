@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragSource;
 import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DnDConstants;
 import java.awt.event.MouseEvent;
 
 
@@ -255,9 +256,17 @@ public abstract class CharacterDataBlockView extends BlockView
 	{
 		DocumentFragment documentFragment = xmlEditor.getXmlModel().getDocument().createDocumentFragment();
 		documentFragment.appendChild(characterData.cloneNode(true));
-		xmlEditor.setDraggingNode(characterData);
-		xmlEditor.getDragSource().startDrag(event, DragSource.DefaultMoveDrop,
-				new XmlTransferable(documentFragment), xmlEditor);
+		xmlEditor.setDraggingNode(characterData, event.getDragAction() == DnDConstants.ACTION_MOVE ? true : false);
+		if(event.getDragAction() == DnDConstants.ACTION_COPY)
+		{
+			xmlEditor.getDragSource().startDrag(event, DragSource.DefaultCopyDrop,
+					new XmlTransferable(documentFragment), xmlEditor);
+		}
+		else
+		{
+			xmlEditor.getDragSource().startDrag(event, DragSource.DefaultMoveDrop,
+					new XmlTransferable(documentFragment), xmlEditor);
+		}
 	}
 
 	public void dragOver(DropTargetDragEvent event, int startH, int startV)
