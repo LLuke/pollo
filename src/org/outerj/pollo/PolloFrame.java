@@ -2,6 +2,7 @@ package org.outerj.pollo;
 
 import org.outerj.pollo.action.*;
 import org.outerj.pollo.gui.RecentlyOpenedFilesMenu;
+import org.outerj.pollo.gui.EmptyIcon;
 import org.outerj.pollo.xmleditor.IconManager;
 import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.util.Utilities;
@@ -11,8 +12,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -45,6 +45,8 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
     protected Action helpAction;
     protected Action aboutAction;
     protected Action userPreferencesAction;
+    protected Action closeAllViewsExceptThisAction;
+    protected Action closeAllAction;
 
     public PolloFrame()
     {
@@ -56,6 +58,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 
         editorPanelTabs = new DnDTabbedPane();
         editorPanelTabs.addChangeListener(this);
+        editorPanelTabs.addMouseListener(new TabsMouseListener());
 
         //check it's not a mac (returns string if it's a mac, null otherwise)
         if (System.getProperty("mrj.version") == null)
@@ -76,6 +79,8 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
         aboutAction = new AboutAction(this);
         exitAction = new ExitAction(this);
         userPreferencesAction = new UserPreferencesAction(this, pollo.getConfiguration());
+        closeAllViewsExceptThisAction = new CloseAllViewsExceptThisAction();
+        closeAllAction = new CloseAllAction(this);
 
         // create and display menu bar
         createNoEditorPanelsMenuBar();
@@ -187,6 +192,11 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
     public Action getUserPreferencesAction()
     {
         return userPreferencesAction;
+    }
+
+    public Action getCloseAllAction()
+    {
+        return closeAllAction;
     }
 
     /**
@@ -351,7 +361,7 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
             // the line below works only from java 1.4
             //int index = indexAtLocation((int)dropTargetDragEvent.getLocation().getX(), (int)dropTargetDragEvent.getLocation().getY());
 
-            int index =  getUI().tabForCoordinate(this, (int)dropTargetDragEvent.getLocation().getX(), (int)dropTargetDragEvent.getLocation().getY());
+            int index =  getTabForCoordinate((int)dropTargetDragEvent.getLocation().getX(), (int)dropTargetDragEvent.getLocation().getY());
             if(index >= 0 && index<getTabCount() && index != getSelectedIndex())
             {
                 setSelectedIndex(index);
@@ -366,5 +376,80 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
         {
         }
 
+        public int getTabForCoordinate(int x, int y)
+        {
+            int index =  getUI().tabForCoordinate(this, x, y);
+            return index;
+        }
+
+    }
+
+    class TabsMouseListener implements MouseListener
+    {
+        public void mouseClicked(MouseEvent e)
+        {
+            if (SwingUtilities.isRightMouseButton(e))
+            {
+                int tabIndex = editorPanelTabs.getTabForCoordinate(e.getX(), e.getY());
+                if (tabIndex != -1)
+                {
+                    final EditorPanel editorPanel = (EditorPanel)editorPanelTabs.getComponent(tabIndex);
+                    JPopupMenu popupMenu = new JPopupMenu();
+                    popupMenu.add(editorPanel.getCloseAction());
+                    popupMenu.add(closeAllViewsExceptThisAction);
+                    popupMenu.show(editorPanelTabs, e.getX(), e.getY());
+                }
+            }
+        }
+
+        public void mousePressed(MouseEvent e)
+        {
+        }
+
+        public void mouseReleased(MouseEvent e)
+        {
+        }
+
+        public void mouseEntered(MouseEvent e)
+        {
+        }
+
+        public void mouseExited(MouseEvent e)
+        {
+        }
+    }
+
+    class CloseAllViewsExceptThisAction extends AbstractAction
+    {
+        public CloseAllViewsExceptThisAction()
+        {
+            super("Close All Except This", EmptyIcon.get16Instance());
+        }
+
+        public void actionPerformed(ActionEvent e)
+        {
+            int selected = editorPanelTabs.getSelectedIndex();
+
+            // make a copy of the list of editorpanels
+            ArrayList editorPanelsList = new ArrayList();
+            for (int i = 0; i < editorPanelTabs.getTabCount(); i++)
+            {
+                editorPanelsList.add(editorPanelTabs.getComponent(i));
+            }
+
+            // try to close the editor panels. This can be canceled by the user
+            // when asking him to save a changed file and he/she selects cancel.
+            for (int i = 0; i < editorPanelsList.size(); i++)
+            {
+                if (i != selected)
+                {
+                    EditorPanel editorPanel = (EditorPanel)editorPanelsList.get(i);
+                    if (editorPanel.close())
+                    {
+                        editorPanelTabs.remove(editorPanel);
+                    }
+                }
+            }
+        }
     }
 }
