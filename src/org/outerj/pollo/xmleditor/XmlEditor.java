@@ -7,7 +7,6 @@ import org.outerj.pollo.DomConnected;
 import org.outerj.pollo.gui.EmptyIcon;
 import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.xmleditor.action.*;
-import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.model.InvalidXmlException;
 import org.outerj.pollo.xmleditor.model.XmlModel;
@@ -40,7 +39,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	protected View mainView;
 	protected SelectionInfo selectionInfo = new SelectionInfo();
 
-	// fields for managing drag-and-drop
+	// fields for managing drag-and-drop    c
 	protected Rectangle dragOverEffectRedraw;
 	protected Node dropNode;
 	protected int dropAction;
@@ -367,7 +366,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 			createViewsRecursive((Element)node, view);
 			return view;
 		}
-		if (node.getNodeType() == Node.DOCUMENT_NODE)
+		else if (node.getNodeType() == Node.DOCUMENT_NODE)
 		{
 			DocumentBlockView view = new DocumentBlockView(parentView, (Document)node, this);
 			createViewsRecursive(node, view);
@@ -375,45 +374,25 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		}
 		else if (node.getNodeType() == Node.COMMENT_NODE)
 		{
-			return createCommentView((Comment)node, parentView);
+			return new CommentView(parentView, (Comment)node, this);
 		}
 		else if (node.getNodeType() == Node.TEXT_NODE)
 		{
-			return createTextView((Text)node, parentView);
+			return new TextView(parentView, (Text)node, this);
 		}
 		else if (node.getNodeType() == Node.CDATA_SECTION_NODE)
 		{
-			return createCDataView((CDATASection)node, parentView);
+			return new CDataView(parentView, (CDATASection)node, this);
 		}
 		else if (node.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE)
 		{
-			return createPIView((ProcessingInstruction)node, parentView);
+			return new PIView(parentView, (ProcessingInstruction)node, this);
 		}
-		throw new RuntimeException("Unsupported type of node: " + node.getNodeType());
-	}
-
-	public View createCommentView(Comment comment, View parentView)
-	{
-		CommentView view = new CommentView(parentView, comment, this);
-		return view;
-	}
-
-	public View createTextView(Text text, View parentView)
-	{
-		TextView view = new TextView(parentView, text, this);
-		return view;
-	}
-
-	public View createPIView(ProcessingInstruction pi, View parentView)
-	{
-		PIView view = new PIView(parentView, pi, this);
-		return view;
-	}
-
-	public View createCDataView(CDATASection cdata, View parentView)
-	{
-		CDataView view = new CDataView(parentView, cdata, this);
-		return view;
+        else if (node.getNodeType() == Node.ENTITY_REFERENCE_NODE)
+        {
+            return new EntityReferenceView(parentView, (EntityReference)node, this);
+        }
+        return null;
 	}
 
 	private void createViewsRecursive(Node parentNode, View parentView)
@@ -423,33 +402,9 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		for (int i = 0; i < children.getLength(); i++)
 		{
 			Node node = (Node)children.item(i);
-			if ((node.getNodeType() == Node.ELEMENT_NODE) /*&&
-					displaySpec.getElementSpec(node.getNamespaceURI(),
-						node.getLocalName()).viewType == ElementSpec.BLOCK_VIEW*/)
-			{
-				View childView = createView((Element)node, parentView);
-				parentView.addChildView(childView);
-			}
-			else if ((node.getNodeType() == Node.COMMENT_NODE))
-			{
-				View childView = createCommentView((Comment)node, parentView);
-				parentView.addChildView(childView);
-			}
-			else if ((node.getNodeType() == Node.TEXT_NODE))
-			{
-				View childView = createTextView((Text)node, parentView);
-				parentView.addChildView(childView);
-			}
-			else if ((node.getNodeType() == Node.CDATA_SECTION_NODE))
-			{
-				View childView = createCDataView((CDATASection)node, parentView);
-				parentView.addChildView(childView);
-			}
-			else if ((node.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE))
-			{
-				View childView = createPIView((ProcessingInstruction)node, parentView);
-				parentView.addChildView(childView);
-			}
+            View childView = createView(node, parentView);
+            if (childView != null)
+                parentView.addChildView(childView);
 		}
 	}
 
@@ -1137,6 +1092,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 				return true;
 			case Node.PROCESSING_INSTRUCTION_NODE:
 				return true;
+            case Node.ENTITY_REFERENCE_NODE:
+                return true;
 			default:
 				return false;
 		}
