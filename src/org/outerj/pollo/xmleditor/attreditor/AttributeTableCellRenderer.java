@@ -39,7 +39,7 @@ public class AttributeTableCellRenderer extends DefaultTableCellRenderer
                 else
                     setEnabled(true);
 
-                if (taei.attrSchema.required)
+                if (taei.attrSchema != null && taei.attrSchema.required)
                     setIcon(requiredAttributeIcon);
 
                 break;
