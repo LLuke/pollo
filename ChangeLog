@@ -1,3 +1,62 @@
+Plan for the next version: make it easy for the user to add support for new
+filetypes (including documentation etc.). Also add user preferences (including
+recent file list and serialization options) and render tabs correctly
+in text/coment nodes. Add more keyboard bindings based on user input.
+And of course a lot of bug fixes.
+
+version 0.3
+===========
+ - Added keyboard support, see the Help->About for an overview
+   of the keybindings.
+ - All attributes of an element are now rendered, regardless of
+   whether they are specified in the display specification or not.
+   Attributes that are defined in the display specification are
+   first shown (in the same order as they appear in the displayspec),
+   then the remaining attributes are shown.
+ - Changed the format of the Pollo configuration file to XML instead
+   of java properties format. Use apache common's digester to build
+   an object structure from it.
+ - Defined interfaces for display specifications and schemas and
+   for their factories. These factories are now specified in the
+   Pollo configuration file per viewtype, so that other implementations
+   can be used for other filetypes. Added generic implementations
+   of the display specification and schema which can be used for
+   XML files not explicitely supported by Pollo. Also made an implementation
+   of them which chains a number of other display specifications/schemas.
+   This will allow to support file types using mixed schemas,
+   such as WSDL containing XML Schema.
+ - Added the possibility to create plugins for editing attribute values.
+   These plugins can be chained, meaning that if the first plugin
+   doesn't return an editor for attribute, then the next plugin is
+   asked for one, and so on. Also included is an example plugin for
+   Ant, that allows to select property names from a dialog.
+ - Added support for executing XPath queries. If the result of the
+   query is a list of nodes, you can jump between the nodes. If the
+   result is a not a node, it is shown in a dialog box.
+ - Use jaxen instead of xalan for executing xpath queries.
+ - Added support for templates. A template is implemented by a Java
+   class that must generate a dom tree. Currently included is an
+   implementation that parses a file, but any code that generates
+   a DOM could be used. The templates must be defined in the Pollo
+   configuration file.
+ - show a red border around the component that has keyboard focus.
+ - the list with the elements now require to double click on an element
+   to insert it. Alternatively, you can select one an then press enter.
+ - when dropping a node on a location where its not allowed (according
+   to the schema in use), it is now asked if you want to insert it anyway.
+ - removed a bug where the tree could get distored when undoing
+   the insertion/removal of a node in a part of the tree that
+   was collapsed.
+ - Added an 'insert unlisted element' item to the lists with elements.
+ - stripping whitespace text nodes did not work in the presence
+   of a DTD. Thanks to Ross Burton for reporting this.
+ - disabled use of Kunstoff look and feel. It can look ugly on certain
+   JDK's. Will make this user-configurable in the next version.
+ - Changed splash screen logo to something that better fits with the season.
+ - started using log4j in some places. Still needs more work.
+ - after deleting a node, move the focus to the next node
+ - and any other stuff I forgot to mention...
+
 version 0.2
 ===========
  - rendering/editing of comment nodes, text nodes, cdata nodes
