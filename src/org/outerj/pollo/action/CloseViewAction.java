@@ -2,6 +2,7 @@ package org.outerj.pollo.action;
 
 import org.outerj.pollo.PolloFrame;
 import org.outerj.pollo.EditorPanel;
+import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,7 +17,7 @@ public class CloseViewAction extends AbstractAction
 
 	public CloseViewAction(PolloFrame polloFrame, EditorPanel editorPanel)
 	{
-		super("Close view");
+		super("Close view", EmptyIcon.getInstance());
 		this.polloFrame = polloFrame;
 		this.editorPanel = editorPanel;
 	}

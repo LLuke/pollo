@@ -1,6 +1,7 @@
 package org.outerj.pollo.action;
 
 import org.outerj.pollo.PolloFrame;
+import org.outerj.pollo.gui.EmptyIcon;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ public class CloseAction extends AbstractAction
 
 	public CloseAction(XmlModel xmlModel, PolloFrame polloFrame)
 	{
-		super("Close");
+		super("Close", EmptyIcon.getInstance());
 		this.xmlModel = xmlModel;
 		this.polloFrame = polloFrame;
 	}

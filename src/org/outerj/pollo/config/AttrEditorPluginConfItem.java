@@ -6,6 +6,7 @@ import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPluginFactory;
 import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.PolloFrame;
 
 public class AttrEditorPluginConfItem extends ConfItem
 {
@@ -17,7 +18,7 @@ public class AttrEditorPluginConfItem extends ConfItem
 		logcat.debug("New AttrEditorPluginConfItem created");
 	}
 
-	public IAttributeEditorPlugin createPlugin(XmlModel xmlModel, ISchema schema)
+	public IAttributeEditorPlugin createPlugin(XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
 		throws PolloException
 	{
 		IAttributeEditorPlugin plugin = null;
@@ -25,7 +26,7 @@ public class AttrEditorPluginConfItem extends ConfItem
 		{
 			IAttributeEditorPluginFactory pluginFactory =
 				(IAttributeEditorPluginFactory)ComponentManager.getFactoryInstance(getFactoryClass());
-			plugin = pluginFactory.getInstance(getInitParams(), xmlModel, schema);
+			plugin = pluginFactory.getInstance(getInitParams(), xmlModel, schema, polloFrame);
 		}
 		catch (Exception e)
 		{

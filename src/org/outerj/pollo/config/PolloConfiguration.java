@@ -42,8 +42,14 @@ public class PolloConfiguration
 	protected String fileOpenDialogPath = null;
 	protected String schemaOpenDialogPath = null;
 
+	protected int splitPane1Pos = 620;
+	protected int splitPane2Pos = 370;
+	protected int windowWidth = 800;
+	protected int windowHeight = 600;
+
 	public static final String USER_CONF_FILE_NAME = ".pollorc";
 
+	// element tag names
 	private static final String EL_POLLO = "pollo";
 	private static final String EL_FILE_OPEN_DIALOG_PATH = "file-open-dialog-path";
 	private static final String EL_SCHEMA_OPEN_DIALOG_PATH = "schema-open-dialog-path";
@@ -53,6 +59,10 @@ public class PolloConfiguration
 	private static final String EL_RECENT_XPATH = "recent-xpath";
 	private static final String EL_RECENT_SCHEMAS = "recent-schemas";
 	private static final String EL_RECENT_SCHEMA = "recent-schema";
+	private static final String EL_SPLIT1_POS = "splitpane1-pos";
+	private static final String EL_SPLIT2_POS = "splitpane2-pos";
+	private static final String EL_WINDOW_WIDTH = "window-width";
+	private static final String EL_WINDOW_HEIGHT = "window-height";
 
 
 	public void addViewType(ViewTypeConf viewType)
@@ -185,6 +195,66 @@ public class PolloConfiguration
 		return usedSchemasModel;
 	}
 
+	public int getSplitPane1Pos()
+	{
+		return splitPane1Pos;
+	}
+
+	public void setSplitPane1Pos(int pos)
+	{
+		splitPane1Pos = pos;
+	}
+
+	public void setSplitPane1Pos(String pos)
+	{
+		splitPane1Pos = Integer.parseInt(pos);
+	}
+
+	public int getSplitPane2Pos()
+	{
+		return splitPane2Pos;
+	}
+
+	public void setSplitPane2Pos(int pos)
+	{
+		splitPane2Pos = pos;
+	}
+
+	public void setSplitPane2Pos(String pos)
+	{
+		splitPane2Pos = Integer.parseInt(pos);
+	}
+
+	public int getWindowHeight()
+	{
+		return windowHeight;
+	}
+
+	public int getWindowWidth()
+	{
+		return windowWidth;
+	}
+
+	public void setWindowHeight(int height)
+	{
+		this.windowHeight = height;
+	}
+
+	public void setWindowWidth(int width)
+	{
+		this.windowWidth = width;
+	}
+
+	public void setWindowHeight(String height)
+	{
+		this.windowHeight = Integer.parseInt(height);
+	}
+
+	public void setWindowWidth(String width)
+	{
+		this.windowWidth = Integer.parseInt(width);
+	}
+
 	public void store()
 		throws PolloConfigurationException
 	{
@@ -236,6 +306,26 @@ public class PolloConfiguration
 			handler.characters(fileOpenDialogPath.toCharArray(), 0, fileOpenDialogPath.length());
 			handler.endElement(null, EL_SCHEMA_OPEN_DIALOG_PATH, EL_SCHEMA_OPEN_DIALOG_PATH);
 		}
+
+		handler.startElement(null, EL_SPLIT1_POS, EL_SPLIT1_POS, new AttributesImpl());
+		String splitPane1PosString = String.valueOf(splitPane1Pos);
+		handler.characters(splitPane1PosString.toCharArray(), 0, splitPane1PosString.length());
+		handler.endElement(null, EL_SPLIT1_POS, EL_SPLIT1_POS);
+
+		handler.startElement(null, EL_SPLIT2_POS, EL_SPLIT2_POS, new AttributesImpl());
+		String splitPane2PosString = String.valueOf(splitPane2Pos);
+		handler.characters(splitPane2PosString.toCharArray(), 0, splitPane2PosString.length());
+		handler.endElement(null, EL_SPLIT2_POS, EL_SPLIT2_POS);
+
+		handler.startElement(null, EL_WINDOW_HEIGHT, EL_WINDOW_HEIGHT, new AttributesImpl());
+		String windowHeightString = String.valueOf(windowHeight);
+		handler.characters(windowHeightString.toCharArray(), 0, windowHeightString.length());
+		handler.endElement(null, EL_WINDOW_HEIGHT, EL_WINDOW_HEIGHT);
+
+		handler.startElement(null, EL_WINDOW_WIDTH, EL_WINDOW_WIDTH, new AttributesImpl());
+		String windowWidthString = String.valueOf(windowWidth);
+		handler.characters(windowWidthString.toCharArray(), 0, windowWidthString.length());
+		handler.endElement(null, EL_WINDOW_WIDTH, EL_WINDOW_WIDTH);
 
 		// store recent files
         storeList(EL_RECENT_FILES, EL_RECENT_FILE, recentlyOpenedFiles, handler);

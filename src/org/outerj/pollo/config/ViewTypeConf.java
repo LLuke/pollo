@@ -112,7 +112,7 @@ public class ViewTypeConf
 		return displaySpecChain;
 	}
 
-	public IAttributeEditorPlugin createAttrEditorPluginChain(XmlModel xmlModel, ISchema schema)
+	public IAttributeEditorPlugin createAttrEditorPluginChain(XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
 		throws PolloException
 	{
 		AttrEditorPluginChain attrEditorPluginChain = new AttrEditorPluginChain();
@@ -121,7 +121,7 @@ public class ViewTypeConf
 		while (it.hasNext())
 		{
 			AttrEditorPluginConfItem conf = (AttrEditorPluginConfItem)it.next();
-			attrEditorPluginChain.add(conf.createPlugin(xmlModel, schema));
+			attrEditorPluginChain.add(conf.createPlugin(xmlModel, schema, polloFrame));
 		}
 
 		return attrEditorPluginChain;

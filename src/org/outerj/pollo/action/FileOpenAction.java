@@ -17,7 +17,8 @@ public class FileOpenAction extends AbstractAction
 
 	public FileOpenAction(PolloFrame polloFrame)
 	{
-		super("Open...", IconManager.getIcon("org/outerj/pollo/resource/stock_open-16.png"));
+		super("Open...", IconManager.getIcon("org/outerj/pollo/resource/open.gif"));
+		putValue(Action.SHORT_DESCRIPTION, "Open file");
 		this.polloFrame = polloFrame;
 	}
 

@@ -2,6 +2,7 @@ package org.outerj.pollo.action;
 
 import org.outerj.pollo.PolloFrame;
 import org.outerj.pollo.gui.AboutDialog;
+import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +14,7 @@ public class AboutAction extends AbstractAction
 
 	public AboutAction(PolloFrame polloFrame)
 	{
-		super("About Pollo...");
+		super("About Pollo...", EmptyIcon.getInstance());
 		this.polloFrame = polloFrame;
 	}
 

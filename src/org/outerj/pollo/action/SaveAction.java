@@ -2,6 +2,7 @@ package org.outerj.pollo.action;
 
 import org.outerj.pollo.PolloFrame;
 import org.outerj.pollo.gui.ErrorDialog;
+import org.outerj.pollo.gui.EmptyIcon;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 
 import javax.swing.*;
@@ -14,7 +15,7 @@ public class SaveAction extends AbstractAction
 
 	public SaveAction(XmlModel model, PolloFrame polloFrame)
 	{
-		super("Save");
+		super("Save", EmptyIcon.getInstance());
 		this.model = model;
 		this.polloFrame = polloFrame;
 	}

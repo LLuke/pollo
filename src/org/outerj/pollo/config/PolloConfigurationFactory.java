@@ -90,6 +90,10 @@ public class PolloConfigurationFactory
 			digester.push(polloConfiguration);
 			digester.addCallMethod("pollo/file-open-dialog-path", "setFileOpenDialogPath", 0);
 			digester.addCallMethod("pollo/schema-open-dialog-path", "setSchemaOpenDialogPath", 0);
+			digester.addCallMethod("pollo/splitpane1-pos", "setSplitPane1Pos", 0);
+			digester.addCallMethod("pollo/splitpane2-pos", "setSplitPane2Pos", 0);
+			digester.addCallMethod("pollo/window-height", "setWindowHeight", 0);
+			digester.addCallMethod("pollo/window-width", "setWindowWidth", 0);
 			digester.addCallMethod("pollo/recent-files/recent-file", "putRecentlyOpenedFile", 0);
 			digester.addCallMethod("pollo/recent-xpaths/recent-xpath", "putRecentlyUsedXPath", 0);
 			digester.addCallMethod("pollo/recent-schemas/recent-schema", "putRecentlyUsedSchema", 0);

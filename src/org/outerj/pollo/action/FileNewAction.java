@@ -19,7 +19,8 @@ public class FileNewAction extends AbstractAction
 
 	public FileNewAction(PolloFrame polloFrame)
 	{
-		super("New...", IconManager.getIcon("org/outerj/pollo/resource/stock_new-16.png"));
+		super("New...", IconManager.getIcon("org/outerj/pollo/resource/new.gif"));
+		putValue(Action.SHORT_DESCRIPTION, "New file");
 		this.polloFrame = polloFrame;
 		this.pollo = pollo;
 	}

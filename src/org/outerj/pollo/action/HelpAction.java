@@ -2,6 +2,7 @@ package org.outerj.pollo.action;
 
 import org.outerj.pollo.PolloFrame;
 import org.outerj.pollo.gui.ErrorDialog;
+import org.outerj.pollo.gui.EmptyIcon;
 
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
@@ -17,7 +18,7 @@ public class HelpAction extends AbstractAction
 
 	public HelpAction(PolloFrame polloFrame)
 	{
-		super("Help");
+		super("Help", EmptyIcon.getInstance());
 		this.polloFrame = polloFrame;
 	}
 

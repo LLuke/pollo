@@ -13,6 +13,13 @@
 
  - Thanks to Al Byers for getting me started on MSV support.
 
+ - The look with the panels is inspired by Eclipse. It was
+   the demo by Karsten Lentzsch (http://www.jgoodies.com/metamorphosis)
+   that brought me to that idea, and other GUI improvements.
+
+ - Some of the icons used in Pollo come from:
+   http://primates.ximian.com/~tigert/new_stock_project/
+
  - the tree view was originally inspired by conglomerate:
    http://www.conglomerate.org
 
