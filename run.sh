@@ -1,2 +1,2 @@
-export CLASSPATH=lib/xalan.jar:lib/xerces.jar:build
-java org.outerj.smeditor.SitemapEditor
+export CLASSPATH=lib/xerces.jar:lib/xalan.jar:lib/kunststoff.jar:build
+java org.outerj.pollo.Pollo

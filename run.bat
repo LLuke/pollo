@@ -1,2 +1,2 @@
-set CLASSPATH=lib\xalan.jar;lib\xerces.jar;build
-java smgui.smeditor.SitemapEditor
+set CLASSPATH=lib\xerces.jar;lib\xalan.jar;lib\kunststoff.jar;build
+java org.outerj.pollo.Pollo
