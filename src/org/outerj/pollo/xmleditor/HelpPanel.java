@@ -59,6 +59,7 @@ public class HelpPanel extends JPanel
                 editorPane.setText(text);
             else
                 editorPane.setText(NO_HELP);
+            editorPane.setCaretPosition(0);
         }
 
         public void nodeUnselected(Node node)
