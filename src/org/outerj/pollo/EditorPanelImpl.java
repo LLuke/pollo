@@ -28,6 +28,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MenuListener;
+import javax.swing.event.MenuEvent;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -526,28 +528,33 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 		xmlTextEditorPanel.dispose();
 	}
 
-	protected class ActionPluginMenu extends JMenu
+	protected class ActionPluginMenu extends JMenu implements MenuListener
 	{
 		public ActionPluginMenu(String name)
 		{
 			super(name);
+			addMenuListener(this);
 		}
 
-		public void setPopupMenuVisible(boolean visible)
+		public void menuSelected(MenuEvent e)
 		{
-			if (visible)
+			destructMenus(getMenuComponents());
+			removeAll();
+			actionPlugin.addActionsToPluginMenu(this, xmlEditorPanel.getXmlEditor().getSelectedNode());
+			if (getMenuComponentCount() == 0)
 			{
-				destructMenus(getMenuComponents());
-				removeAll();
-				actionPlugin.addActionsToPluginMenu(this, xmlEditorPanel.getXmlEditor().getSelectedNode());
-				if (getMenuComponentCount() == 0)
-				{
-					JMenuItem menuItem = new JMenuItem("No plugin actions available");
-					menuItem.setEnabled(false);
-					add(menuItem);
-				}
+				JMenuItem menuItem = new JMenuItem("No plugin actions available");
+				menuItem.setEnabled(false);
+				add(menuItem);
 			}
-			super.setPopupMenuVisible(visible);
+		}
+
+		public void menuDeselected(MenuEvent e)
+		{
+		}
+
+		public void menuCanceled(MenuEvent e)
+		{
 		}
 	}
 
