@@ -4,10 +4,8 @@ import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import org.outerj.pollo.xmleditor.XmlEditor;
-import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.view.View;
 import org.outerj.pollo.util.ResourceManager;
-import org.w3c.dom.Node;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,9 +77,10 @@ public class RenderViewToFileAction extends AbstractNodeAction
 			File file = fileChooser.getSelectedFile();
 			
 			// save it as a jpeg (png would be better but not supported by jdk 1.3)
+            OutputStream ostream = null;
 			try
 			{
-				OutputStream ostream = new FileOutputStream(file);
+				ostream = new FileOutputStream(file);
 				ByteArrayOutputStream bstream = new ByteArrayOutputStream();
 				JPEGImageEncoder jpegEncoder = JPEGCodec.createJPEGEncoder(bstream);
 				JPEGEncodeParam params = JPEGCodec.getDefaultJPEGEncodeParam(image);
@@ -94,6 +93,22 @@ public class RenderViewToFileAction extends AbstractNodeAction
 				JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
 						"Error storing image: " + e.getMessage());	
 			}
+            finally
+            {
+                if (ostream != null)
+                {
+                    try
+                    {
+                        ostream.close();
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println("[RenderViewToFileAction] Error closing file.");
+                        e.printStackTrace();
+                    }
+                }
+
+            }
 		}
 	}
 
