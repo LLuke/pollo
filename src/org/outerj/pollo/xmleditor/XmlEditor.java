@@ -282,17 +282,21 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 	public Dimension getPreferredSize()
 	{
-		return new Dimension(300, height);
+		JViewport viewPort = (JViewport)getParent();
+		Rectangle rect = viewPort.getViewRect();
+		return new Dimension(300, Math.max(height, rect.height));
 	}
 
 	public Dimension getMinimumSize()
 	{
-		return new Dimension(300, height);
+		JViewport viewPort = (JViewport)getParent();
+		Rectangle rect = viewPort.getViewRect();
+		return new Dimension(300, Math.max(height, rect.height));
 	}
 
 	public Dimension getMaximumSize()
 	{
-		return new Dimension(300, height);
+		return new Dimension(300, Integer.MAX_VALUE);
 	}
 
 	public void setSize(Dimension d)
@@ -928,6 +932,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 		public void reconnectToDom()
 		{
+			unselect(); // so that action etc. disable themselves properly
 			disconnectFromDom();
 			selectedNode = null;
 			selectedNodeView = null;

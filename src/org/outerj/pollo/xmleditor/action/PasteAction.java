@@ -38,7 +38,7 @@ public class PasteAction extends AbstractAction implements SelectionListener
 		}
 		else if (behaviour == PASTE_ASCHILD)
 		{
-			return "paste inside";
+			return "paste as child";
 		}
 		return "unkown?!";
 	}

@@ -1,7 +1,7 @@
 package org.outerj.pollo.texteditor;
 
 import org.apache.xerces.parsers.SAXParser;
-import org.outerj.pollo.dialog.ErrorDialog;
+import org.outerj.pollo.gui.ErrorDialog;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;

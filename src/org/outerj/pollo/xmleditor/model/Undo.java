@@ -2,6 +2,7 @@ package org.outerj.pollo.xmleditor.model;
 
 import org.outerj.pollo.DomConnected;
 import org.outerj.pollo.xmleditor.util.DomUtils;
+import org.outerj.pollo.xmleditor.IconManager;
 import org.w3c.dom.*;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
@@ -59,8 +60,7 @@ public class Undo implements EventListener, DomConnected
 		((EventTarget)node).addEventListener("DOMNodeRemoved", this, true);
 		((EventTarget)node).addEventListener("DOMCharacterDataModified", this, true);
 
-		undoAction.putValue(UndoAction.NAME, "Undo");
-		undoAction.setEnabled(false);
+		setUndoInfo(null);
 
 		undos = new Stack();
 	}
@@ -104,14 +104,12 @@ public class Undo implements EventListener, DomConnected
 			if (currentUndoTransaction != null)
 			{
 				currentUndoTransaction.addUndoable(undo);
-				undoAction.putValue(UndoAction.NAME, "Undo " + currentUndoTransaction.getDescription());
-				undoAction.setEnabled(true);
+				setUndoInfo(currentUndoTransaction);
 			}
 			else
 			{
 				undos.push(undo);
-				undoAction.putValue(UndoAction.NAME, "Undo " + undo.getDescription());
-				undoAction.setEnabled(true);
+				setUndoInfo(undo);
 			}
 		}
 		catch (Exception e)
@@ -135,18 +133,35 @@ public class Undo implements EventListener, DomConnected
 
 		if (undos.empty())
 		{
-			undoAction.setEnabled(false);
-			undoAction.putValue(UndoAction.NAME, "Undo");
+			setUndoInfo(null);
 		}
 		else
-			undoAction.putValue(UndoAction.NAME, "Undo " +
-					((Undoable)undos.peek()).getDescription());
+		{
+			setUndoInfo((Undoable)undos.peek());
+		}
 
 
 		undoing = true;
 		undoable.undo();
 	}
-	
+
+	private final void setUndoInfo(Undoable undoable)
+	{
+		if (undoable == null)
+		{
+			undoAction.putValue(UndoAction.NAME, "Undo");
+			undoAction.putValue(UndoAction.SHORT_DESCRIPTION, "Nothing to undo");
+			undoAction.setEnabled(false);
+		}
+		else
+		{
+			String description = "Undo " + undoable.getDescription();
+			undoAction.putValue(UndoAction.NAME, description);
+			undoAction.putValue(UndoAction.SHORT_DESCRIPTION, description);
+			undoAction.setEnabled(true);
+		}
+	}
+
 	public void startUndoTransaction(String description)
 	{
 		UndoTransaction undoTransaction = new UndoTransaction(description);
@@ -430,7 +445,7 @@ public class Undo implements EventListener, DomConnected
 	{
 		protected UndoAction()
 		{
-			super("Undo");
+			super("Undo", IconManager.getIcon("org/outerj/pollo/resource/stock_undo-16.png"));
 		}
 
 		public void actionPerformed(ActionEvent e)

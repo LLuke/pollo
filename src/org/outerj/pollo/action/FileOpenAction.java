@@ -2,6 +2,7 @@ package org.outerj.pollo.action;
 
 import org.outerj.pollo.Pollo;
 import org.outerj.pollo.PolloFrame;
+import org.outerj.pollo.xmleditor.IconManager;
 import org.outerj.pollo.util.ExtensionFileFilter;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class FileOpenAction extends AbstractAction
 
 	public FileOpenAction(PolloFrame polloFrame)
 	{
-		super("Open...");
+		super("Open...", IconManager.getIcon("org/outerj/pollo/resource/stock_open-16.png"));
 		this.polloFrame = polloFrame;
 	}
 

@@ -8,6 +8,8 @@ public interface EditorPanelListener
 	 */
 	public void editorPanelMenuChanged(EditorPanel source);
 
+	public void editorPanelToolBarChanged(EditorPanel source);
+
 	/**
 	 * Called when the EditorPanel should be closed.
 	 */

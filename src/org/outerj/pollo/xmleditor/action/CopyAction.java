@@ -2,6 +2,7 @@ package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.IconManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -22,7 +23,7 @@ public class CopyAction extends AbstractAction implements SelectionListener
 
 	public CopyAction(XmlEditor xmlEditor)
 	{
-		super("Copy");
+		super("Copy", IconManager.getIcon("org/outerj/pollo/resource/stock_copy-16.png"));
 		this.xmlEditor = xmlEditor;
 		xmlEditor.getSelectionInfo().addListener(this);
 		setEnabled(false);

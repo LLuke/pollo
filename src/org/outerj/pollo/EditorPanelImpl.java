@@ -3,12 +3,17 @@ package org.outerj.pollo;
 import org.outerj.pollo.action.CloseAction;
 import org.outerj.pollo.action.SaveAction;
 import org.outerj.pollo.action.SaveAsAction;
+import org.outerj.pollo.action.CloseViewAction;
 import org.outerj.pollo.config.ViewTypeConf;
-import org.outerj.pollo.dialog.ErrorDialog;
+import org.outerj.pollo.gui.ErrorDialog;
+import org.outerj.pollo.gui.ToolButton;
+import org.outerj.pollo.gui.PopupToolButton;
 import org.outerj.pollo.plugin.IActionPlugin;
 import org.outerj.pollo.texteditor.XmlTextEditorPanel;
+import org.outerj.pollo.texteditor.XmlTextEditor;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.XmlEditorPanel;
+import org.outerj.pollo.xmleditor.IconManager;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.model.View;
 import org.outerj.pollo.xmleditor.model.XmlModel;
@@ -22,26 +27,31 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class EditorPanelImpl extends EditorPanel implements View, ChangeListener,
-		XmlModelListener
+public class EditorPanelImpl extends EditorPanel implements View, XmlModelListener
 {
 	protected XmlModel xmlModel;
 	protected PolloFrame polloFrame;
 	protected XmlEditorPanel xmlEditorPanel;
 	protected XmlTextEditorPanel xmlTextEditorPanel;
-	protected JTabbedPane modeSwitchPane;
+	protected JComponent currentModePanel; // reference to either xmlEditorPanel or xmlTextEditorPanel
 	protected ArrayList listeners = new ArrayList();
 	protected String title;
 	protected JMenuBar domModeMenuBar;
 	protected JMenuBar textModeMenuBar;
-	protected boolean ignoreModeChange = false;
+	protected JToolBar domModeToolBar;
+	protected JToolBar textModeToolBar;
+	protected ModeSwitchDropDown textToolBarSwitch = new ModeSwitchDropDown();
+	protected ModeSwitchDropDown domToolBarSwitch = new ModeSwitchDropDown();
 	protected IActionPlugin actionPlugin;
 	protected SaveAction saveAction;
 	protected SaveAsAction saveAsAction;
 	protected CloseAction closeAction;
+	protected CloseViewAction closeViewAction;
 
 	public EditorPanelImpl(XmlModel xmlModel, ViewTypeConf viewTypeConf, PolloFrame polloFrame)
 		throws Exception
@@ -58,20 +68,16 @@ public class EditorPanelImpl extends EditorPanel implements View, ChangeListener
 		xmlTextEditorPanel = new XmlTextEditorPanel(xmlModel, ischema);
 
 
-		modeSwitchPane = new JTabbedPane();
-		modeSwitchPane.add("Tree view", xmlEditorPanel);
-		modeSwitchPane.add("Text view", xmlTextEditorPanel);
-		modeSwitchPane.addChangeListener(this);
-
 		// no borders
-		modeSwitchPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		xmlTextEditorPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
 		xmlEditorPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
 		this.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-		// switch to the right tab
+		// determine the start mode
 		if (xmlModel.isInTextMode())
-			modeSwitchPane.setSelectedComponent(xmlTextEditorPanel);
+			currentModePanel = xmlTextEditorPanel;
+		else
+			currentModePanel = xmlEditorPanel;
 
 		// initialize actions
 		saveAction = new SaveAction(xmlModel, polloFrame);
@@ -79,15 +85,20 @@ public class EditorPanelImpl extends EditorPanel implements View, ChangeListener
 			saveAction.setEnabled(false);
 		saveAsAction = new SaveAsAction(xmlModel, polloFrame);
 		closeAction = new CloseAction(xmlModel, polloFrame);
+		closeViewAction = new CloseViewAction(polloFrame, this);
 
 		// add the component to the panel
 		this.setLayout(new BorderLayout());
-		add(modeSwitchPane, BorderLayout.CENTER);
+		add(currentModePanel, BorderLayout.CENTER);
+
 		xmlModel.addListener(this);
 
 		title = xmlModel.getFileName();
+		if (xmlModel.isModified())
+			title = "*" + title;
 
 		createMenus();
+		createToolBars();
 	}
 
 	protected void createMenus()
@@ -190,12 +201,14 @@ public class EditorPanelImpl extends EditorPanel implements View, ChangeListener
 		// view menu for dom and text menu bar
 		JMenu domViewMenu = new JMenu("View");
 		JMenu textViewMenu = new JMenu("View");
-		domViewMenu.add(Pollo.getInstance().getNewPolloFrameAction());
-		textViewMenu.add(Pollo.getInstance().getNewPolloFrameAction());
-		domViewMenu.add(new NewEditorPanelMenu(polloFrame));
-		textViewMenu.add(new NewEditorPanelMenu(polloFrame));
 		domModeMenuBar.add(domViewMenu);
 		textModeMenuBar.add(textViewMenu);
+		domViewMenu.add(closeViewAction);
+		textViewMenu.add(closeViewAction);
+		domViewMenu.add(new NewEditorPanelMenu(polloFrame));
+		textViewMenu.add(new NewEditorPanelMenu(polloFrame));
+		domViewMenu.add(Pollo.getInstance().getNewPolloFrameAction());
+		textViewMenu.add(Pollo.getInstance().getNewPolloFrameAction());
 
 		// help menu for the dom and text mode menu bar
 		domModeMenuBar.add(Box.createHorizontalGlue());
@@ -214,6 +227,59 @@ public class EditorPanelImpl extends EditorPanel implements View, ChangeListener
 
 	}
 
+	protected void createToolBars()
+	{
+		domModeToolBar = new JToolBar();
+		domModeToolBar.setFloatable(false);
+		domModeToolBar.add(new ToolButton(polloFrame.getFileOpenAction()));
+		domModeToolBar.add(new ToolButton(polloFrame.getFileNewAction()));
+
+		domModeToolBar.addSeparator();
+		domModeToolBar.add(new ToolButton(xmlModel.getUndo().getUndoAction()));
+
+		domModeToolBar.addSeparator();
+		XmlEditor xmlEditor = xmlEditorPanel.getXmlEditor();
+		domModeToolBar.add(new ToolButton(xmlEditor.getCutAction()));
+		domModeToolBar.add(new ToolButton(xmlEditor.getCopyAction()));
+
+		PopupToolButton domPasteButton = new PopupToolButton("Paste:", "Paste", IconManager.getIcon("org/outerj/pollo/resource/stock_paste-16.png"));
+		domPasteButton.addAction(xmlEditor.getPasteBeforeAction());
+		domPasteButton.addAction(xmlEditor.getPasteInsideAction());
+		domPasteButton.addAction(xmlEditor.getPasteAfterAction());
+		domModeToolBar.add(domPasteButton);
+
+		domModeToolBar.addSeparator();
+		PopupToolButton domTextButton = new PopupToolButton("Insert text:", "Insert Text Node", IconManager.getIcon("org/outerj/pollo/resource/stock_font-16.png"));
+		domTextButton.addAction(xmlEditor.getInsertTextBeforeAction());
+		domTextButton.addAction(xmlEditor.getInsertTextInsideAction());
+		domTextButton.addAction(xmlEditor.getInsertTextAfterAction());
+		domModeToolBar.add(domTextButton);
+
+		PopupToolButton domCommentButton = new PopupToolButton("Insert comment:", "Insert Comment Node", IconManager.getIcon("org/outerj/pollo/resource/comment-16.png"));
+		domCommentButton.addAction(xmlEditor.getInsertCommentBeforeAction());
+		domCommentButton.addAction(xmlEditor.getInsertCommentInsideAction());
+		domCommentButton.addAction(xmlEditor.getInsertCommentAfterAction());
+		domModeToolBar.add(domCommentButton);
+
+		domModeToolBar.addSeparator();
+		domModeToolBar.add(domToolBarSwitch);
+
+		textModeToolBar = new JToolBar();
+		textModeToolBar.setFloatable(false);
+
+		textModeToolBar.add(new ToolButton(polloFrame.getFileOpenAction()));
+		textModeToolBar.add(new ToolButton(polloFrame.getFileNewAction()));
+
+		textModeToolBar.addSeparator();
+		XmlTextEditor xmlTextEditor = xmlTextEditorPanel.getEditor();
+		textModeToolBar.add(xmlTextEditor.getCutAction());
+		textModeToolBar.add(xmlTextEditor.getCopyAction());
+		textModeToolBar.add(xmlTextEditor.getPasteAction());
+
+		textModeToolBar.addSeparator();
+		textModeToolBar.add(textToolBarSwitch);
+	}
+
 	public XmlEditorPanel getXmlEditorPanel()
 	{
 		return xmlEditorPanel;
@@ -225,6 +291,22 @@ public class EditorPanelImpl extends EditorPanel implements View, ChangeListener
 			return domModeMenuBar;
 		else if (xmlModel.isInTextMode())
 			return textModeMenuBar;
+		else
+			throw new Error("[EditorPanelImpl] XmlModel is neither in parsed nor in text mode.");
+	}
+
+	public JToolBar getToolBar()
+	{
+		if (xmlModel.isInParsedMode())
+		{
+			domToolBarSwitch.setToTreeMode();
+			return domModeToolBar;
+		}
+		else if (xmlModel.isInTextMode())
+		{
+			textToolBarSwitch.setToTextMode();
+			return textModeToolBar;
+		}
 		else
 			throw new Error("[EditorPanelImpl] XmlModel is neither in parsed nor in text mode.");
 	}
@@ -283,6 +365,15 @@ public class EditorPanelImpl extends EditorPanel implements View, ChangeListener
 		}
 	}
 
+	public void fireToolBarChangedEvent()
+	{
+		Iterator listenerIt = listeners.iterator();
+		while (listenerIt.hasNext())
+		{
+			((EditorPanelListener)listenerIt.next()).editorPanelToolBarChanged(this);
+		}
+	}
+
 	public void fireClosingEvent()
 	{
 		Iterator listenerIt = listeners.iterator();
@@ -295,47 +386,6 @@ public class EditorPanelImpl extends EditorPanel implements View, ChangeListener
 		Iterator listenerIt = listeners.iterator();
 		while (listenerIt.hasNext())
 			((EditorPanelListener)listenerIt.next()).editorPanelTitleChanged(this);
-	}
-
-	public void stateChanged(ChangeEvent e)
-	{
-		if (ignoreModeChange)
-		{
-			ignoreModeChange = false;
-			return;
-		}
-		if (modeSwitchPane.getSelectedComponent() == xmlTextEditorPanel)
-		{
-			try
-			{
-				xmlModel.switchToTextMode();
-			}
-			catch (Exception exception)
-			{
-				modeSwitchPane.setSelectedComponent(xmlEditorPanel);
-				ErrorDialog errordialog = new ErrorDialog(polloFrame, "Could not serialize the DOM tree to text.", exception);
-				errordialog.show();
-			}
-		}
-		else if (modeSwitchPane.getSelectedComponent() == xmlEditorPanel)
-		{
-			try
-			{
-				xmlModel.switchToParsedMode();
-			}
-			catch (SAXParseException saxparseexception)
-			{
-				modeSwitchPane.setSelectedComponent(xmlTextEditorPanel);
-				xmlTextEditorPanel.showParseException(saxparseexception);
-				JOptionPane.showMessageDialog(this, "The document contains well formedness errors.");
-			}
-			catch (Exception exception1)
-			{
-				modeSwitchPane.setSelectedComponent(xmlTextEditorPanel);
-				ErrorDialog errordialog1 = new ErrorDialog(polloFrame, "Could not parse the text to a DOM tree.", exception1);
-				errordialog1.show();
-			}
-		}
 	}
 
 	public void lastViewClosed(XmlModel sourceXmlModel)
@@ -365,15 +415,23 @@ public class EditorPanelImpl extends EditorPanel implements View, ChangeListener
 	public void switchToTextMode(XmlModel sourceXmlModel)
 	{
 		xmlTextEditorPanel.jumpToBeginning();
-		modeSwitchPane.setSelectedComponent(xmlTextEditorPanel);
+		remove(currentModePanel);
+		currentModePanel = xmlTextEditorPanel;
+		add(currentModePanel, BorderLayout.CENTER);
 		fireMenuBarChangedEvent();
+		fireToolBarChangedEvent();
+		getRootPane().repaint();
 	}
 
 	public void switchToParsedMode(XmlModel sourceXmlModel)
 	{
 		xmlEditorPanel.reconnectToDom();
-		modeSwitchPane.setSelectedComponent(xmlEditorPanel);
+		remove(currentModePanel);
+		currentModePanel = xmlEditorPanel;
+		add(currentModePanel, BorderLayout.CENTER);
 		fireMenuBarChangedEvent();
+		fireToolBarChangedEvent();
+		getRootPane().repaint();
 	}
 
 	public String getTitle()
@@ -409,5 +467,75 @@ public class EditorPanelImpl extends EditorPanel implements View, ChangeListener
 			}
 			super.setPopupMenuVisible(visible);
 		}
+	}
+
+	public class ModeSwitchDropDown extends JComboBox
+	{
+		public ModeSwitchDropDown()
+		{
+            addItem("Tree view");
+			addItem("Text view");
+
+			// set maximum size to preferred size, otherwise the dropdown will take
+			// up all available width
+			Dimension dim = getPreferredSize();
+			setMaximumSize(dim);
+
+			setRequestFocusEnabled(false);
+
+			addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					if (getSelectedItem().equals("Tree view"))
+					{
+						if (currentModePanel != xmlEditorPanel)
+						{
+							try
+							{
+								xmlModel.switchToParsedMode();
+							}
+							catch (SAXParseException saxparseexception)
+							{
+								xmlTextEditorPanel.showParseException(saxparseexception);
+								JOptionPane.showMessageDialog(polloFrame, "The document contains well formedness errors.");
+							}
+							catch (Exception exception1)
+							{
+								ErrorDialog errordialog1 = new ErrorDialog(polloFrame, "Could not parse the text to a DOM tree.", exception1);
+								errordialog1.show();
+							}
+						}
+					}
+					else if (getSelectedItem().equals("Text view"))
+					{
+						if (currentModePanel != xmlTextEditorPanel)
+						{
+							try
+							{
+								xmlModel.switchToTextMode();
+							}
+							catch (Exception exception)
+							{
+								ErrorDialog errordialog = new ErrorDialog(polloFrame, "Could not serialize the DOM tree to text.", exception);
+								errordialog.show();
+							}
+						}
+					}
+				}
+			});
+
+		}
+
+		public void setToTextMode()
+		{
+			setSelectedIndex(1);
+		}
+
+		public void setToTreeMode()
+		{
+			setSelectedIndex(0);
+		}
+
 	}
 }

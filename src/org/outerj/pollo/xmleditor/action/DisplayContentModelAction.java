@@ -2,7 +2,7 @@ package org.outerj.pollo.xmleditor.action;
 
 import com.sun.msv.grammar.*;
 import com.sun.msv.grammar.util.ExpressionPrinter;
-import org.outerj.pollo.dialog.ErrorDialog;
+import org.outerj.pollo.gui.ErrorDialog;
 import org.outerj.pollo.xmleditor.IconManager;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;

@@ -12,6 +12,8 @@ public abstract class EditorPanel extends JPanel implements View
 	 */
 	public abstract JMenuBar getMenuBar();
 
+	public abstract JToolBar getToolBar();
+
 	public abstract boolean close();
 
 	public abstract XmlModel getXmlModel();

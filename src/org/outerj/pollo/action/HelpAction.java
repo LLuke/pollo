@@ -1,7 +1,7 @@
 package org.outerj.pollo.action;
 
 import org.outerj.pollo.PolloFrame;
-import org.outerj.pollo.dialog.ErrorDialog;
+import org.outerj.pollo.gui.ErrorDialog;
 
 import javax.help.HelpBroker;
 import javax.help.HelpSet;

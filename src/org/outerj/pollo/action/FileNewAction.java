@@ -2,6 +2,7 @@ package org.outerj.pollo.action;
 
 import org.outerj.pollo.Pollo;
 import org.outerj.pollo.PolloFrame;
+import org.outerj.pollo.xmleditor.IconManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -18,7 +19,7 @@ public class FileNewAction extends AbstractAction
 
 	public FileNewAction(PolloFrame polloFrame)
 	{
-		super("New...");
+		super("New...", IconManager.getIcon("org/outerj/pollo/resource/stock_new-16.png"));
 		this.polloFrame = polloFrame;
 		this.pollo = pollo;
 	}

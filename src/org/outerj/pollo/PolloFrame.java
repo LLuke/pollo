@@ -33,6 +33,9 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 	/** A tabbed pane containing the editorpanel instances */
 	protected JTabbedPane editorPanelTabs;
 
+	/** The currently visible toolbar */
+	protected JToolBar currentToolBar;
+
 	protected Action fileOpenAction;
 	protected Action fileNewAction;
 	protected Action exitAction;
@@ -48,9 +51,10 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 
 		// no border and dark background
 		editorPanelTabs.setBorder(new EmptyBorder(0, 0, 0, 0));
-		setBackground(new Color(153, 153, 153));
-		// FIXME: dark background doesn't show up
+		editorPanelTabs.setBackground(new Color(153, 153, 153));
+		editorPanelTabs.setOpaque(true);
 
+		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(editorPanelTabs, BorderLayout.CENTER);
 
 		// initialize actions
@@ -114,6 +118,16 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 		editorPanelTabs.setSelectedComponent(editorPanel);
 	}
 
+	/**
+	 * This only removed the EditorPanel from this PolloFrame, it
+	 * does not actually close and clean up the EditorPanel. To do
+	 * that, use the close() method of EditorPanel.
+	 */
+	public void removeEditorPanel(EditorPanel editorPanel)
+	{
+		editorPanelTabs.remove(editorPanel);
+	}
+
 	public Action getFileOpenAction()
 	{
 		return fileOpenAction;
@@ -154,6 +168,22 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 	/**
 	 * Implementation of EditorPanelListener interface.
 	 */
+	public void editorPanelToolBarChanged(EditorPanel source)
+	{
+		if (editorPanelTabs.getSelectedComponent() == source)
+		{
+			if (currentToolBar != null)
+				getContentPane().remove(currentToolBar);
+			currentToolBar = source.getToolBar();
+			if (currentToolBar != null)
+				getContentPane().add(currentToolBar, BorderLayout.NORTH);
+			getRootPane().revalidate();
+		}
+	}
+
+	/**
+	 * Implementation of EditorPanelListener interface.
+	 */
 	public void editorPanelClosing(EditorPanel source)
 	{
 		editorPanelTabs.remove(source);
@@ -180,12 +210,21 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
 		if (currentEditorPanel != null)
 		{
 			setJMenuBar(currentEditorPanel.getMenuBar());
+			JToolBar toolBar = currentEditorPanel.getToolBar();
+			if (currentToolBar != null)
+				getContentPane().remove(currentToolBar);
+			currentToolBar = toolBar;
+			if (currentToolBar != null)
+				getContentPane().add(currentToolBar, BorderLayout.NORTH);
 		}
 		else
 		{
 			setJMenuBar(noEditorPanelsMenuBar);
+			if (currentToolBar != null)
+				getContentPane().remove(currentToolBar);
 		}
 		setFrameTitle();
+		getRootPane().revalidate(); // this is needed after changing the toolbar
 	}
 
 	public void setFrameTitle()

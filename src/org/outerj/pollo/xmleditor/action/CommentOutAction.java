@@ -2,7 +2,7 @@ package org.outerj.pollo.xmleditor.action;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-import org.outerj.pollo.dialog.ErrorDialog;
+import org.outerj.pollo.gui.ErrorDialog;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.model.Undo;

@@ -17,8 +17,16 @@ public class IconManager
 {
 	protected static HashMap icons = new HashMap();
 
+	public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
+			org.outerj.pollo.xmleditor.AppenderDefinitions.GUI);
+
+
+	/**
+	 * This method can return null, it will not throw an exception.
+	 *
+	 * FIXME: we should return a dummy icon if it could not be loaded.
+	 */
 	public static Icon getIcon(String iconpath)
-		throws PolloException
 	{
 		if (!icons.containsKey(iconpath))
 		{
@@ -31,7 +39,7 @@ public class IconManager
 			}
 			catch (Exception e)
 			{
-				throw new PolloException("[IconManager] Could not load the icon " + iconpath, e);
+				logcat.error("[IconManager] Could not load the icon " + iconpath, e);
 			}
 		}
 

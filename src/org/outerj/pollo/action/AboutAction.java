@@ -1,7 +1,7 @@
 package org.outerj.pollo.action;
 
 import org.outerj.pollo.PolloFrame;
-import org.outerj.pollo.dialog.AboutDialog;
+import org.outerj.pollo.gui.AboutDialog;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

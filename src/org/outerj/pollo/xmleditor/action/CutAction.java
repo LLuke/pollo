@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.IconManager;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
@@ -20,6 +21,7 @@ public class CutAction extends RemoveAction
 	public CutAction(XmlEditor xmlEditor)
 	{
 		super(xmlEditor);
+		putValue(Action.SMALL_ICON, IconManager.getIcon("org/outerj/pollo/resource/stock_cut-16.png"));
 		putValue(Action.NAME, "Cut");
 	}
 

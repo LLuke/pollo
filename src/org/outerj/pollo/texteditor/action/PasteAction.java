@@ -1,6 +1,7 @@
 package org.outerj.pollo.texteditor.action;
 
 import org.outerj.pollo.texteditor.XmlTextEditor;
+import org.outerj.pollo.xmleditor.IconManager;
 
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
@@ -11,7 +12,7 @@ public class PasteAction extends AbstractAction
 
 	public PasteAction(XmlTextEditor xmlTextEditor)
 	{
-		super("Paste");
+		super("Paste", IconManager.getIcon("org/outerj/pollo/resource/stock_paste-16.png"));
 		this.xmlTextEditor = xmlTextEditor;
 	}
 
