@@ -12,19 +12,19 @@ import java.util.HashMap;
 public class MsvSchemaFactory implements ISchemaFactory
 {
 
-	public ISchema getSchema(HashMap initParams)
-		throws PolloException
-	{
-		MsvSchema newSchema = new MsvSchema();
+    public ISchema getSchema(HashMap initParams)
+        throws PolloException
+    {
+        MsvSchema newSchema = new MsvSchema();
 
-		try
-		{
-			newSchema.init(initParams);
-		}
-		catch (Exception e)
-		{
-			throw new PolloException("[MsvSchema] MsvSchema could not be created. ", e);
-		}
-		return newSchema;
-	}
+        try
+        {
+            newSchema.init(initParams);
+        }
+        catch (Exception e)
+        {
+            throw new PolloException("[MsvSchema] MsvSchema could not be created. ", e);
+        }
+        return newSchema;
+    }
 }

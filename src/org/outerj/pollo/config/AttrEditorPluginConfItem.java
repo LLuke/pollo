@@ -10,29 +10,29 @@ import org.outerj.pollo.PolloFrame;
 
 public class AttrEditorPluginConfItem extends ConfItem
 {
-	public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-			org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
+    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
+            org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
 
-	public AttrEditorPluginConfItem()
-	{
-		logcat.debug("New AttrEditorPluginConfItem created");
-	}
+    public AttrEditorPluginConfItem()
+    {
+        logcat.debug("New AttrEditorPluginConfItem created");
+    }
 
-	public IAttributeEditorPlugin createPlugin(XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
-		throws PolloException
-	{
-		IAttributeEditorPlugin plugin = null;
-		try
-		{
-			IAttributeEditorPluginFactory pluginFactory =
-				(IAttributeEditorPluginFactory)ComponentManager.getFactoryInstance(getFactoryClass());
-			plugin = pluginFactory.getInstance(getInitParams(), xmlModel, schema, polloFrame);
-		}
-		catch (Exception e)
-		{
-			logcat.error("[AttrEditorPluginConfItem] Error creating plugin", e);
-			throw new PolloException("[AttrEditorPluginConfItem] Error creating plugin.", e);
-		}
-		return plugin;
-	}
+    public IAttributeEditorPlugin createPlugin(XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
+        throws PolloException
+    {
+        IAttributeEditorPlugin plugin = null;
+        try
+        {
+            IAttributeEditorPluginFactory pluginFactory =
+                (IAttributeEditorPluginFactory)ComponentManager.getFactoryInstance(getFactoryClass());
+            plugin = pluginFactory.getInstance(getInitParams(), xmlModel, schema, polloFrame);
+        }
+        catch (Exception e)
+        {
+            logcat.error("[AttrEditorPluginConfItem] Error creating plugin", e);
+            throw new PolloException("[AttrEditorPluginConfItem] Error creating plugin.", e);
+        }
+        return plugin;
+    }
 }

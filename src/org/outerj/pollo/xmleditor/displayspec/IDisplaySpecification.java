@@ -14,35 +14,35 @@ import java.awt.*;
  */
 public interface IDisplaySpecification
 {
-	/**
-	 * Get the background fill color.
-	 */
-	public Color getBackgroundColor();
+    /**
+     * Get the background fill color.
+     */
+    public Color getBackgroundColor();
 
-	/**
-	 * Gets the element specification, this is an object
-	 * containing attributes for how this element should be
-	 * rendered.
-	 *
-	 * @param parent can be null
-	 */
-	public ElementSpec getElementSpec(String namespaceURI, String localName, Element parent);
+    /**
+     * Gets the element specification, this is an object
+     * containing attributes for how this element should be
+     * rendered.
+     *
+     * @param parent can be null
+     */
+    public ElementSpec getElementSpec(String namespaceURI, String localName, Element parent);
 
-	public ElementSpec getElementSpec(Element element);
+    public ElementSpec getElementSpec(Element element);
 
-	/**
-	 * Get the font to be used for attribute names.
-	 */
-	public Font getAttributeNameFont();
+    /**
+     * Get the font to be used for attribute names.
+     */
+    public Font getAttributeNameFont();
 
-	/**
-	 * Get the font to be used for attribute values.
-	 */
-	public Font getAttributeValueFont();
+    /**
+     * Get the font to be used for attribute values.
+     */
+    public Font getAttributeValueFont();
 
-	/**
-	 * Get the font to be used for element names.
-	 */
-	public Font getElementNameFont();
+    /**
+     * Get the font to be used for element names.
+     */
+    public Font getElementNameFont();
 
 }

@@ -9,8 +9,8 @@ import org.outerj.pollo.xmleditor.exception.PolloException;
 public class ValidationNotSupportedException extends PolloException
 {
 
-	public ValidationNotSupportedException()
-	{
-		super("The current schema implementation does not support validation", null);
-	}
+    public ValidationNotSupportedException()
+    {
+        super("The current schema implementation does not support validation", null);
+    }
 }

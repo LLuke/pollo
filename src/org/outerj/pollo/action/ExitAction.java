@@ -9,17 +9,17 @@ import java.awt.event.ActionEvent;
 
 public class ExitAction extends AbstractAction
 {
-	protected PolloFrame polloFrame;
+    protected PolloFrame polloFrame;
 
-	public ExitAction(PolloFrame polloFrame)
-	{
-		ResourceManager resMgr = ResourceManager.getManager(ExitAction.class);
+    public ExitAction(PolloFrame polloFrame)
+    {
+        ResourceManager resMgr = ResourceManager.getManager(ExitAction.class);
         resMgr.configureAction(this);
-		this.polloFrame = polloFrame;
-	}
+        this.polloFrame = polloFrame;
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		Pollo.getInstance().exit(polloFrame);
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        Pollo.getInstance().exit(polloFrame);
+    }
 }

@@ -22,26 +22,26 @@ import org.xml.sax.SAXException;
  */
 public class PolloMsvVerifier extends Verifier
 {
-	protected boolean stopNow = false;
+    protected boolean stopNow = false;
 
-	public PolloMsvVerifier(DocumentDeclaration documentDeclaration, ErrorHandler errorHandler)
-	{
-		super(documentDeclaration, errorHandler);
-	}
+    public PolloMsvVerifier(DocumentDeclaration documentDeclaration, ErrorHandler errorHandler)
+    {
+        super(documentDeclaration, errorHandler);
+    }
 
-	protected void onNextAcceptorReady(StartTagInfo info, Acceptor acceptor) throws SAXException
-	{
-		if (stopNow)
-		{
-			// to stop the validation here, we throw an exception, though it's not really
-			// meant as an exception, its just to stop the validation process here.
-			throw new StopValidationException(info, acceptor);
-		}
-	}
+    protected void onNextAcceptorReady(StartTagInfo info, Acceptor acceptor) throws SAXException
+    {
+        if (stopNow)
+        {
+            // to stop the validation here, we throw an exception, though it's not really
+            // meant as an exception, its just to stop the validation process here.
+            throw new StopValidationException(info, acceptor);
+        }
+    }
 
-	public void setStopNow(boolean stopNow)
-	{
-		this.stopNow = stopNow;
-	}
+    public void setStopNow(boolean stopNow)
+    {
+        this.stopNow = stopNow;
+    }
 
 }

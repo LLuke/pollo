@@ -7,13 +7,13 @@ package org.outerj.pollo.xmleditor.exception;
  */
 public class PolloConfigurationException extends PolloException
 {
-	public PolloConfigurationException(String message)
-	{
-		super(message);
-	}
+    public PolloConfigurationException(String message)
+    {
+        super(message);
+    }
 
-	public PolloConfigurationException(String message, Exception nestedException)
-	{
-		super(message, nestedException);
-	}
+    public PolloConfigurationException(String message, Exception nestedException)
+    {
+        super(message, nestedException);
+    }
 }

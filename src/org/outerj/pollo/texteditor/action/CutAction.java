@@ -8,18 +8,18 @@ import java.awt.event.ActionEvent;
 
 public class CutAction extends AbstractAction
 {
-	protected XmlTextEditor xmlTextEditor;
+    protected XmlTextEditor xmlTextEditor;
     protected static final ResourceManager resourceManager = ResourceManager.getManager(CutAction.class);
 
-	public CutAction(XmlTextEditor xmlTextEditor)
-	{
+    public CutAction(XmlTextEditor xmlTextEditor)
+    {
         resourceManager.configureAction(this);
-		this.xmlTextEditor = xmlTextEditor;
-	}
+        this.xmlTextEditor = xmlTextEditor;
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		xmlTextEditor.cut();
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        xmlTextEditor.cut();
+    }
 
 }

@@ -7,21 +7,21 @@ import java.awt.*;
 
 public class BorderLessSplitPane extends JSplitPane
 {
-	public BorderLessSplitPane(int newOrientation, Component newLeftComponent, Component newRightComponent)
-	{
-		super(newOrientation, newLeftComponent, newRightComponent);
-	}
+    public BorderLessSplitPane(int newOrientation, Component newLeftComponent, Component newRightComponent)
+    {
+        super(newOrientation, newLeftComponent, newRightComponent);
+    }
 
-	public BorderLessSplitPane(int newOrientation)
-	{
-		super(newOrientation);
-	}
+    public BorderLessSplitPane(int newOrientation)
+    {
+        super(newOrientation);
+    }
 
-	public void updateUI()
-	{
-		super.updateUI();
-		BasicSplitPaneUI ui = (BasicSplitPaneUI) getUI();
-		ui.getDivider().setBorder(new EmptyBorder(0, 0, 0, 0));
-		setBorder(new EmptyBorder(0, 0, 0, 0));
-	}
+    public void updateUI()
+    {
+        super.updateUI();
+        BasicSplitPaneUI ui = (BasicSplitPaneUI) getUI();
+        ui.getDivider().setBorder(new EmptyBorder(0, 0, 0, 0));
+        setBorder(new EmptyBorder(0, 0, 0, 0));
+    }
 }

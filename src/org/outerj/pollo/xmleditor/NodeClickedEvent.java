@@ -13,26 +13,26 @@ import java.awt.event.MouseEvent;
  */
 public class NodeClickedEvent
 {
-	Node node;
-	MouseEvent mouseEvent;
+    Node node;
+    MouseEvent mouseEvent;
 
 
-	/**
-	  @param element the element which has been clicked on.
-	 */
-	public NodeClickedEvent(Node node, MouseEvent mouseEvent)
-	{
-		this.node = node;
-		this.mouseEvent = mouseEvent;
-	}
+    /**
+      @param element the element which has been clicked on.
+     */
+    public NodeClickedEvent(Node node, MouseEvent mouseEvent)
+    {
+        this.node = node;
+        this.mouseEvent = mouseEvent;
+    }
 
-	public MouseEvent getMouseEvent()
-	{
-		return mouseEvent;
-	}
+    public MouseEvent getMouseEvent()
+    {
+        return mouseEvent;
+    }
 
-	public Node getNode()
-	{
-		return node;
-	}
+    public Node getNode()
+    {
+        return node;
+    }
 }

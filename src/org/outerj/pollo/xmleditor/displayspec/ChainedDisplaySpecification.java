@@ -17,79 +17,79 @@ import java.util.ArrayList;
  */
 public class ChainedDisplaySpecification implements IDisplaySpecification
 {
-	protected ArrayList displaySpecs = new ArrayList();
+    protected ArrayList displaySpecs = new ArrayList();
 
-	public void add(IDisplaySpecification displaySpec)
-	{
-		displaySpecs.add(displaySpec);
-	}
+    public void add(IDisplaySpecification displaySpec)
+    {
+        displaySpecs.add(displaySpec);
+    }
 
-	public Color getBackgroundColor()
-	{
-		for (int i = 0; i < displaySpecs.size(); i++)
-		{
-			Color result = ((IDisplaySpecification)displaySpecs.get(i))
-				.getBackgroundColor();
-			if (result != null)
-				return result;
-		}
-		return null;
-	}
+    public Color getBackgroundColor()
+    {
+        for (int i = 0; i < displaySpecs.size(); i++)
+        {
+            Color result = ((IDisplaySpecification)displaySpecs.get(i))
+                .getBackgroundColor();
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
 
-	public ElementSpec getElementSpec(String namespaceURI, String localName, Element parent)
-	{
-		for (int i = 0; i < displaySpecs.size(); i++)
-		{
-			ElementSpec result = ((IDisplaySpecification)displaySpecs.get(i))
-				.getElementSpec(namespaceURI, localName, parent);
-			if (result != null)
-				return result;
-		}
-		return null;
-	}
+    public ElementSpec getElementSpec(String namespaceURI, String localName, Element parent)
+    {
+        for (int i = 0; i < displaySpecs.size(); i++)
+        {
+            ElementSpec result = ((IDisplaySpecification)displaySpecs.get(i))
+                .getElementSpec(namespaceURI, localName, parent);
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
 
-	public ElementSpec getElementSpec(Element element)
-	{
-		for (int i = 0; i < displaySpecs.size(); i++)
-		{
-			ElementSpec result = ((IDisplaySpecification)displaySpecs.get(i))
-				.getElementSpec(element);
-			if (result != null)
-				return result;
-		}
-		return null;
-	}
+    public ElementSpec getElementSpec(Element element)
+    {
+        for (int i = 0; i < displaySpecs.size(); i++)
+        {
+            ElementSpec result = ((IDisplaySpecification)displaySpecs.get(i))
+                .getElementSpec(element);
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
 
-	public Font getAttributeNameFont()
-	{
-		for (int i = 0; i < displaySpecs.size(); i++)
-		{
-			Font result = ((IDisplaySpecification)displaySpecs.get(i)).getAttributeNameFont();
-			if (result != null)
-				return result;
-		}
-		return null;
-	}
+    public Font getAttributeNameFont()
+    {
+        for (int i = 0; i < displaySpecs.size(); i++)
+        {
+            Font result = ((IDisplaySpecification)displaySpecs.get(i)).getAttributeNameFont();
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
 
-	public Font getAttributeValueFont()
-	{
-		for (int i = 0; i < displaySpecs.size(); i++)
-		{
-			Font result = ((IDisplaySpecification)displaySpecs.get(i)).getAttributeValueFont();
-			if (result != null)
-				return result;
-		}
-		return null;
-	}
+    public Font getAttributeValueFont()
+    {
+        for (int i = 0; i < displaySpecs.size(); i++)
+        {
+            Font result = ((IDisplaySpecification)displaySpecs.get(i)).getAttributeValueFont();
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
 
-	public Font getElementNameFont()
-	{
-		for (int i = 0; i < displaySpecs.size(); i++)
-		{
-			Font result = ((IDisplaySpecification)displaySpecs.get(i)).getElementNameFont();
-			if (result != null)
-				return result;
-		}
-		return null;
-	}
+    public Font getElementNameFont()
+    {
+        for (int i = 0; i < displaySpecs.size(); i++)
+        {
+            Font result = ((IDisplaySpecification)displaySpecs.get(i)).getElementNameFont();
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
 }

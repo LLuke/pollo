@@ -21,63 +21,63 @@ import java.util.List;
  */
 public class RecentlyOpenedFilesMenu extends JMenu implements MenuListener
 {
-	PolloFrame polloFrame;
+    PolloFrame polloFrame;
 
-	public RecentlyOpenedFilesMenu(PolloFrame polloFrame)
-	{
-		ResourceManager resMgr = ResourceManager.getManager(RecentlyOpenedFilesMenu.class);
-		resMgr.configureMenu( this );
-		this.polloFrame = polloFrame;
-		addMenuListener(this);
-	}
+    public RecentlyOpenedFilesMenu(PolloFrame polloFrame)
+    {
+        ResourceManager resMgr = ResourceManager.getManager(RecentlyOpenedFilesMenu.class);
+        resMgr.configureMenu( this );
+        this.polloFrame = polloFrame;
+        addMenuListener(this);
+    }
 
-	public void menuSelected(MenuEvent e)
-	{
-		removeAll();
-		// create the items in the menu, one for each XmlModel
-		List recentFiles = Pollo.getInstance().getConfiguration().getRecentlyOpenedFiles();
-		for (int i = recentFiles.size() - 1; i >= 0; i--)
-		{
-			add(new OpenRecentFileAction((String)recentFiles.get(i)));
-		}
-	}
+    public void menuSelected(MenuEvent e)
+    {
+        removeAll();
+        // create the items in the menu, one for each XmlModel
+        List recentFiles = Pollo.getInstance().getConfiguration().getRecentlyOpenedFiles();
+        for (int i = recentFiles.size() - 1; i >= 0; i--)
+        {
+            add(new OpenRecentFileAction((String)recentFiles.get(i)));
+        }
+    }
 
-	public void menuDeselected(MenuEvent e)
-	{
-	}
+    public void menuDeselected(MenuEvent e)
+    {
+    }
 
-	public void menuCanceled(MenuEvent e)
-	{
-	}
+    public void menuCanceled(MenuEvent e)
+    {
+    }
 
-	public class OpenRecentFileAction extends AbstractAction
-	{
-		String fullpath;
+    public class OpenRecentFileAction extends AbstractAction
+    {
+        String fullpath;
 
-		public OpenRecentFileAction(String fullpath)
-		{
-			super(fullpath);
-			this.fullpath = fullpath;
-		}
+        public OpenRecentFileAction(String fullpath)
+        {
+            super(fullpath);
+            this.fullpath = fullpath;
+        }
 
-		public void actionPerformed(ActionEvent e)
-		{
-			File file = new File(fullpath);
-			if (!file.exists())
-			{
-				ResourceManager resMgr = ResourceManager.getManager(RecentlyOpenedFilesMenu.class);
+        public void actionPerformed(ActionEvent e)
+        {
+            File file = new File(fullpath);
+            if (!file.exists())
+            {
+                ResourceManager resMgr = ResourceManager.getManager(RecentlyOpenedFilesMenu.class);
 
-				String message = resMgr.getString("FileDoesNotExistMessageDialog_message");
-				message += fullpath;
+                String message = resMgr.getString("FileDoesNotExistMessageDialog_message");
+                message += fullpath;
 
-				String title = resMgr.getString("FileDoesNotExistMessageDialog_title");
+                String title = resMgr.getString("FileDoesNotExistMessageDialog_title");
 
-				JOptionPane.showMessageDialog(polloFrame, 
-					message, title, JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			Pollo.getInstance().openFile(file, polloFrame);
-		}
-	}
+                JOptionPane.showMessageDialog(polloFrame, 
+                    message, title, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Pollo.getInstance().openFile(file, polloFrame);
+        }
+    }
 
 }

@@ -11,21 +11,21 @@ import java.util.HashMap;
  */
 public class NodeMap extends HashMap
 {
-	public void put(String namespaceURI, String localName, Object object)
-	{
-		put(getHashString(namespaceURI, localName), object);
-	}
+    public void put(String namespaceURI, String localName, Object object)
+    {
+        put(getHashString(namespaceURI, localName), object);
+    }
 
-	public Object get(String namespaceURI, String localName)
-	{
-		return get(getHashString(namespaceURI, localName));
-	}
+    public Object get(String namespaceURI, String localName)
+    {
+        return get(getHashString(namespaceURI, localName));
+    }
 
-	private final String getHashString(String uri, String localName)
-	{
-		if (uri == null) uri = "";
-		StringBuffer fqn = new StringBuffer();
-		fqn.append("{").append(uri).append("}").append(localName);
-		return fqn.toString();
-	}
+    private final String getHashString(String uri, String localName)
+    {
+        if (uri == null) uri = "";
+        StringBuffer fqn = new StringBuffer();
+        fqn.append("{").append(uri).append("}").append(localName);
+        return fqn.toString();
+    }
 }

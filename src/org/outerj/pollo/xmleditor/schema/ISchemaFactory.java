@@ -11,6 +11,6 @@ import java.util.HashMap;
  */
 public interface ISchemaFactory
 {
-	public ISchema getSchema(HashMap initParams)
-		throws PolloException;
+    public ISchema getSchema(HashMap initParams)
+        throws PolloException;
 }

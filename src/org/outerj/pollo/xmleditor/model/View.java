@@ -19,15 +19,15 @@ import java.awt.*;
  */
 public interface View
 {
-	/**
-	 * Called when this view should close itself. This is usually called when
-	 * the document itself is closed, which is normally when the application
-	 * ends.
-	 */
-	public void stop();
+    /**
+     * Called when this view should close itself. This is usually called when
+     * the document itself is closed, which is normally when the application
+     * ends.
+     */
+    public void stop();
 
-	/**
-	 * Should return the component to use as parent for displaying modal dialog boxes.
-	 */
-	public Component getParentForDialogs();
+    /**
+     * Should return the component to use as parent for displaying modal dialog boxes.
+     */
+    public Component getParentForDialogs();
 }

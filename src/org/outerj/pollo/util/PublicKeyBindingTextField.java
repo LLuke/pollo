@@ -9,9 +9,9 @@ import java.awt.event.KeyEvent;
  */
 public class PublicKeyBindingTextField extends JTextField
 {
-	public boolean processKeyBindingPublic(KeyStroke ks, KeyEvent e,
-										int condition, boolean pressed)
-	{
-		return super.processKeyBinding(ks, e, condition, pressed);
-	}
+    public boolean processKeyBindingPublic(KeyStroke ks, KeyEvent e,
+                                        int condition, boolean pressed)
+    {
+        return super.processKeyBinding(ks, e, condition, pressed);
+    }
 }

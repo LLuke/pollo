@@ -8,18 +8,18 @@ import java.awt.event.ActionEvent;
 
 public class PasteAction extends AbstractAction
 {
-	protected XmlTextEditor xmlTextEditor;
+    protected XmlTextEditor xmlTextEditor;
     protected static final ResourceManager resourceManager = ResourceManager.getManager(PasteAction.class);
 
-	public PasteAction(XmlTextEditor xmlTextEditor)
-	{
+    public PasteAction(XmlTextEditor xmlTextEditor)
+    {
         resourceManager.configureAction(this);
-		this.xmlTextEditor = xmlTextEditor;
-	}
+        this.xmlTextEditor = xmlTextEditor;
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		xmlTextEditor.paste();
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        xmlTextEditor.paste();
+    }
 
 }

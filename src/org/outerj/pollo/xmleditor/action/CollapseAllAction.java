@@ -11,16 +11,16 @@ public class CollapseAllAction extends AbstractNodeAction
 {
     protected static final ResourceManager resourceManager = ResourceManager.getManager(CollapseAllAction.class);
 
-	public CollapseAllAction(XmlEditor xmlEditor)
-	{
-		super(xmlEditor);
+    public CollapseAllAction(XmlEditor xmlEditor)
+    {
+        super(xmlEditor);
         resourceManager.configureAction(this);
-	}
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		View view = xmlEditor.getSelectionInfo().getSelectedNodeView();
-		if (view.getNode().getNodeType() != Node.DOCUMENT_NODE)
-			view.collapseAll();
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        View view = xmlEditor.getSelectionInfo().getSelectedNodeView();
+        if (view.getNode().getNodeType() != Node.DOCUMENT_NODE)
+            view.collapseAll();
+    }
 }

@@ -24,75 +24,75 @@ import java.io.OutputStream;
  */
 public class RenderViewToFileAction extends AbstractNodeAction
 {
-	protected JFileChooser fileChooser;
+    protected JFileChooser fileChooser;
     protected static final ResourceManager resourceManager = ResourceManager.getManager(RenderViewToFileAction.class);
 
-	public RenderViewToFileAction(XmlEditor xmlEditor)
-	{
-		super(xmlEditor);
+    public RenderViewToFileAction(XmlEditor xmlEditor)
+    {
+        super(xmlEditor);
         resourceManager.configureAction(this);
-	}
+    }
 
-	public void actionPerformed(ActionEvent event)
-	{
-		View selectedView = xmlEditor.getSelectionInfo().getSelectedNodeView();
-		if (selectedView != null)
-		{
-			// create the image
-			int width = selectedView.getWidth() + 1;
-			int height = selectedView.getHeight() + 2;
-			BufferedImage image;
-			try
-			{
-				image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-			}
-			catch (OutOfMemoryError e)
-			{
-				JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
-						"Not enough memory to create image.");	
-				return;
-			}
+    public void actionPerformed(ActionEvent event)
+    {
+        View selectedView = xmlEditor.getSelectionInfo().getSelectedNodeView();
+        if (selectedView != null)
+        {
+            // create the image
+            int width = selectedView.getWidth() + 1;
+            int height = selectedView.getHeight() + 2;
+            BufferedImage image;
+            try
+            {
+                image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            }
+            catch (OutOfMemoryError e)
+            {
+                JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
+                        "Not enough memory to create image.");  
+                return;
+            }
 
-			Graphics2D gr = image.createGraphics();
-			gr.setClip(0, 0, width, height);
+            Graphics2D gr = image.createGraphics();
+            gr.setClip(0, 0, width, height);
 
-			// unselect the selected view, so that the selection highlight won't be rendered
-			xmlEditor.getSelectionInfo().unselect();
+            // unselect the selected view, so that the selection highlight won't be rendered
+            xmlEditor.getSelectionInfo().unselect();
 
-			// draw the background
-			Color backgroundColor = xmlEditor.getDisplaySpec().getBackgroundColor();
-			gr.setColor(backgroundColor);
-			gr.fillRect(0, 0, width, height);
+            // draw the background
+            Color backgroundColor = xmlEditor.getDisplaySpec().getBackgroundColor();
+            gr.setColor(backgroundColor);
+            gr.fillRect(0, 0, width, height);
 
-			// draw the view
-			selectedView.paint(gr, 0, 0);
+            // draw the view
+            selectedView.paint(gr, 0, 0);
 
-			// ask user for a filename
-			if (fileChooser == null)
-				fileChooser = new JFileChooser();
-			int returnVal = fileChooser.showSaveDialog(xmlEditor.getTopLevelAncestor());
-			if(returnVal != JFileChooser.APPROVE_OPTION)
-				return;
+            // ask user for a filename
+            if (fileChooser == null)
+                fileChooser = new JFileChooser();
+            int returnVal = fileChooser.showSaveDialog(xmlEditor.getTopLevelAncestor());
+            if(returnVal != JFileChooser.APPROVE_OPTION)
+                return;
 
-			File file = fileChooser.getSelectedFile();
-			
-			// save it as a jpeg (png would be better but not supported by jdk 1.3)
+            File file = fileChooser.getSelectedFile();
+            
+            // save it as a jpeg (png would be better but not supported by jdk 1.3)
             OutputStream ostream = null;
-			try
-			{
-				ostream = new FileOutputStream(file);
-				ByteArrayOutputStream bstream = new ByteArrayOutputStream();
-				JPEGImageEncoder jpegEncoder = JPEGCodec.createJPEGEncoder(bstream);
-				JPEGEncodeParam params = JPEGCodec.getDefaultJPEGEncodeParam(image);
-				params.setQuality(1f, true);
-				jpegEncoder.encode(image, params);
-				ostream.write(bstream.toByteArray());
-			}
-			catch (Exception e)
-			{
-				JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
-						"Error storing image: " + e.getMessage());	
-			}
+            try
+            {
+                ostream = new FileOutputStream(file);
+                ByteArrayOutputStream bstream = new ByteArrayOutputStream();
+                JPEGImageEncoder jpegEncoder = JPEGCodec.createJPEGEncoder(bstream);
+                JPEGEncodeParam params = JPEGCodec.getDefaultJPEGEncodeParam(image);
+                params.setQuality(1f, true);
+                jpegEncoder.encode(image, params);
+                ostream.write(bstream.toByteArray());
+            }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
+                        "Error storing image: " + e.getMessage());  
+            }
             finally
             {
                 if (ostream != null)
@@ -109,7 +109,7 @@ public class RenderViewToFileAction extends AbstractNodeAction
                 }
 
             }
-		}
-	}
+        }
+    }
 
 }

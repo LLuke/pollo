@@ -15,17 +15,17 @@ import java.util.Collection;
  */
 public interface ISchema
 {
-	public Collection getAttributesFor(Element element);
+    public Collection getAttributesFor(Element element);
 
-	public boolean isChildAllowed(Element parent, Element child);
+    public boolean isChildAllowed(Element parent, Element child);
 
-	public String [] getPossibleAttributeValues(Element element, String namespaceURI, String localName);
+    public String [] getPossibleAttributeValues(Element element, String namespaceURI, String localName);
 
-	public Collection getAllowedSubElements(Element element);
+    public Collection getAllowedSubElements(Element element);
 
-	public Collection getAllowedSubTexts(Element element);
+    public Collection getAllowedSubTexts(Element element);
 
-	public Collection validate(Document document)
-		throws ValidationNotSupportedException, Exception;
+    public Collection validate(Document document)
+        throws ValidationNotSupportedException, Exception;
 
 }

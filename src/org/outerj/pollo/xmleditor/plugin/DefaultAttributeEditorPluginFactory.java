@@ -9,11 +9,11 @@ import java.util.HashMap;
 
 public class DefaultAttributeEditorPluginFactory implements IAttributeEditorPluginFactory
 {
-	public IAttributeEditorPlugin getInstance(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
-		throws PolloException
-	{
-		DefaultAttributeEditorPlugin plugin = new DefaultAttributeEditorPlugin();
-		plugin.init(initParams, xmlModel, schema);
-		return plugin;
-	}
+    public IAttributeEditorPlugin getInstance(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
+        throws PolloException
+    {
+        DefaultAttributeEditorPlugin plugin = new DefaultAttributeEditorPlugin();
+        plugin.init(initParams, xmlModel, schema);
+        return plugin;
+    }
 }

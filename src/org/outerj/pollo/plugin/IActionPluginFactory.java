@@ -11,6 +11,6 @@ import java.util.HashMap;
  */
 public interface IActionPluginFactory
 {
-	public IActionPlugin getActionPlugin(HashMap initParams, EditorPanel editorPanel, PolloFrame polloFrame)
-		throws PolloException;
+    public IActionPlugin getActionPlugin(HashMap initParams, EditorPanel editorPanel, PolloFrame polloFrame)
+        throws PolloException;
 }

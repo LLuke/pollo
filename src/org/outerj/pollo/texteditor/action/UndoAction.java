@@ -8,17 +8,17 @@ import java.awt.event.ActionEvent;
 
 public class UndoAction extends AbstractAction
 {
-	protected XmlTextDocument xmlTextDocument;
+    protected XmlTextDocument xmlTextDocument;
 
-	public UndoAction(XmlTextDocument xmlTextDocument)
-	{
-		super("Undo", EmptyIcon.getInstance());
-		this.xmlTextDocument = xmlTextDocument;
-	}
+    public UndoAction(XmlTextDocument xmlTextDocument)
+    {
+        super("Undo", EmptyIcon.getInstance());
+        this.xmlTextDocument = xmlTextDocument;
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		xmlTextDocument.undo();
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        xmlTextDocument.undo();
+    }
 
 }

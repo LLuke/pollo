@@ -9,6 +9,6 @@ import java.util.HashMap;
 
 public interface IAttributeEditorPluginFactory
 {
-	public IAttributeEditorPlugin getInstance(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
-		throws PolloException;
+    public IAttributeEditorPlugin getInstance(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
+        throws PolloException;
 }

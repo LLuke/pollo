@@ -12,6 +12,6 @@ package org.outerj.pollo.xmleditor.displayspec;
  */
 public class AttributeSpec
 {
-	public String nsUri;
-	public String localName;
+    public String nsUri;
+    public String localName;
 }

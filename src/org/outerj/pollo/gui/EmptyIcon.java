@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class EmptyIcon implements Icon
 {
-	protected static final Icon instance16 = new EmptyIcon(16, 16);
+    protected static final Icon instance16 = new EmptyIcon(16, 16);
     protected static final Icon instance20 = new EmptyIcon(20, 20);
     protected int width;
     protected int height;
@@ -18,10 +18,10 @@ public class EmptyIcon implements Icon
         return instance16;
     }
 
-	public static Icon get16Instance()
-	{
-		return instance16;
-	}
+    public static Icon get16Instance()
+    {
+        return instance16;
+    }
 
     public static Icon get20Instance()
     {
@@ -34,17 +34,17 @@ public class EmptyIcon implements Icon
         this.width = width;
     }
 
-	public void paintIcon(Component c, Graphics g, int x, int y)
-	{
-	}
+    public void paintIcon(Component c, Graphics g, int x, int y)
+    {
+    }
 
-	public int getIconWidth()
-	{
-		return width;
-	}
+    public int getIconWidth()
+    {
+        return width;
+    }
 
-	public int getIconHeight()
-	{
-		return height;
-	}
+    public int getIconHeight()
+    {
+        return height;
+    }
 }

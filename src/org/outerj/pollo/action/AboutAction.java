@@ -10,18 +10,18 @@ import java.awt.event.ActionEvent;
 
 public class AboutAction extends AbstractAction
 {
-	protected PolloFrame polloFrame;
+    protected PolloFrame polloFrame;
 
-	public AboutAction(PolloFrame polloFrame)
-	{
-		ResourceManager resMgr = ResourceManager.getManager(AboutAction.class);
+    public AboutAction(PolloFrame polloFrame)
+    {
+        ResourceManager resMgr = ResourceManager.getManager(AboutAction.class);
         resMgr.configureAction(this);
-		this.polloFrame = polloFrame;
-	}
+        this.polloFrame = polloFrame;
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		AboutDialog aboutdialog = new AboutDialog(polloFrame);
-		aboutdialog.show();
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        AboutDialog aboutdialog = new AboutDialog(polloFrame);
+        aboutdialog.show();
+    }
 }

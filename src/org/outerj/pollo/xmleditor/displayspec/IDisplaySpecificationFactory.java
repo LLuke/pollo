@@ -13,6 +13,6 @@ import java.util.HashMap;
  */
 public interface IDisplaySpecificationFactory
 {
-	public IDisplaySpecification getDisplaySpecification(HashMap initParams)
-		throws PolloException;
+    public IDisplaySpecification getDisplaySpecification(HashMap initParams)
+        throws PolloException;
 }

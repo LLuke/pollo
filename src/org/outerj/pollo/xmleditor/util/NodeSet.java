@@ -11,22 +11,22 @@ import java.util.HashSet;
  */
 public class NodeSet extends HashSet
 {
-	public void add(String namespaceURI, String localName)
-	{
-		add(getHashString(namespaceURI, localName));
-	}
+    public void add(String namespaceURI, String localName)
+    {
+        add(getHashString(namespaceURI, localName));
+    }
 
-	public boolean contains(String namespaceURI, String localName)
-	{
-		return contains(getHashString(namespaceURI, localName));
-	}
+    public boolean contains(String namespaceURI, String localName)
+    {
+        return contains(getHashString(namespaceURI, localName));
+    }
 
 
-	private final String getHashString(String uri, String localName)
-	{
-		if (uri == null) uri = "";
-		StringBuffer fqn = new StringBuffer();
-		fqn.append("{").append(uri).append("}").append(localName);
-		return fqn.toString();
-	}
+    private final String getHashString(String uri, String localName)
+    {
+        if (uri == null) uri = "";
+        StringBuffer fqn = new StringBuffer();
+        fqn.append("{").append(uri).append("}").append(localName);
+        return fqn.toString();
+    }
 }

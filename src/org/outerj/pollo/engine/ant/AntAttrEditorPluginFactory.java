@@ -11,11 +11,11 @@ import java.util.HashMap;
 
 public class AntAttrEditorPluginFactory implements IAttributeEditorPluginFactory
 {
-	public IAttributeEditorPlugin getInstance(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
-		throws PolloException
-	{
-		AntAttrEditorPlugin plugin = new AntAttrEditorPlugin();
-		plugin.init(initParams, xmlModel, schema, polloFrame);
-		return plugin;
-	}
+    public IAttributeEditorPlugin getInstance(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
+        throws PolloException
+    {
+        AntAttrEditorPlugin plugin = new AntAttrEditorPlugin();
+        plugin.init(initParams, xmlModel, schema, polloFrame);
+        return plugin;
+    }
 }

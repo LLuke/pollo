@@ -6,6 +6,6 @@ import javax.swing.table.TableCellEditor;
 
 public interface IAttributeEditorPlugin
 {
-	public TableCellEditor getAttributeEditor(Element element,
-			String namespaceURI, String localName);
+    public TableCellEditor getAttributeEditor(Element element,
+            String namespaceURI, String localName);
 }

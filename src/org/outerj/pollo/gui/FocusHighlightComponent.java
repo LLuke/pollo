@@ -15,26 +15,26 @@ import java.awt.event.FocusListener;
  */
 public class FocusHighlightComponent implements FocusListener
 {
-	protected JComponent component;
-	protected Color oldColor;
-	protected static final Color highlightColor = new Color(203, 213, 229);
+    protected JComponent component;
+    protected Color oldColor;
+    protected static final Color highlightColor = new Color(203, 213, 229);
 
-	/**
-	 * @param component the component of which the background will be changed
-	 */
-	public FocusHighlightComponent(JComponent component)
-	{
-		this.component = component;
-	}
+    /**
+     * @param component the component of which the background will be changed
+     */
+    public FocusHighlightComponent(JComponent component)
+    {
+        this.component = component;
+    }
 
-	public void focusGained(FocusEvent event)
-	{
-		oldColor = component.getBackground();
-		component.setBackground(highlightColor);
-	}
+    public void focusGained(FocusEvent event)
+    {
+        oldColor = component.getBackground();
+        component.setBackground(highlightColor);
+    }
 
-	public void focusLost(FocusEvent event)
-	{
-		component.setBackground(oldColor);
-	}
+    public void focusLost(FocusEvent event)
+    {
+        component.setBackground(oldColor);
+    }
 }

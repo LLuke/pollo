@@ -21,18 +21,18 @@ public class CopyAction extends AbstractNodeAction
 {
     protected static final ResourceManager resourceManager = ResourceManager.getManager(CopyAction.class);
 
-	public CopyAction(XmlEditor xmlEditor)
-	{
+    public CopyAction(XmlEditor xmlEditor)
+    {
         super(xmlEditor);
         resourceManager.configureAction(this);
-	}
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		Node node = xmlEditor.getSelectedNode();
-		if (!(node instanceof Document))
-		{
-			xmlEditor.putOnClipboard(xmlEditor.getSelectedNode());
-		}
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        Node node = xmlEditor.getSelectedNode();
+        if (!(node instanceof Document))
+        {
+            xmlEditor.putOnClipboard(xmlEditor.getSelectedNode());
+        }
+    }
 }

@@ -19,20 +19,20 @@ public class CutAction extends RemoveAction
 {
     protected static final ResourceManager resourceManager = ResourceManager.getManager(CutAction.class);
 
-	public CutAction(XmlEditor xmlEditor)
-	{
-		super(xmlEditor);
+    public CutAction(XmlEditor xmlEditor)
+    {
+        super(xmlEditor);
         resourceManager.configureAction(this);
-	}
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		Node node = xmlEditor.getSelectionInfo().getSelectedNode();
-		if (node != xmlEditor.getRootView().getNode())
-		{
-			xmlEditor.putOnClipboard(node);
-			super.actionPerformed(e);
-		}
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        Node node = xmlEditor.getSelectionInfo().getSelectedNode();
+        if (node != xmlEditor.getRootView().getNode())
+        {
+            xmlEditor.putOnClipboard(node);
+            super.actionPerformed(e);
+        }
+    }
 
 }

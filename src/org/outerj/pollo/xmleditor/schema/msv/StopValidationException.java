@@ -13,18 +13,18 @@ import org.xml.sax.SAXParseException;
  */
 public class StopValidationException extends SAXParseException
 {
-	protected StartTagInfo startTagInfo;
-	protected Acceptor acceptor;
+    protected StartTagInfo startTagInfo;
+    protected Acceptor acceptor;
 
-	public StopValidationException(StartTagInfo info, Acceptor acceptor)
-	{
-		super("StopValidationException", "", "", -1, -1);
-		this.startTagInfo = info;
-		this.acceptor = acceptor;
-	}
+    public StopValidationException(StartTagInfo info, Acceptor acceptor)
+    {
+        super("StopValidationException", "", "", -1, -1);
+        this.startTagInfo = info;
+        this.acceptor = acceptor;
+    }
 
-	public Acceptor getAcceptor()
-	{
-		return acceptor;
-	}
+    public Acceptor getAcceptor()
+    {
+        return acceptor;
+    }
 }

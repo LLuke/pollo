@@ -12,24 +12,24 @@ import java.util.HashMap;
  */
 public class ComponentManager
 {
-	protected static HashMap factories = new HashMap();
+    protected static HashMap factories = new HashMap();
 
-	public static Object getFactoryInstance(String factoryClassName)
-		throws PolloException
-	{
-		if (!factories.containsKey(factoryClassName))
-		{
-			try
-			{
-				Object newFactory = Class.forName(factoryClassName).newInstance();
-				factories.put(factoryClassName, newFactory);
-			}
-			catch (Exception e)
-			{
-				throw new PolloException("[ComponentManager] Could not instantiate the factory " + factoryClassName, e);
-			}
-		}
+    public static Object getFactoryInstance(String factoryClassName)
+        throws PolloException
+    {
+        if (!factories.containsKey(factoryClassName))
+        {
+            try
+            {
+                Object newFactory = Class.forName(factoryClassName).newInstance();
+                factories.put(factoryClassName, newFactory);
+            }
+            catch (Exception e)
+            {
+                throw new PolloException("[ComponentManager] Could not instantiate the factory " + factoryClassName, e);
+            }
+        }
 
-		return factories.get(factoryClassName);
-	}
+        return factories.get(factoryClassName);
+    }
 }

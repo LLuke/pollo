@@ -8,17 +8,17 @@ import java.awt.event.ActionEvent;
 
 public class RedoAction extends AbstractAction
 {
-	protected XmlTextDocument xmlTextDocument;
+    protected XmlTextDocument xmlTextDocument;
 
-	public RedoAction(XmlTextDocument xmlTextDocument)
-	{
-		super("Redo", EmptyIcon.getInstance());
-		this.xmlTextDocument = xmlTextDocument;
-	}
+    public RedoAction(XmlTextDocument xmlTextDocument)
+    {
+        super("Redo", EmptyIcon.getInstance());
+        this.xmlTextDocument = xmlTextDocument;
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		xmlTextDocument.redo();
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        xmlTextDocument.redo();
+    }
 
 }

@@ -8,6 +8,6 @@ import java.util.HashMap;
  */
 public interface ITemplateFactory
 {
-	public ITemplate getTemplate(HashMap initParams)
-		throws PolloException;
+    public ITemplate getTemplate(HashMap initParams)
+        throws PolloException;
 }

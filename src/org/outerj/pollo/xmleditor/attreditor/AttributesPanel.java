@@ -31,195 +31,195 @@ import java.awt.event.KeyEvent;
  */
 public class AttributesPanel extends JPanel implements ActionListener, SelectionListener, DomConnected
 {
-	protected JTable attributesTable;
-	protected AttributesTableModel attributesTableModel;
-	protected AttributeTableCellRenderer attributeTableCellRenderer = new AttributeTableCellRenderer();
-	protected JButton addAttrButton;
-	protected JButton deleteAttrButton;
-	protected XmlModel xmlModel;
-	protected ISchema schema;
-	protected IAttributeEditorPlugin attrEditorPlugin;
+    protected JTable attributesTable;
+    protected AttributesTableModel attributesTableModel;
+    protected AttributeTableCellRenderer attributeTableCellRenderer = new AttributeTableCellRenderer();
+    protected JButton addAttrButton;
+    protected JButton deleteAttrButton;
+    protected XmlModel xmlModel;
+    protected ISchema schema;
+    protected IAttributeEditorPlugin attrEditorPlugin;
     protected JComponent parentFocusComponent;
 
     /**
      * @param parentFocusComponent a component to which to move the focus after pressing escape. Can be null.
      */
-	public AttributesPanel(XmlModel xmlModel, ISchema schema, IAttributeEditorPlugin attrEditorPlugin,
+    public AttributesPanel(XmlModel xmlModel, ISchema schema, IAttributeEditorPlugin attrEditorPlugin,
                            JComponent parentFocusComponent)
-	{
-		this.xmlModel = xmlModel;
-		this.schema = schema;
-		this.attrEditorPlugin = attrEditorPlugin;
+    {
+        this.xmlModel = xmlModel;
+        this.schema = schema;
+        this.attrEditorPlugin = attrEditorPlugin;
         this.parentFocusComponent = parentFocusComponent;
 
-		// construct the interface components
-		attributesTableModel = new AttributesTableModel(schema, xmlModel);
-		attributesTable = new AttributesTable(attributesTableModel, schema);
-		attributesTable.setBorder(BorderFactory.createEmptyBorder());
-		attributesTable.addFocusListener(new FocusHighlightComponent(attributesTable.getTableHeader()));
+        // construct the interface components
+        attributesTableModel = new AttributesTableModel(schema, xmlModel);
+        attributesTable = new AttributesTable(attributesTableModel, schema);
+        attributesTable.setBorder(BorderFactory.createEmptyBorder());
+        attributesTable.addFocusListener(new FocusHighlightComponent(attributesTable.getTableHeader()));
 
-		attributesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        attributesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		TableColumn column = null;
-		column = attributesTable.getColumnModel().getColumn(0);
-		column.setPreferredWidth(40);
-		column = attributesTable.getColumnModel().getColumn(1);
-		column.setPreferredWidth(300);
+        TableColumn column = null;
+        column = attributesTable.getColumnModel().getColumn(0);
+        column.setPreferredWidth(40);
+        column = attributesTable.getColumnModel().getColumn(1);
+        column.setPreferredWidth(300);
 
-		JScrollPane scrollPane = new JScrollPane(attributesTable);
-		scrollPane.setBorder(new SomeLinesBorder(false, false, false, true));
+        JScrollPane scrollPane = new JScrollPane(attributesTable);
+        scrollPane.setBorder(new SomeLinesBorder(false, false, false, true));
 
-		setLayout(new BorderLayout());
-		add(scrollPane, BorderLayout.CENTER);
+        setLayout(new BorderLayout());
+        add(scrollPane, BorderLayout.CENTER);
 
-		addAttrButton = new JButton("Add attribute...");
-		addAttrButton.setActionCommand("add");
-		addAttrButton.addActionListener(this);
+        addAttrButton = new JButton("Add attribute...");
+        addAttrButton.setActionCommand("add");
+        addAttrButton.addActionListener(this);
 
-		deleteAttrButton = new JButton("Clear value");
-		deleteAttrButton.setActionCommand("delete");
-		deleteAttrButton.addActionListener(this);
+        deleteAttrButton = new JButton("Clear value");
+        deleteAttrButton.setActionCommand("delete");
+        deleteAttrButton.addActionListener(this);
 
-		JPanel rightPanel = new JPanel();
-		add(rightPanel, BorderLayout.EAST);
-		GridBagLayout gridbag = new GridBagLayout();
-		rightPanel.setLayout(gridbag);
+        JPanel rightPanel = new JPanel();
+        add(rightPanel, BorderLayout.EAST);
+        GridBagLayout gridbag = new GridBagLayout();
+        rightPanel.setLayout(gridbag);
 
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
 
-		gridbag.setConstraints(addAttrButton, gbc);
-		gridbag.setConstraints(deleteAttrButton, gbc);
+        gridbag.setConstraints(addAttrButton, gbc);
+        gridbag.setConstraints(deleteAttrButton, gbc);
 
-		rightPanel.add(addAttrButton);
-		rightPanel.add(deleteAttrButton);
+        rightPanel.add(addAttrButton);
+        rightPanel.add(deleteAttrButton);
 
-		setEnabled(false);
-	}
+        setEnabled(false);
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		TableCellEditor cellEditor = attributesTable.getCellEditor();
-		if (cellEditor != null)
-		{
-			cellEditor.stopCellEditing();
-		}
+    public void actionPerformed(ActionEvent e)
+    {
+        TableCellEditor cellEditor = attributesTable.getCellEditor();
+        if (cellEditor != null)
+        {
+            cellEditor.stopCellEditing();
+        }
 
-		if (e.getActionCommand().equals("add"))
-		{
-			String newAttrName = JOptionPane.showInputDialog(getTopLevelAncestor(),
-					"Please enter the (optionally qualified) attribute name:", "New attribute",
-					JOptionPane.QUESTION_MESSAGE);
+        if (e.getActionCommand().equals("add"))
+        {
+            String newAttrName = JOptionPane.showInputDialog(getTopLevelAncestor(),
+                    "Please enter the (optionally qualified) attribute name:", "New attribute",
+                    JOptionPane.QUESTION_MESSAGE);
 
-			if (newAttrName == null || newAttrName.trim().equals(""))
-			{
-				return;
-			}
-			if (!org.apache.xerces.dom.DocumentImpl.isXMLName(newAttrName))
-			{
-				JOptionPane.showMessageDialog(getTopLevelAncestor(),
-					"That is not a valid XML attribute name.", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			int prefixpos = newAttrName.indexOf(":");
-			String prefix = null;
-			String localName = null;
-			String ns = null;
-			if (prefixpos != -1)
-			{
-				prefix = newAttrName.substring(0, prefixpos);
-				localName = newAttrName.substring(prefixpos + 1, newAttrName.length());
-				ns = xmlModel.findNamespaceForPrefix(attributesTableModel.getElement(), prefix);
-				if (ns == null && !prefix.equals("xmlns"))
-				{
-					JOptionPane.showMessageDialog(getTopLevelAncestor(),
-							"No namespace declaration found for namespace prefix " + prefix
-							+ ". Attribute will not be added.",
-							"Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-			}
-			else
-			{
-				// oooops... namespace defaulting does not apply to attributes !!
-				// ns = xmlModel.findDefaultNamespace(attributesTableModel.getElement());
-				localName = newAttrName;
-			}
+            if (newAttrName == null || newAttrName.trim().equals(""))
+            {
+                return;
+            }
+            if (!org.apache.xerces.dom.DocumentImpl.isXMLName(newAttrName))
+            {
+                JOptionPane.showMessageDialog(getTopLevelAncestor(),
+                    "That is not a valid XML attribute name.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int prefixpos = newAttrName.indexOf(":");
+            String prefix = null;
+            String localName = null;
+            String ns = null;
+            if (prefixpos != -1)
+            {
+                prefix = newAttrName.substring(0, prefixpos);
+                localName = newAttrName.substring(prefixpos + 1, newAttrName.length());
+                ns = xmlModel.findNamespaceForPrefix(attributesTableModel.getElement(), prefix);
+                if (ns == null && !prefix.equals("xmlns"))
+                {
+                    JOptionPane.showMessageDialog(getTopLevelAncestor(),
+                            "No namespace declaration found for namespace prefix " + prefix
+                            + ". Attribute will not be added.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            else
+            {
+                // oooops... namespace defaulting does not apply to attributes !!
+                // ns = xmlModel.findDefaultNamespace(attributesTableModel.getElement());
+                localName = newAttrName;
+            }
 
-			attributesTableModel.addAttribute(ns, prefix, localName);
-		}
-		else if (e.getActionCommand().equals("delete"))
-		{
-			int row = attributesTable.getSelectedRow();
-			if (row == -1)
-			{
-				System.out.println("no attribute selected");
-			}
-			else
-			{
-				attributesTableModel.deleteAttribute(row);
-			}
-		}
-	}
+            attributesTableModel.addAttribute(ns, prefix, localName);
+        }
+        else if (e.getActionCommand().equals("delete"))
+        {
+            int row = attributesTable.getSelectedRow();
+            if (row == -1)
+            {
+                System.out.println("no attribute selected");
+            }
+            else
+            {
+                attributesTableModel.deleteAttribute(row);
+            }
+        }
+    }
 
-	/**
-	 * Implementation of the SelectionListener interface.
-	 */
-	public void nodeSelected(Node node)
-	{
-		TableCellEditor cellEditor = attributesTable.getCellEditor();
-		if (cellEditor != null)
-		{
-			cellEditor.stopCellEditing();
-		}
+    /**
+     * Implementation of the SelectionListener interface.
+     */
+    public void nodeSelected(Node node)
+    {
+        TableCellEditor cellEditor = attributesTable.getCellEditor();
+        if (cellEditor != null)
+        {
+            cellEditor.stopCellEditing();
+        }
 
-		if (node instanceof Element)
-		{
-			attributesTableModel.setElement((Element)node);
-			setEnabled(true);
-		}
-		else
-		{
-			// if it's not an element node
-			attributesTableModel.setElement(null);
-			setEnabled(false);
-		}
+        if (node instanceof Element)
+        {
+            attributesTableModel.setElement((Element)node);
+            setEnabled(true);
+        }
+        else
+        {
+            // if it's not an element node
+            attributesTableModel.setElement(null);
+            setEnabled(false);
+        }
 
-		attributesTable.clearSelection();
-	}
+        attributesTable.clearSelection();
+    }
 
-	/**
-	 * Implementation of the SelectionListener interface.
-	 */
-	public void nodeUnselected(Node node)
-	{
-		setEnabled(false);
-		attributesTableModel.setElement(null);
-		attributesTable.clearSelection();
-	}
+    /**
+     * Implementation of the SelectionListener interface.
+     */
+    public void nodeUnselected(Node node)
+    {
+        setEnabled(false);
+        attributesTableModel.setElement(null);
+        attributesTable.clearSelection();
+    }
 
 
-	/**
-	 * Extension of JTable. Purpose is to be able to provide other cell editors.
-	 */
-	public class AttributesTable extends JTable
-	{
-		protected ISchema schema;
+    /**
+     * Extension of JTable. Purpose is to be able to provide other cell editors.
+     */
+    public class AttributesTable extends JTable
+    {
+        protected ISchema schema;
 
-		public AttributesTable(AttributesTableModel model, ISchema schema)
-		{
-			super(model);
-			this.schema = schema;
+        public AttributesTable(AttributesTableModel model, ISchema schema)
+        {
+            super(model);
+            this.schema = schema;
 
-			// the following will automatically transfer the focus to the
-			// cell editor when one starts typing. It also helps to solve
-			// another issue I encountered: when tapping space (while in the
-			// cell editor), the 'toggle expand' action was also triggered
-			// (because it is bound to Space via the menu)
-			//setSurrendersFocusOnKeystroke(true);
-			// Ooops.. this method is not available in java 1.3, therefore overided
-			//  processKeyBinding instead (see below)
+            // the following will automatically transfer the focus to the
+            // cell editor when one starts typing. It also helps to solve
+            // another issue I encountered: when tapping space (while in the
+            // cell editor), the 'toggle expand' action was also triggered
+            // (because it is bound to Space via the menu)
+            //setSurrendersFocusOnKeystroke(true);
+            // Ooops.. this method is not available in java 1.3, therefore overided
+            //  processKeyBinding instead (see below)
 
             // move focus back to the main editor widget when escape is pressed. Normally this would not
             // be needed here, but apparently JTable does not propagate event further.
@@ -231,103 +231,103 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
                         parentFocusComponent.requestFocus();
                 }
             });
-		}
+        }
 
-		
-		public TableCellEditor getCellEditor(int row, int column)
-		{
-			// if the schema has a list of values for this attribute, show that,
-			// or otherwise show the default cell editor.
-			AttributesTableModel model = (AttributesTableModel)getModel();
-			AttributesTableModel.TempAttrEditInfo taei = model.getTempAttrEditInfo(row);
-			TableCellEditor editor = attrEditorPlugin.getAttributeEditor(model.getElement(), taei.uri, taei.name);
-			if (editor != null)
-				return editor;
-			else
-				return super.getCellEditor(row, column);
-		}
+        
+        public TableCellEditor getCellEditor(int row, int column)
+        {
+            // if the schema has a list of values for this attribute, show that,
+            // or otherwise show the default cell editor.
+            AttributesTableModel model = (AttributesTableModel)getModel();
+            AttributesTableModel.TempAttrEditInfo taei = model.getTempAttrEditInfo(row);
+            TableCellEditor editor = attrEditorPlugin.getAttributeEditor(model.getElement(), taei.uri, taei.name);
+            if (editor != null)
+                return editor;
+            else
+                return super.getCellEditor(row, column);
+        }
 
-		public TableCellRenderer getCellRenderer(int row, int column)
-		{
-			return attributeTableCellRenderer;
-		}
+        public TableCellRenderer getCellRenderer(int row, int column)
+        {
+            return attributeTableCellRenderer;
+        }
 
-		public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend)
-		{
-			// Only cells in the second column should be selectable
-			super.changeSelection(rowIndex, 1, toggle, extend);
-		}
+        public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend)
+        {
+            // Only cells in the second column should be selectable
+            super.changeSelection(rowIndex, 1, toggle, extend);
+        }
 
-		protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
-						int condition, boolean pressed)
-		{
-			boolean retValue = super.processKeyBinding(ks, e, condition, pressed);
-			if (retValue == true)
-			{
-				Component editorComponent = getEditorComponent();
-				if (editorComponent != null)
-						editorComponent.requestFocus();
-			}
-			return retValue;
-		}
+        protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
+                        int condition, boolean pressed)
+        {
+            boolean retValue = super.processKeyBinding(ks, e, condition, pressed);
+            if (retValue == true)
+            {
+                Component editorComponent = getEditorComponent();
+                if (editorComponent != null)
+                        editorComponent.requestFocus();
+            }
+            return retValue;
+        }
 
-	}
+    }
 
 
-	public void setEnabled(boolean enabled)
-	{
-		super.setEnabled(enabled);
+    public void setEnabled(boolean enabled)
+    {
+        super.setEnabled(enabled);
 
-		attributesTable.setEnabled(enabled);
-		addAttrButton.setEnabled(enabled);
-		deleteAttrButton.setEnabled(enabled);
-	}
+        attributesTable.setEnabled(enabled);
+        addAttrButton.setEnabled(enabled);
+        deleteAttrButton.setEnabled(enabled);
+    }
 
-	public void requestFocus()
-	{
-		attributesTable.requestFocus();
-	}
+    public void requestFocus()
+    {
+        attributesTable.requestFocus();
+    }
 
-	public boolean highlightAttribute(String namespaceURI, String localName)
-	{
-		int maxAttrs = attributesTableModel.getRowCount();
-		for (int i = 0; i < maxAttrs; i++)
-		{
-			AttributesTableModel.TempAttrEditInfo taei = attributesTableModel.getTempAttrEditInfo(i);
-			if (((taei.uri == null && namespaceURI == null)
-						|| (namespaceURI != null && namespaceURI.equals(taei.uri)))
-					&& taei.name.equals(localName))
-			{
-				attributesTable.changeSelection(i, 0, false, false);
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean highlightAttribute(String namespaceURI, String localName)
+    {
+        int maxAttrs = attributesTableModel.getRowCount();
+        for (int i = 0; i < maxAttrs; i++)
+        {
+            AttributesTableModel.TempAttrEditInfo taei = attributesTableModel.getTempAttrEditInfo(i);
+            if (((taei.uri == null && namespaceURI == null)
+                        || (namespaceURI != null && namespaceURI.equals(taei.uri)))
+                    && taei.name.equals(localName))
+            {
+                attributesTable.changeSelection(i, 0, false, false);
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public JTable getAttributesTable()
-	{
-		return attributesTable;
-	}
+    public JTable getAttributesTable()
+    {
+        return attributesTable;
+    }
 
-	public AttributesTableModel getAttributesTableModel()
-	{
-		return attributesTableModel;
-	}
+    public AttributesTableModel getAttributesTableModel()
+    {
+        return attributesTableModel;
+    }
 
-	public void disconnectFromDom()
-	{
-		attributesTableModel.disconnectFromDom();
-	}
+    public void disconnectFromDom()
+    {
+        attributesTableModel.disconnectFromDom();
+    }
 
-	public void reconnectToDom()
-	{
-		attributesTableModel.reconnectToDom();
-	}
+    public void reconnectToDom()
+    {
+        attributesTableModel.reconnectToDom();
+    }
 
-	public void dispose()
-	{
-		if (attrEditorPlugin instanceof Disposable)
-			((Disposable)attrEditorPlugin).dispose();
-	}
+    public void dispose()
+    {
+        if (attrEditorPlugin instanceof Disposable)
+            ((Disposable)attrEditorPlugin).dispose();
+    }
 }

@@ -19,123 +19,123 @@ import java.awt.event.MouseEvent;
  */
 public interface View extends EventListener
 {
-	public void paint(Graphics gr, int startHorizontal, int startVertical);
+    public void paint(Graphics gr, int startHorizontal, int startVertical);
 
-	/**
-	 * The layout method is responsible for layouting the view, eg
-	 * defining where everything should be placed etc, so that the paint
-	 * method doesn't need to do a lot of calculations.
-	 *
-	 * @param width the available width
-	 *
-	 */
-	public void layout(int width);
+    /**
+     * The layout method is responsible for layouting the view, eg
+     * defining where everything should be placed etc, so that the paint
+     * method doesn't need to do a lot of calculations.
+     *
+     * @param width the available width
+     *
+     */
+    public void layout(int width);
 
-	/**
-	 * Returns the height of this view.
-	 */
-	public int getHeight();
+    /**
+     * Returns the height of this view.
+     */
+    public int getHeight();
 
-	/**
-	 * Relayouts the view when it's height has changed.
-	 * Used by the collapsing features.
-	 */
-	public void heightChanged(int amount);
+    /**
+     * Relayouts the view when it's height has changed.
+     * Used by the collapsing features.
+     */
+    public void heightChanged(int amount);
 
-	/**
-	 * Relayouts the view when it's width is changed, like
-	 * when the user resizes when the window. Returns the
-	 * new height.
-	 */
-	public int widthChanged(int amount);
+    /**
+     * Relayouts the view when it's width is changed, like
+     * when the user resizes when the window. Returns the
+     * new height.
+     */
+    public int widthChanged(int amount);
 
-	/**
-	 * Determines whether this view needs to be repainted.
-	 */
-	public boolean needsRepainting(int startVertical, int clipStartVertical, int clipEndVertical);
+    /**
+     * Determines whether this view needs to be repainted.
+     */
+    public boolean needsRepainting(int startVertical, int clipStartVertical, int clipEndVertical);
 
-	public int getWidth();
+    public int getWidth();
 
-	public void addChildView(View childView);
+    public void addChildView(View childView);
 
-	public void mousePressed          (MouseEvent e,              int startH, int startV);
-	public void dragGestureRecognized (DragGestureEvent event,    int startH, int startV);
-	public void dragOver              (DropTargetDragEvent event, int startH, int startV);
+    public void mousePressed          (MouseEvent e,              int startH, int startV);
+    public void dragGestureRecognized (DragGestureEvent event,    int startH, int startV);
+    public void dragOver              (DropTargetDragEvent event, int startH, int startV);
 
-	public Node getNode();
+    public Node getNode();
 
-	public void removeEventListeners();
+    public void removeEventListeners();
 
-	public boolean isCollapsed();
-	public void collapse();
-	public void collapseAll();
-	public void expand();
-	public void expandAll();
+    public boolean isCollapsed();
+    public void collapse();
+    public void collapseAll();
+    public void expand();
+    public void expandAll();
 
-	/**
-	 * This function will check if the view can be be made visible,
-	 * which consists of checking that none of it parents are collapsed.
-	 *
-	 * It will not make the view itself visible, to do that the method
-	 * scrollAlignTop/Bottom of XmlEditor could be used.
-	 *
-	 * @param recursive should be false
-	 */
-	public void assureVisibility(boolean recursive);
+    /**
+     * This function will check if the view can be be made visible,
+     * which consists of checking that none of it parents are collapsed.
+     *
+     * It will not make the view itself visible, to do that the method
+     * scrollAlignTop/Bottom of XmlEditor could be used.
+     *
+     * @param recursive should be false
+     */
+    public void assureVisibility(boolean recursive);
 
-	/**
-	 * This method returns the absolute vertical position of this view.
-	 * A view doesn't know it's absolute position, therefore it has to
-	 * ask its position at its parent, which again needs to ask it at
-	 * its parent, and so on until the root node is reached.
-	 */
-	public int getVerticalPosition();
+    /**
+     * This method returns the absolute vertical position of this view.
+     * A view doesn't know it's absolute position, therefore it has to
+     * ask its position at its parent, which again needs to ask it at
+     * its parent, and so on until the root node is reached.
+     */
+    public int getVerticalPosition();
 
-	/**
-	 * Returns the (absolute) vertical position of the given childView.
-	 */
-	public int getVerticalPosition(View wantedChildView);
+    /**
+     * Returns the (absolute) vertical position of the given childView.
+     */
+    public int getVerticalPosition(View wantedChildView);
 
-	/**
-	 * Analog to getVerticalPosition()
-	 */
-	public int getHorizontalPosition();
-	public int getHorizontalPosition(View wantedChildView);
+    /**
+     * Analog to getVerticalPosition()
+     */
+    public int getHorizontalPosition();
+    public int getHorizontalPosition(View wantedChildView);
 
-	public View getNextSibling();
+    public View getNextSibling();
 
-	public View getNextSibling(View childView);
+    public View getNextSibling(View childView);
 
-	/**
-	 * @param visible true if the next visible view should be
-	 * returned (eg if an element is collapsed, then that would
-	 * be the next sibling instead of the first child).
-	 */
-	public View getNext(boolean visible);
+    /**
+     * @param visible true if the next visible view should be
+     * returned (eg if an element is collapsed, then that would
+     * be the next sibling instead of the first child).
+     */
+    public View getNext(boolean visible);
 
-	/**
-	 * Get the next view but not a child view.
-	 */
-	public View getNextButNotChild();
+    /**
+     * Get the next view but not a child view.
+     */
+    public View getNextButNotChild();
 
-	public View getPreviousSibling();
+    public View getPreviousSibling();
 
-	public View getPreviousSibling(View childView);
+    public View getPreviousSibling(View childView);
 
-	public View getPrevious(boolean visible);
+    public View getPrevious(boolean visible);
 
-	public void markAsSelected(int startH, int startV);
+    public void markAsSelected(int startH, int startV);
 
-	/**
-	 * For views with childviews, this should return recursively the last child
-	 * of the view. Thus the last child of the last child of the last child of...
-	 * Or return itself if it has no childs.
-	 */
-	public View getLastChild(boolean visible);
+    /**
+     * For views with childviews, this should return recursively the last child
+     * of the view. Thus the last child of the last child of the last child of...
+     * Or return itself if it has no childs.
+     */
+    public View getLastChild(boolean visible);
 
-	/**
-	 * Finds the View that corresponds to the given node. Returns null
-	 * if it is not found.
-	 */
-	public View findNode(Node node);
+    /**
+     * Finds the View that corresponds to the given node. Returns null
+     * if it is not found.
+     */
+    public View findNode(Node node);
 }

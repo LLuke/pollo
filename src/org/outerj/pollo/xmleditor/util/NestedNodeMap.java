@@ -23,129 +23,129 @@ import java.util.HashMap;
  */
 public class NestedNodeMap
 {
-	protected final HashMap hashMap = new HashMap();
+    protected final HashMap hashMap = new HashMap();
 
-	public void put(String namespaceURI, String localName, Object object)
-	{
-		NodeEntry newNodeEntry = new NodeEntry();
-		newNodeEntry.value = object;
-		hashMap.put(getHashString(namespaceURI, localName), newNodeEntry);
-	}
+    public void put(String namespaceURI, String localName, Object object)
+    {
+        NodeEntry newNodeEntry = new NodeEntry();
+        newNodeEntry.value = object;
+        hashMap.put(getHashString(namespaceURI, localName), newNodeEntry);
+    }
 
-	/**
-	 * Puts an object in the map, whose key is a (possibly) a nested
-	 * element path, e.g. "parentelement/childelement". Thus the element
-	 * names are separated by slashes, but the element path should not start
-	 * with a slash.
-	 */
-	public void put(String nestedElementPath, Object value, NamespaceSupport namespaceSupport)
-	{
-		String currentElement = null;
-		String restOfThePath = null;
-		int pos = nestedElementPath.lastIndexOf('/');
-		if (pos != -1)
-		{
-			restOfThePath = nestedElementPath.substring(0, pos);
-			currentElement = nestedElementPath.substring(pos + 1);
-		}
-		else
-		{
-			currentElement = nestedElementPath;
-		}
+    /**
+     * Puts an object in the map, whose key is a (possibly) a nested
+     * element path, e.g. "parentelement/childelement". Thus the element
+     * names are separated by slashes, but the element path should not start
+     * with a slash.
+     */
+    public void put(String nestedElementPath, Object value, NamespaceSupport namespaceSupport)
+    {
+        String currentElement = null;
+        String restOfThePath = null;
+        int pos = nestedElementPath.lastIndexOf('/');
+        if (pos != -1)
+        {
+            restOfThePath = nestedElementPath.substring(0, pos);
+            currentElement = nestedElementPath.substring(pos + 1);
+        }
+        else
+        {
+            currentElement = nestedElementPath;
+        }
 
-		// split element name in namespaceURI and localName parts
-		String[] nameParts = new String[3];
-		nameParts = namespaceSupport.processName(currentElement, nameParts, false);
-		String namespaceURI = nameParts[0].equals("") ? null : nameParts[0];
-		String localName = nameParts[1];
+        // split element name in namespaceURI and localName parts
+        String[] nameParts = new String[3];
+        nameParts = namespaceSupport.processName(currentElement, nameParts, false);
+        String namespaceURI = nameParts[0].equals("") ? null : nameParts[0];
+        String localName = nameParts[1];
 
-		NodeEntry nodeEntry = null;
-		// if there's an existing entry, we'll extend the information in there
-		nodeEntry = (NodeEntry) hashMap.get(getHashString(namespaceURI, localName));
-		if (nodeEntry == null)
-			nodeEntry = new NodeEntry();
+        NodeEntry nodeEntry = null;
+        // if there's an existing entry, we'll extend the information in there
+        nodeEntry = (NodeEntry) hashMap.get(getHashString(namespaceURI, localName));
+        if (nodeEntry == null)
+            nodeEntry = new NodeEntry();
 
-		if (restOfThePath != null)
-		{
-			if (nodeEntry.nestedNodes == null)
-				nodeEntry.nestedNodes = new NestedNodeMap();
-			nodeEntry.nestedNodes.put(restOfThePath, value, namespaceSupport);
-		}
-		else
-		{
-			nodeEntry.value = value;
-		}
-		hashMap.put(getHashString(namespaceURI, localName), nodeEntry);
-	}
+        if (restOfThePath != null)
+        {
+            if (nodeEntry.nestedNodes == null)
+                nodeEntry.nestedNodes = new NestedNodeMap();
+            nodeEntry.nestedNodes.put(restOfThePath, value, namespaceSupport);
+        }
+        else
+        {
+            nodeEntry.value = value;
+        }
+        hashMap.put(getHashString(namespaceURI, localName), nodeEntry);
+    }
 
-	public Object get(String namespaceURI, String localName)
-	{
-		NodeEntry nodeEntry = (NodeEntry) hashMap.get(getHashString(namespaceURI, localName));
-		if (nodeEntry != null)
-			return nodeEntry.value;
-		else
-			return null;
-	}
+    public Object get(String namespaceURI, String localName)
+    {
+        NodeEntry nodeEntry = (NodeEntry) hashMap.get(getHashString(namespaceURI, localName));
+        if (nodeEntry != null)
+            return nodeEntry.value;
+        else
+            return null;
+    }
 
-	/**
-	 * This method will search for the object that best matches the given
-	 * element, it will take into account the parent nodes of the element.
-	 */
-	public Object get(Element element)
-	{
-		NodeEntry nodeEntry = (NodeEntry) hashMap.get(getHashString(element.getNamespaceURI(), element.getLocalName()));
-		if (nodeEntry != null)
-		{
-			if (element.getParentNode() instanceof Element)
-			{
-				if (nodeEntry.nestedNodes != null)
-				{
-					Object value = nodeEntry.nestedNodes.get((Element) element.getParentNode());
-					if (value != null)
-						return value;
-					else
-						return nodeEntry.value;
-				}
-			}
-			return nodeEntry.value;
-		}
-		return null;
-	}
+    /**
+     * This method will search for the object that best matches the given
+     * element, it will take into account the parent nodes of the element.
+     */
+    public Object get(Element element)
+    {
+        NodeEntry nodeEntry = (NodeEntry) hashMap.get(getHashString(element.getNamespaceURI(), element.getLocalName()));
+        if (nodeEntry != null)
+        {
+            if (element.getParentNode() instanceof Element)
+            {
+                if (nodeEntry.nestedNodes != null)
+                {
+                    Object value = nodeEntry.nestedNodes.get((Element) element.getParentNode());
+                    if (value != null)
+                        return value;
+                    else
+                        return nodeEntry.value;
+                }
+            }
+            return nodeEntry.value;
+        }
+        return null;
+    }
 
-	/**
-	 * This method is usefull if you don't have an 'Element' object yet
-	 * for looking up the object, but you do have an Element object for the
-	 * parent of this node.
-	 *
-	 * @param parent can be null
-	 */
-	public Object get(String namespaceURI, String localName, Element parent)
-	{
-		NodeEntry nodeEntry = (NodeEntry) hashMap.get(getHashString(namespaceURI, localName));
-		if (nodeEntry != null)
-		{
-			if (nodeEntry.nestedNodes != null && parent != null)
-			{
-				Object value = nodeEntry.nestedNodes.get((Element) parent);
-				if (value != null)
-					return value;
-			}
-			return nodeEntry.value;
-		}
-		return null;
-	}
+    /**
+     * This method is usefull if you don't have an 'Element' object yet
+     * for looking up the object, but you do have an Element object for the
+     * parent of this node.
+     *
+     * @param parent can be null
+     */
+    public Object get(String namespaceURI, String localName, Element parent)
+    {
+        NodeEntry nodeEntry = (NodeEntry) hashMap.get(getHashString(namespaceURI, localName));
+        if (nodeEntry != null)
+        {
+            if (nodeEntry.nestedNodes != null && parent != null)
+            {
+                Object value = nodeEntry.nestedNodes.get((Element) parent);
+                if (value != null)
+                    return value;
+            }
+            return nodeEntry.value;
+        }
+        return null;
+    }
 
-	private final String getHashString(String uri, String localName)
-	{
-		if (uri == null) uri = "";
-		StringBuffer fqn = new StringBuffer();
-		fqn.append("{").append(uri).append("}").append(localName);
-		return fqn.toString();
-	}
+    private final String getHashString(String uri, String localName)
+    {
+        if (uri == null) uri = "";
+        StringBuffer fqn = new StringBuffer();
+        fqn.append("{").append(uri).append("}").append(localName);
+        return fqn.toString();
+    }
 
-	public class NodeEntry
-	{
-		public Object value;
-		public NestedNodeMap nestedNodes;
-	}
+    public class NodeEntry
+    {
+        public Object value;
+        public NestedNodeMap nestedNodes;
+    }
 }

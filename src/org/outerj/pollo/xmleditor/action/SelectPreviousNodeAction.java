@@ -15,24 +15,24 @@ import java.awt.event.ActionEvent;
  */
 public class SelectPreviousNodeAction extends AbstractAction
 {
-	protected XmlEditor xmlEditor;
+    protected XmlEditor xmlEditor;
 
-	public SelectPreviousNodeAction(XmlEditor xmlEditor)
-	{
-		super("Select previous node", EmptyIcon.getInstance());
-		this.xmlEditor = xmlEditor;
-	}
+    public SelectPreviousNodeAction(XmlEditor xmlEditor)
+    {
+        super("Select previous node", EmptyIcon.getInstance());
+        this.xmlEditor = xmlEditor;
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		View selectedView = xmlEditor.getSelectionInfo().getSelectedNodeView();
-		if (selectedView != null)
-		{
-			View prevView = selectedView.getPrevious(true);
-			int startV = prevView.getVerticalPosition();
-			int startH = prevView.getHorizontalPosition();
-			prevView.markAsSelected(startH, startV);
-			xmlEditor.scrollAlignTop(startV, prevView.getHeight());
-		}
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        View selectedView = xmlEditor.getSelectionInfo().getSelectedNodeView();
+        if (selectedView != null)
+        {
+            View prevView = selectedView.getPrevious(true);
+            int startV = prevView.getVerticalPosition();
+            int startH = prevView.getHorizontalPosition();
+            prevView.markAsSelected(startH, startV);
+            xmlEditor.scrollAlignTop(startV, prevView.getHeight());
+        }
+    }
 }

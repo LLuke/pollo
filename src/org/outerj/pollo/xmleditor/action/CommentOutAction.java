@@ -25,75 +25,75 @@ import java.io.StringWriter;
  */
 public class CommentOutAction extends AbstractAction implements SelectionListener
 {
-	protected XmlEditor xmlEditor;
+    protected XmlEditor xmlEditor;
 
-	public CommentOutAction(XmlEditor xmlEditor)
-	{
-		super("Comment out", EmptyIcon.getInstance());
+    public CommentOutAction(XmlEditor xmlEditor)
+    {
+        super("Comment out", EmptyIcon.getInstance());
 
-		this.xmlEditor = xmlEditor;
+        this.xmlEditor = xmlEditor;
 
-		xmlEditor.getSelectionInfo().addListener(this);
-		setEnabled(false);
-	}
+        xmlEditor.getSelectionInfo().addListener(this);
+        setEnabled(false);
+    }
 
-	public void actionPerformed(ActionEvent event)
-	{
-		Node selectedNode = xmlEditor.getSelectedNode();
+    public void actionPerformed(ActionEvent event)
+    {
+        Node selectedNode = xmlEditor.getSelectedNode();
 
-		if (selectedNode instanceof Document)
-		{
-			JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
-					"You cannot comment out the XML document itself.");	
-			return;
-		}
-		StringWriter commentWriter = new StringWriter();
+        if (selectedNode instanceof Document)
+        {
+            JOptionPane.showMessageDialog(xmlEditor.getTopLevelAncestor(),
+                    "You cannot comment out the XML document itself."); 
+            return;
+        }
+        StringWriter commentWriter = new StringWriter();
 
-		try
-		{
-			OutputFormat outputFormat = new OutputFormat();
-			outputFormat.setIndenting(true);
-			outputFormat.setIndent(2);
-			outputFormat.setOmitXMLDeclaration(true);
+        try
+        {
+            OutputFormat outputFormat = new OutputFormat();
+            outputFormat.setIndenting(true);
+            outputFormat.setIndent(2);
+            outputFormat.setOmitXMLDeclaration(true);
 
-			XMLSerializer serializer = new XMLSerializer(commentWriter, outputFormat);
-			serializer.serialize((Element)selectedNode);
+            XMLSerializer serializer = new XMLSerializer(commentWriter, outputFormat);
+            serializer.serialize((Element)selectedNode);
 
-			/* JAXP
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty("omit-xml-declaration", "yes");
-			transformer.transform(new DOMSource(selectedNode), new StreamResult(commentWriter));
-			*/
-		}
-		catch (Exception e)
-		{
-			ErrorDialog errorDialog = new ErrorDialog((Frame)xmlEditor.getTopLevelAncestor(),
-					"Could not serialize the selected node.", e);
-			errorDialog.show();
-			return;
-		}
+            /* JAXP
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty("omit-xml-declaration", "yes");
+            transformer.transform(new DOMSource(selectedNode), new StreamResult(commentWriter));
+            */
+        }
+        catch (Exception e)
+        {
+            ErrorDialog errorDialog = new ErrorDialog((Frame)xmlEditor.getTopLevelAncestor(),
+                    "Could not serialize the selected node.", e);
+            errorDialog.show();
+            return;
+        }
 
-		Node parent = selectedNode.getParentNode();
+        Node parent = selectedNode.getParentNode();
 
-		Node newNode = xmlEditor.getXmlModel().getDocument().createComment(commentWriter.toString());
+        Node newNode = xmlEditor.getXmlModel().getDocument().createComment(commentWriter.toString());
 
-		Undo undo = xmlEditor.getXmlModel().getUndo();
-		undo.startUndoTransaction("Comment out node of the node <" + selectedNode.getLocalName() + ">");
-		parent.insertBefore(newNode, selectedNode);
-		parent.removeChild(selectedNode);
-		undo.endUndoTransaction();
+        Undo undo = xmlEditor.getXmlModel().getUndo();
+        undo.startUndoTransaction("Comment out node of the node <" + selectedNode.getLocalName() + ">");
+        parent.insertBefore(newNode, selectedNode);
+        parent.removeChild(selectedNode);
+        undo.endUndoTransaction();
 
-	}
+    }
 
-	public void nodeUnselected(Node node)
-	{
-		setEnabled(false);
-	}
+    public void nodeUnselected(Node node)
+    {
+        setEnabled(false);
+    }
 
-	public void nodeSelected(Node node)
-	{
-		if (!(node instanceof Comment))
-			setEnabled(true);
-	}
+    public void nodeSelected(Node node)
+    {
+        if (!(node instanceof Comment))
+            setEnabled(true);
+    }
 }

@@ -9,20 +9,20 @@ import java.awt.event.ActionEvent;
 
 public class HelpAction extends AbstractAction
 {
-	protected PolloFrame polloFrame;
+    protected PolloFrame polloFrame;
 
-	public HelpAction(PolloFrame polloFrame)
-	{
-		ResourceManager resMgr = ResourceManager.getManager(HelpAction.class);
+    public HelpAction(PolloFrame polloFrame)
+    {
+        ResourceManager resMgr = ResourceManager.getManager(HelpAction.class);
         resMgr.configureAction(this);
 
-		this.polloFrame = polloFrame;
-	}
+        this.polloFrame = polloFrame;
+    }
 
 
 
-	public void actionPerformed(ActionEvent e)
-	{
+    public void actionPerformed(ActionEvent e)
+    {
         JOptionPane.showMessageDialog(polloFrame, "Help is available from Pollo's website at http://pollo.sf.net");
-	}
+    }
 }

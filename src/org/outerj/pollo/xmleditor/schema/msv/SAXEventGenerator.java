@@ -55,9 +55,9 @@ public class SAXEventGenerator implements IDOMVisitor {
     private DeclHandler decl_;
     private LexicalHandler lexical_;
     private ErrorHandler error_;
-	private Element lastElement_; // last element that was streamed
-	private CharacterData lastCharacterData_; // last character data that was streamed
-	private Node stopAtNode_ = null;
+    private Element lastElement_; // last element that was streamed
+    private CharacterData lastCharacterData_; // last character data that was streamed
+    private Node stopAtNode_ = null;
 
     private final NamespaceSupport namespace_ = new NamespaceSupport();
 
@@ -72,10 +72,10 @@ public class SAXEventGenerator implements IDOMVisitor {
         decl_ = new DeclHandlerBase();
     }
 
-	public void stopAtNode(Node node)
-	{
-		stopAtNode_ = node;
-	}
+    public void stopAtNode(Node node)
+    {
+        stopAtNode_ = node;
+    }
 
     public void setDocumentEmulation(boolean emulate) {
         needDocumentEmulation_ = emulate;
@@ -157,8 +157,8 @@ public class SAXEventGenerator implements IDOMVisitor {
             }
             String localName = element.getLocalName();
             String qName = element.getTagName();
-			if(localName==null)	localName = qName;
-			
+            if(localName==null) localName = qName;
+            
             NamedNodeMap attrMap = element.getAttributes();
             AttributesImpl attrs = new AttributesImpl();
             int size = attrMap.getLength();
@@ -170,7 +170,7 @@ public class SAXEventGenerator implements IDOMVisitor {
                 }
                 String attrLocalName = attr.getLocalName();
                 String attrQName = attr.getName();
-				if(attrLocalName==null)	attrLocalName = attrQName;
+                if(attrLocalName==null) attrLocalName = attrQName;
                 String attrValue = attr.getValue();
                 if (attrQName.startsWith("xmlns:")) {
                     String prefix;
@@ -195,10 +195,10 @@ public class SAXEventGenerator implements IDOMVisitor {
                     );
                 }
             }
-			lastElement_ = element;
+            lastElement_ = element;
 
-			if (element == stopAtNode_)
-				((PolloMsvVerifier)content_).setStopNow(true);
+            if (element == stopAtNode_)
+                ((PolloMsvVerifier)content_).setStopNow(true);
 
             content_.startElement(namespaceURI, localName, qName, attrs);
         } catch (SAXException e) {
@@ -213,7 +213,7 @@ public class SAXEventGenerator implements IDOMVisitor {
 
     public boolean enter(Text text) {
         try {
-			lastCharacterData_ = text;
+            lastCharacterData_ = text;
             String data = text.getData();
             content_.characters(data.toCharArray(), 0, data.length());
         } catch (SAXException e) {
@@ -224,7 +224,7 @@ public class SAXEventGenerator implements IDOMVisitor {
 
     public boolean enter(CDATASection cdata) {
         try {
-			lastCharacterData_ = cdata;
+            lastCharacterData_ = cdata;
             lexical_.startCDATA();
             String data = cdata.getData();
             content_.characters(data.toCharArray(), 0, data.length());
@@ -409,7 +409,7 @@ public class SAXEventGenerator implements IDOMVisitor {
             }
             String localName = element.getLocalName();
             String qName = element.getTagName();
-			if(localName==null)		localName=qName;
+            if(localName==null)     localName=qName;
             content_.endElement(namespaceURI, localName, qName);
             namespace_.popContext();
         } catch (SAXException e) {
@@ -497,14 +497,14 @@ public class SAXEventGenerator implements IDOMVisitor {
         }
     }
 
-	public Node getLastElement()
-	{
-		return lastElement_;
-	}
+    public Node getLastElement()
+    {
+        return lastElement_;
+    }
 
-	public Node getLastCharacterData()
-	{
-		return lastCharacterData_;
-	}
+    public Node getLastCharacterData()
+    {
+        return lastCharacterData_;
+    }
 
 }

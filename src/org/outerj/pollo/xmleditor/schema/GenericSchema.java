@@ -16,38 +16,38 @@ import java.util.HashMap;
  */
 public class GenericSchema implements ISchema
 {
-	public void init(HashMap initParams)
-	{
-	}
+    public void init(HashMap initParams)
+    {
+    }
 
-	public Collection getAttributesFor(Element element)
-	{
-		return Collections.EMPTY_LIST;
-	}
+    public Collection getAttributesFor(Element element)
+    {
+        return Collections.EMPTY_LIST;
+    }
 
-	public boolean isChildAllowed(Element parent, Element child)
-	{
-		return true;
-	}
+    public boolean isChildAllowed(Element parent, Element child)
+    {
+        return true;
+    }
 
-	public String [] getPossibleAttributeValues(Element element, String namespaceURI, String localName)
-	{
-		return new String[0];
-	}
+    public String [] getPossibleAttributeValues(Element element, String namespaceURI, String localName)
+    {
+        return new String[0];
+    }
 
-	public Collection getAllowedSubElements(Element element)
-	{
-		return Collections.EMPTY_LIST;
-	}
+    public Collection getAllowedSubElements(Element element)
+    {
+        return Collections.EMPTY_LIST;
+    }
 
-	public Collection getAllowedSubTexts(Element element)
-	{
-		return Collections.EMPTY_LIST;
-	}
+    public Collection getAllowedSubTexts(Element element)
+    {
+        return Collections.EMPTY_LIST;
+    }
 
-	public Collection validate(Document doc)
-		throws ValidationNotSupportedException
-	{
-		throw new ValidationNotSupportedException();
-	}
+    public Collection validate(Document doc)
+        throws ValidationNotSupportedException
+    {
+        throw new ValidationNotSupportedException();
+    }
 }

@@ -11,16 +11,16 @@ public class ExpandAllAction extends AbstractNodeAction
 {
     protected static final ResourceManager resourceManager = ResourceManager.getManager(ExpandAllAction.class);
 
-	public ExpandAllAction(XmlEditor xmlEditor)
-	{
-		super(xmlEditor);
+    public ExpandAllAction(XmlEditor xmlEditor)
+    {
+        super(xmlEditor);
         resourceManager.configureAction(this);
-	}
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		View view = xmlEditor.getSelectionInfo().getSelectedNodeView();
-		if (view.getNode().getNodeType() != Node.DOCUMENT_NODE)
-			view.expandAll();
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        View view = xmlEditor.getSelectionInfo().getSelectedNodeView();
+        if (view.getNode().getNodeType() != Node.DOCUMENT_NODE)
+            view.expandAll();
+    }
 }

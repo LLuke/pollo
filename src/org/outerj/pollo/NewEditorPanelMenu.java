@@ -19,55 +19,55 @@ import java.util.List;
  */
 public class NewEditorPanelMenu extends JMenu implements MenuListener
 {
-	PolloFrame polloFrame;
+    PolloFrame polloFrame;
 
-	public NewEditorPanelMenu(PolloFrame polloFrame)
-	{
-		ResourceManager resMgr = ResourceManager.getManager(NewEditorPanelMenu.class);
-		resMgr.configureMenu( this );
-		this.polloFrame = polloFrame;
-		addMenuListener(this);
-	}
+    public NewEditorPanelMenu(PolloFrame polloFrame)
+    {
+        ResourceManager resMgr = ResourceManager.getManager(NewEditorPanelMenu.class);
+        resMgr.configureMenu( this );
+        this.polloFrame = polloFrame;
+        addMenuListener(this);
+    }
 
-	public void menuSelected(MenuEvent e)
-	{
-		removeAll();
-		// create the items in the menu, one for each XmlModel
-		List openFiles = Pollo.getInstance().getOpenFiles();
-		Iterator it = openFiles.iterator();
-		while (it.hasNext())
-		{
-			XmlModel xmlModel = (XmlModel)it.next();
-			add(new NewEditorPanelAction(xmlModel));
-		}
-	}
+    public void menuSelected(MenuEvent e)
+    {
+        removeAll();
+        // create the items in the menu, one for each XmlModel
+        List openFiles = Pollo.getInstance().getOpenFiles();
+        Iterator it = openFiles.iterator();
+        while (it.hasNext())
+        {
+            XmlModel xmlModel = (XmlModel)it.next();
+            add(new NewEditorPanelAction(xmlModel));
+        }
+    }
 
-	public void menuDeselected(MenuEvent e)
-	{
-	}
+    public void menuDeselected(MenuEvent e)
+    {
+    }
 
-	public void menuCanceled(MenuEvent e)
-	{
-	}
+    public void menuCanceled(MenuEvent e)
+    {
+    }
 
-	public class NewEditorPanelAction extends AbstractAction
-	{
-		XmlModel xmlModel;
+    public class NewEditorPanelAction extends AbstractAction
+    {
+        XmlModel xmlModel;
 
-		public NewEditorPanelAction(XmlModel xmlModel)
-		{
-			this.xmlModel = xmlModel;
+        public NewEditorPanelAction(XmlModel xmlModel)
+        {
+            this.xmlModel = xmlModel;
 
-			// set the action name
-			putValue(Action.NAME, xmlModel.getLongTitle());
-		}
+            // set the action name
+            putValue(Action.NAME, xmlModel.getLongTitle());
+        }
 
-		public void actionPerformed(ActionEvent e)
-		{
-			EditorPanel editorPanel = Pollo.getInstance().createEditorPanel(xmlModel, polloFrame);
-			if (editorPanel != null)
-				polloFrame.addEditorPanel(editorPanel);
-		}
-	}
+        public void actionPerformed(ActionEvent e)
+        {
+            EditorPanel editorPanel = Pollo.getInstance().createEditorPanel(xmlModel, polloFrame);
+            if (editorPanel != null)
+                polloFrame.addEditorPanel(editorPanel);
+        }
+    }
 
 }

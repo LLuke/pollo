@@ -10,23 +10,23 @@ import java.util.HashMap;
 
 public class CocoonActionPluginFactory implements IActionPluginFactory
 {
-	/**
-	 * Note: when this method is called, editorPanelImpl will not yet be fully initialised, so during
-	 * initialisation the Action Plugin should not call methods on EditorPanel.
-	 */
-	public IActionPlugin getActionPlugin(HashMap initParams, EditorPanel editorPanel, PolloFrame polloFrame)
-			throws PolloException
-	{
-		try
-		{
-			CocoonActionPlugin plugin = new CocoonActionPlugin();
-			plugin.init(initParams, editorPanel, polloFrame);
-			return plugin;
-		}
-		catch (Exception e)
-		{
-			throw new PolloException("[CocoonActionPluginFactory] Could not create plugin.", e);
-		}
-	}
+    /**
+     * Note: when this method is called, editorPanelImpl will not yet be fully initialised, so during
+     * initialisation the Action Plugin should not call methods on EditorPanel.
+     */
+    public IActionPlugin getActionPlugin(HashMap initParams, EditorPanel editorPanel, PolloFrame polloFrame)
+            throws PolloException
+    {
+        try
+        {
+            CocoonActionPlugin plugin = new CocoonActionPlugin();
+            plugin.init(initParams, editorPanel, polloFrame);
+            return plugin;
+        }
+        catch (Exception e)
+        {
+            throw new PolloException("[CocoonActionPluginFactory] Could not create plugin.", e);
+        }
+    }
 
 }

@@ -11,28 +11,28 @@ import java.awt.event.ActionEvent;
 
 public class SaveAsAction extends AbstractAction
 {
-	private XmlModel xmlModel;
-	protected PolloFrame polloFrame;
+    private XmlModel xmlModel;
+    protected PolloFrame polloFrame;
 
-	public SaveAsAction(XmlModel xmlModel, PolloFrame polloFrame)
-	{
-		ResourceManager resMgr = ResourceManager.getManager(SaveAsAction.class);
+    public SaveAsAction(XmlModel xmlModel, PolloFrame polloFrame)
+    {
+        ResourceManager resMgr = ResourceManager.getManager(SaveAsAction.class);
         resMgr.configureAction(this);
 
-		this.xmlModel = xmlModel;
-		this.polloFrame = polloFrame;
-	}
+        this.xmlModel = xmlModel;
+        this.polloFrame = polloFrame;
+    }
 
-	public void actionPerformed(ActionEvent event)
-	{
-		try
-		{
-			xmlModel.saveAs(polloFrame);
-		}
-		catch (Exception e)
-		{
-			ErrorDialog errorDialog = new ErrorDialog(polloFrame, "Error saving document.", e);
-			errorDialog.show();
-		}
-	}
+    public void actionPerformed(ActionEvent event)
+    {
+        try
+        {
+            xmlModel.saveAs(polloFrame);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog errorDialog = new ErrorDialog(polloFrame, "Error saving document.", e);
+            errorDialog.show();
+        }
+    }
 }

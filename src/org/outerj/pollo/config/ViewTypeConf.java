@@ -18,132 +18,132 @@ import java.util.Iterator;
 
 public class ViewTypeConf
 {
-	public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-			org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
+    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
+            org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
 
-	protected String name;
-	protected String description;
-	protected String className;
-	protected ArrayList schemas = new ArrayList();
-	protected ArrayList displaySpecs = new ArrayList();
-	protected ArrayList attrEditorPlugins = new ArrayList();
-	protected ArrayList actionPlugins = new ArrayList();
+    protected String name;
+    protected String description;
+    protected String className;
+    protected ArrayList schemas = new ArrayList();
+    protected ArrayList displaySpecs = new ArrayList();
+    protected ArrayList attrEditorPlugins = new ArrayList();
+    protected ArrayList actionPlugins = new ArrayList();
 
-	public String getName()
-	{
-		return name;
-	}
+    public String getName()
+    {
+        return name;
+    }
 
-	public void setName(String name)
-	{
-		logcat.debug("ViewType.setName: " + name);
-		this.name = name;
-	}
+    public void setName(String name)
+    {
+        logcat.debug("ViewType.setName: " + name);
+        this.name = name;
+    }
 
-	public String getDescription()
-	{
-		return description;
-	}
+    public String getDescription()
+    {
+        return description;
+    }
 
-	public void setDescription(String description)
-	{
-		logcat.debug("ViewType.setDescription: " + description);
-		this.description = description;
-	}
+    public void setDescription(String description)
+    {
+        logcat.debug("ViewType.setDescription: " + description);
+        this.description = description;
+    }
 
-	public String getClassName()
-	{
-		return className;
-	}
+    public String getClassName()
+    {
+        return className;
+    }
 
-	public void setClassName(String className)
-	{
-		logcat.debug("ViewType.setClassName: " + className);
-		this.className = className;
-	}
+    public void setClassName(String className)
+    {
+        logcat.debug("ViewType.setClassName: " + className);
+        this.className = className;
+    }
 
-	public void addSchema(SchemaConfItem schema)
-	{
-		schemas.add(schema);
-	}
+    public void addSchema(SchemaConfItem schema)
+    {
+        schemas.add(schema);
+    }
 
-	public void addDisplaySpec(DisplaySpecConfItem displaySpec)
-	{
-		displaySpecs.add(displaySpec);
-	}
+    public void addDisplaySpec(DisplaySpecConfItem displaySpec)
+    {
+        displaySpecs.add(displaySpec);
+    }
 
-	public void addAttrEditorPlugin(AttrEditorPluginConfItem attrEditorPlugin)
-	{
-		attrEditorPlugins.add(attrEditorPlugin);
-	}
+    public void addAttrEditorPlugin(AttrEditorPluginConfItem attrEditorPlugin)
+    {
+        attrEditorPlugins.add(attrEditorPlugin);
+    }
 
-	public void addActionPlugin(ActionPluginConfItem actionPlugin)
-	{
-		actionPlugins.add(actionPlugin);
-	}
+    public void addActionPlugin(ActionPluginConfItem actionPlugin)
+    {
+        actionPlugins.add(actionPlugin);
+    }
 
-	public ISchema createSchemaChain()
-		throws PolloException
-	{
-		ChainedSchema schemaChain = new ChainedSchema();
+    public ISchema createSchemaChain()
+        throws PolloException
+    {
+        ChainedSchema schemaChain = new ChainedSchema();
 
-		Iterator it = schemas.iterator();
-		while (it.hasNext())
-		{
-			SchemaConfItem conf = (SchemaConfItem)it.next();
-			schemaChain.add(conf.createSchema());
-		}
+        Iterator it = schemas.iterator();
+        while (it.hasNext())
+        {
+            SchemaConfItem conf = (SchemaConfItem)it.next();
+            schemaChain.add(conf.createSchema());
+        }
 
-		return schemaChain;
-	}
+        return schemaChain;
+    }
 
-	public IDisplaySpecification createDisplaySpecChain()
-		throws PolloException
-	{
-		ChainedDisplaySpecification displaySpecChain = new ChainedDisplaySpecification();
+    public IDisplaySpecification createDisplaySpecChain()
+        throws PolloException
+    {
+        ChainedDisplaySpecification displaySpecChain = new ChainedDisplaySpecification();
 
-		Iterator it = displaySpecs.iterator();
-		while (it.hasNext())
-		{
-			DisplaySpecConfItem conf = (DisplaySpecConfItem)it.next();
-			displaySpecChain.add(conf.createDisplaySpec());
-		}
+        Iterator it = displaySpecs.iterator();
+        while (it.hasNext())
+        {
+            DisplaySpecConfItem conf = (DisplaySpecConfItem)it.next();
+            displaySpecChain.add(conf.createDisplaySpec());
+        }
 
-		return displaySpecChain;
-	}
+        return displaySpecChain;
+    }
 
-	public IAttributeEditorPlugin createAttrEditorPluginChain(XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
-		throws PolloException
-	{
-		AttrEditorPluginChain attrEditorPluginChain = new AttrEditorPluginChain();
+    public IAttributeEditorPlugin createAttrEditorPluginChain(XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
+        throws PolloException
+    {
+        AttrEditorPluginChain attrEditorPluginChain = new AttrEditorPluginChain();
 
-		Iterator it = attrEditorPlugins.iterator();
-		while (it.hasNext())
-		{
-			AttrEditorPluginConfItem conf = (AttrEditorPluginConfItem)it.next();
-			attrEditorPluginChain.add(conf.createPlugin(xmlModel, schema, polloFrame));
-		}
+        Iterator it = attrEditorPlugins.iterator();
+        while (it.hasNext())
+        {
+            AttrEditorPluginConfItem conf = (AttrEditorPluginConfItem)it.next();
+            attrEditorPluginChain.add(conf.createPlugin(xmlModel, schema, polloFrame));
+        }
 
-		return attrEditorPluginChain;
-	}
+        return attrEditorPluginChain;
+    }
 
-	public IActionPlugin createActionPlugins(EditorPanel editorPanel, PolloFrame polloFrame)
-		throws PolloException
-	{
-		ActionPluginChain actionPluginChain = new ActionPluginChain();
+    public IActionPlugin createActionPlugins(EditorPanel editorPanel, PolloFrame polloFrame)
+        throws PolloException
+    {
+        ActionPluginChain actionPluginChain = new ActionPluginChain();
 
-		Iterator it = actionPlugins.iterator();
-		while (it.hasNext())
-		{
-			ActionPluginConfItem conf = (ActionPluginConfItem)it.next();
-			actionPluginChain.add(conf.createActionPlugin(editorPanel, polloFrame));
-		}
+        Iterator it = actionPlugins.iterator();
+        while (it.hasNext())
+        {
+            ActionPluginConfItem conf = (ActionPluginConfItem)it.next();
+            actionPluginChain.add(conf.createActionPlugin(editorPanel, polloFrame));
+        }
 
-		return actionPluginChain;
-	}
+        return actionPluginChain;
+    }
 
-	public String toString()
-	{
-		return description;
-	}
+    public String toString()
+    {
+        return description;
+    }
 }

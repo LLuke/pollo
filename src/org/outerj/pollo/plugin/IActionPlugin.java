@@ -8,10 +8,10 @@ import javax.swing.*;
 
 public interface IActionPlugin
 {
-	/**
-	 * @param menu menu to which menu items should be added
-	 * @param selectedNode currently selected node, may be null
-	 */
-	public void addActionsToPluginMenu(JMenu menu, Node selectedNode);
+    /**
+     * @param menu menu to which menu items should be added
+     * @param selectedNode currently selected node, may be null
+     */
+    public void addActionsToPluginMenu(JMenu menu, Node selectedNode);
 
 }

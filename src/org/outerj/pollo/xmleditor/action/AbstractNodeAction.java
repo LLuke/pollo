@@ -17,17 +17,17 @@ public abstract class AbstractNodeAction extends AbstractAction implements Selec
     public AbstractNodeAction(XmlEditor xmlEditor)
     {
         this.xmlEditor = xmlEditor;
-		xmlEditor.getSelectionInfo().addListener(this);
-		setEnabled(false);
+        xmlEditor.getSelectionInfo().addListener(this);
+        setEnabled(false);
     }
 
-	public void nodeUnselected(Node node)
-	{
-		setEnabled(false);
-	}
+    public void nodeUnselected(Node node)
+    {
+        setEnabled(false);
+    }
 
-	public void nodeSelected(Node node)
-	{
-		setEnabled(true);
-	}
+    public void nodeSelected(Node node)
+    {
+        setEnabled(true);
+    }
 }

@@ -11,11 +11,11 @@ import java.util.HashMap;
  */
 public class GenericSchemaFactory implements ISchemaFactory
 {
-	public ISchema getSchema(HashMap initParams)
-		throws PolloException
-	{
-		GenericSchema schema = new GenericSchema();
-		schema.init(initParams);
-		return schema;
-	}
+    public ISchema getSchema(HashMap initParams)
+        throws PolloException
+    {
+        GenericSchema schema = new GenericSchema();
+        schema.init(initParams);
+        return schema;
+    }
 }

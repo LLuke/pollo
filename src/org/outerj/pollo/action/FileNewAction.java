@@ -19,22 +19,22 @@ import java.awt.event.ActionEvent;
 
 public class FileNewAction extends AbstractAction
 {
-	PolloFrame polloFrame;
-	Pollo pollo = Pollo.getInstance();
+    PolloFrame polloFrame;
+    Pollo pollo = Pollo.getInstance();
 
-	public FileNewAction(PolloFrame polloFrame)
-	{
-		ResourceManager resMgr = ResourceManager.getManager(FileNewAction.class);
+    public FileNewAction(PolloFrame polloFrame)
+    {
+        ResourceManager resMgr = ResourceManager.getManager(FileNewAction.class);
         resMgr.configureAction(this);
 
-		this.polloFrame = polloFrame;
-		this.pollo = pollo;
-	}
+        this.polloFrame = polloFrame;
+        this.pollo = pollo;
+    }
 
 
-	public void actionPerformed(ActionEvent e)
-	{
-		pollo.newFileWizard(polloFrame);
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        pollo.newFileWizard(polloFrame);
+    }
 
 }

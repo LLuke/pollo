@@ -20,92 +20,92 @@ import java.util.Iterator;
  */
 public class NodeDetailsPanel extends JPanel implements SelectionListener
 {
-	protected HashMap panels = new HashMap(); // hashed on the node type (constants defined in org.w3c.dom.Node interface)
-	public static final String UNKOWN_NODE_TYPE = "10000";
-	protected CardLayout cardLayout;
-	protected JPanel currentPanel;
+    protected HashMap panels = new HashMap(); // hashed on the node type (constants defined in org.w3c.dom.Node interface)
+    public static final String UNKOWN_NODE_TYPE = "10000";
+    protected CardLayout cardLayout;
+    protected JPanel currentPanel;
 
-	public NodeDetailsPanel()
-	{
-		cardLayout = new CardLayout();
-		this.setLayout(cardLayout);
+    public NodeDetailsPanel()
+    {
+        cardLayout = new CardLayout();
+        this.setLayout(cardLayout);
 
-		JPanel unkownNodeTypePanel = new JPanel();
-		JLabel helpMessage = new JLabel("Selected a node to edit it here.");
-		unkownNodeTypePanel.add(helpMessage);
-		this.add(unkownNodeTypePanel, UNKOWN_NODE_TYPE);
-	}
+        JPanel unkownNodeTypePanel = new JPanel();
+        JLabel helpMessage = new JLabel("Selected a node to edit it here.");
+        unkownNodeTypePanel.add(helpMessage);
+        this.add(unkownNodeTypePanel, UNKOWN_NODE_TYPE);
+    }
 
-	public void add(int nodetype, JPanel panel)
-	{
-		panels.put(String.valueOf(nodetype), panel);
-		this.add(panel, String.valueOf(nodetype));
-		panel.layout();
-	}
+    public void add(int nodetype, JPanel panel)
+    {
+        panels.put(String.valueOf(nodetype), panel);
+        this.add(panel, String.valueOf(nodetype));
+        panel.layout();
+    }
 
-	/**
-	 * Implementation of the SelectionListener interface.
-	 */
-	public void nodeSelected(Node node)
-	{
-		String nodetype = String.valueOf(node.getNodeType());
-		if (panels.containsKey(nodetype))
-		{
-			currentPanel = (JPanel)panels.get(nodetype);
-			cardLayout.show(this, nodetype);
-		}
-		else
-		{
-			currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
-			cardLayout.show(this, UNKOWN_NODE_TYPE);
-		}
-	}
+    /**
+     * Implementation of the SelectionListener interface.
+     */
+    public void nodeSelected(Node node)
+    {
+        String nodetype = String.valueOf(node.getNodeType());
+        if (panels.containsKey(nodetype))
+        {
+            currentPanel = (JPanel)panels.get(nodetype);
+            cardLayout.show(this, nodetype);
+        }
+        else
+        {
+            currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
+            cardLayout.show(this, UNKOWN_NODE_TYPE);
+        }
+    }
 
-	/**
-	 * Implementation of the SelectionListener interface.
-	 */
-	public void nodeUnselected(Node node)
-	{
-		currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
-		cardLayout.show(this, UNKOWN_NODE_TYPE);
-	}
+    /**
+     * Implementation of the SelectionListener interface.
+     */
+    public void nodeUnselected(Node node)
+    {
+        currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
+        cardLayout.show(this, UNKOWN_NODE_TYPE);
+    }
 
-	public void requestFocus()
-	{
-		currentPanel.requestFocus();
-	}
+    public void requestFocus()
+    {
+        currentPanel.requestFocus();
+    }
 
-	public void disconnectFromDom()
-	{
-		Iterator cleanIt = panels.values().iterator();
+    public void disconnectFromDom()
+    {
+        Iterator cleanIt = panels.values().iterator();
 
-		while (cleanIt.hasNext())
-		{
-			Object object = (Object)cleanIt.next();
-			if (object instanceof DomConnected)
-			{
-				((DomConnected)object).disconnectFromDom();
-			}
-		}
+        while (cleanIt.hasNext())
+        {
+            Object object = (Object)cleanIt.next();
+            if (object instanceof DomConnected)
+            {
+                ((DomConnected)object).disconnectFromDom();
+            }
+        }
 
-		currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
-		cardLayout.show(this, UNKOWN_NODE_TYPE);
-	}
+        currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
+        cardLayout.show(this, UNKOWN_NODE_TYPE);
+    }
 
-	public void reconnectToDom()
-	{
-		Iterator cleanIt = panels.values().iterator();
+    public void reconnectToDom()
+    {
+        Iterator cleanIt = panels.values().iterator();
 
-		while (cleanIt.hasNext())
-		{
-			Object object = (Object)cleanIt.next();
-			if (object instanceof DomConnected)
-			{
-				((DomConnected)object).reconnectToDom();
-			}
-		}
+        while (cleanIt.hasNext())
+        {
+            Object object = (Object)cleanIt.next();
+            if (object instanceof DomConnected)
+            {
+                ((DomConnected)object).reconnectToDom();
+            }
+        }
 
-		currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
-		cardLayout.show(this, UNKOWN_NODE_TYPE);
-	}
+        currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
+        cardLayout.show(this, UNKOWN_NODE_TYPE);
+    }
 }

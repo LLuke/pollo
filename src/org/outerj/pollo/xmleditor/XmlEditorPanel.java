@@ -33,237 +33,237 @@ import java.util.Collection;
  */
 public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
 {
-	protected XmlEditor xmlEditor;
-	protected XmlModel xmlModel;
-	protected String xpathForRoot;
-	protected ISchema schema;
-	protected NodeInsertionPanel nodeInsertionPanel;
-	protected NodeDetailsPanel nodeDetailsPanel;
-	protected JSplitPane xmlEditorAndNodeInsertPanelSplit;
-	protected JSplitPane xmlEditorAndValidationErrorsSplit;
-	protected JSplitPane splitPane1AndAttributesPanelSplit;
-	protected Container xpathAndXmlEditorContainer;
-	protected ValidationErrorsPanel validationErrorsPanel;
-	protected AttributesPanel attrPanel;
-	protected ValidateAction validateAction = new ValidateAction(this);
-	protected QueryByXPathPanel queryByXPathPanel;
+    protected XmlEditor xmlEditor;
+    protected XmlModel xmlModel;
+    protected String xpathForRoot;
+    protected ISchema schema;
+    protected NodeInsertionPanel nodeInsertionPanel;
+    protected NodeDetailsPanel nodeDetailsPanel;
+    protected JSplitPane xmlEditorAndNodeInsertPanelSplit;
+    protected JSplitPane xmlEditorAndValidationErrorsSplit;
+    protected JSplitPane splitPane1AndAttributesPanelSplit;
+    protected Container xpathAndXmlEditorContainer;
+    protected ValidationErrorsPanel validationErrorsPanel;
+    protected AttributesPanel attrPanel;
+    protected ValidateAction validateAction = new ValidateAction(this);
+    protected QueryByXPathPanel queryByXPathPanel;
 
-	public XmlEditorPanel(XmlModel model, String xpathForRoot, IDisplaySpecification displaySpec,
-			ISchema schema, IAttributeEditorPlugin attrEditorPlugin)
-		throws Exception
-	{
-		this.xpathForRoot = xpathForRoot;
+    public XmlEditorPanel(XmlModel model, String xpathForRoot, IDisplaySpecification displaySpec,
+            ISchema schema, IAttributeEditorPlugin attrEditorPlugin)
+        throws Exception
+    {
+        this.xpathForRoot = xpathForRoot;
 
-		setLayout(new BorderLayout());
-		this.schema = schema;
+        setLayout(new BorderLayout());
+        this.schema = schema;
 
-		// create the xml content editor component
-		xmlEditor = new XmlEditor(xpathForRoot, displaySpec, schema);
-		JScrollPane scrollPane = new JScrollPane(xmlEditor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
-		scrollPane.setBorder(ShadowBorder.getInstance());
+        // create the xml content editor component
+        xmlEditor = new XmlEditor(xpathForRoot, displaySpec, schema);
+        JScrollPane scrollPane = new JScrollPane(xmlEditor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(10);
+        scrollPane.setBorder(ShadowBorder.getInstance());
 
-		// create the details pane
-		nodeDetailsPanel = new NodeDetailsPanel();
-		xmlEditor.getSelectionInfo().addListener(nodeDetailsPanel);
-		nodeDetailsPanel.setBorder(ShadowBorder.getInstance());
+        // create the details pane
+        nodeDetailsPanel = new NodeDetailsPanel();
+        xmlEditor.getSelectionInfo().addListener(nodeDetailsPanel);
+        nodeDetailsPanel.setBorder(ShadowBorder.getInstance());
 
-		attrPanel = new AttributesPanel(model, schema, attrEditorPlugin, xmlEditor);
-		xmlEditor.getSelectionInfo().addListener(attrPanel);
-		nodeDetailsPanel.add(Node.ELEMENT_NODE, attrPanel);
+        attrPanel = new AttributesPanel(model, schema, attrEditorPlugin, xmlEditor);
+        xmlEditor.getSelectionInfo().addListener(attrPanel);
+        nodeDetailsPanel.add(Node.ELEMENT_NODE, attrPanel);
 
-		CharDataPanel charDataPanel1 = new CharDataPanel(model, Node.CDATA_SECTION_NODE);
-		xmlEditor.getSelectionInfo().addListener(charDataPanel1);
-		nodeDetailsPanel.add(Node.CDATA_SECTION_NODE, charDataPanel1);
+        CharDataPanel charDataPanel1 = new CharDataPanel(model, Node.CDATA_SECTION_NODE);
+        xmlEditor.getSelectionInfo().addListener(charDataPanel1);
+        nodeDetailsPanel.add(Node.CDATA_SECTION_NODE, charDataPanel1);
 
-		CharDataPanel charDataPanel2 = new CharDataPanel(model, Node.TEXT_NODE);
-		xmlEditor.getSelectionInfo().addListener(charDataPanel2);
-		nodeDetailsPanel.add(Node.TEXT_NODE, charDataPanel2);
+        CharDataPanel charDataPanel2 = new CharDataPanel(model, Node.TEXT_NODE);
+        xmlEditor.getSelectionInfo().addListener(charDataPanel2);
+        nodeDetailsPanel.add(Node.TEXT_NODE, charDataPanel2);
 
-		CharDataPanel charDataPanel3 = new CharDataPanel(model, Node.COMMENT_NODE);
-		xmlEditor.getSelectionInfo().addListener(charDataPanel3);
-		nodeDetailsPanel.add(Node.COMMENT_NODE, charDataPanel3);
+        CharDataPanel charDataPanel3 = new CharDataPanel(model, Node.COMMENT_NODE);
+        xmlEditor.getSelectionInfo().addListener(charDataPanel3);
+        nodeDetailsPanel.add(Node.COMMENT_NODE, charDataPanel3);
 
-		CharDataPanel charDataPanel4 = new CharDataPanel(model, Node.PROCESSING_INSTRUCTION_NODE);
-		xmlEditor.getSelectionInfo().addListener(charDataPanel4);
-		nodeDetailsPanel.add(Node.PROCESSING_INSTRUCTION_NODE, charDataPanel4);
+        CharDataPanel charDataPanel4 = new CharDataPanel(model, Node.PROCESSING_INSTRUCTION_NODE);
+        xmlEditor.getSelectionInfo().addListener(charDataPanel4);
+        nodeDetailsPanel.add(Node.PROCESSING_INSTRUCTION_NODE, charDataPanel4);
 
-		// create the panel from which the user can select new nodes to insert
-		nodeInsertionPanel = new NodeInsertionPanel(this);
-		nodeInsertionPanel.setBorder(ShadowBorder.getInstance());
+        // create the panel from which the user can select new nodes to insert
+        nodeInsertionPanel = new NodeInsertionPanel(this);
+        nodeInsertionPanel.setBorder(ShadowBorder.getInstance());
 
-		// bind some keyevents of the xml editor
-		ActionMap editorActionMap = xmlEditor.getActionMap();
-		editorActionMap.put("insert-node-after", new AbstractAction()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						nodeInsertionPanel.activateInsertAfter();
-					}
-				});
-		editorActionMap.put("insert-node-before", new AbstractAction()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						nodeInsertionPanel.activateInsertBefore();
-					}
-				});
-		editorActionMap.put("insert-node-inside", new AbstractAction()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						nodeInsertionPanel.activateInsertInside();
-					}
-				});
-		editorActionMap.put("edit-details", new AbstractAction()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						nodeDetailsPanel.requestFocus();
-					}
-				});
+        // bind some keyevents of the xml editor
+        ActionMap editorActionMap = xmlEditor.getActionMap();
+        editorActionMap.put("insert-node-after", new AbstractAction()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        nodeInsertionPanel.activateInsertAfter();
+                    }
+                });
+        editorActionMap.put("insert-node-before", new AbstractAction()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        nodeInsertionPanel.activateInsertBefore();
+                    }
+                });
+        editorActionMap.put("insert-node-inside", new AbstractAction()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        nodeInsertionPanel.activateInsertInside();
+                    }
+                });
+        editorActionMap.put("edit-details", new AbstractAction()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        nodeDetailsPanel.requestFocus();
+                    }
+                });
 
-		// Create the container containing the QueryByXPath panel and the XmlEditor component
-		xpathAndXmlEditorContainer = new Container();
-		xpathAndXmlEditorContainer.setLayout(new BorderLayout());
-		queryByXPathPanel = new QueryByXPathPanel(xmlEditor, attrPanel);
-		queryByXPathPanel.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 3, 0), ShadowBorder.getInstance()));
-		xpathAndXmlEditorContainer.add(queryByXPathPanel, BorderLayout.NORTH);
-		xpathAndXmlEditorContainer.add(scrollPane, BorderLayout.CENTER);
+        // Create the container containing the QueryByXPath panel and the XmlEditor component
+        xpathAndXmlEditorContainer = new Container();
+        xpathAndXmlEditorContainer.setLayout(new BorderLayout());
+        queryByXPathPanel = new QueryByXPathPanel(xmlEditor, attrPanel);
+        queryByXPathPanel.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 3, 0), ShadowBorder.getInstance()));
+        xpathAndXmlEditorContainer.add(queryByXPathPanel, BorderLayout.NORTH);
+        xpathAndXmlEditorContainer.add(scrollPane, BorderLayout.CENTER);
 
-		// create first split pane (xmlEditor - nodeInsertionPanel)
-		xmlEditorAndNodeInsertPanelSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, xpathAndXmlEditorContainer, nodeInsertionPanel);
-		xmlEditorAndNodeInsertPanelSplit.setResizeWeight(1); // xml content editor gets extra space
-		xmlEditorAndNodeInsertPanelSplit.setDividerLocation(Pollo.getInstance().getConfiguration().getSplitPane1Pos());
-		xmlEditorAndNodeInsertPanelSplit.addPropertyChangeListener(new SplitPaneDividerListener());
-		xmlEditorAndNodeInsertPanelSplit.setDividerSize(3);
-		xmlEditorAndNodeInsertPanelSplit.setBorder(BorderFactory.createEmptyBorder());
+        // create first split pane (xmlEditor - nodeInsertionPanel)
+        xmlEditorAndNodeInsertPanelSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, xpathAndXmlEditorContainer, nodeInsertionPanel);
+        xmlEditorAndNodeInsertPanelSplit.setResizeWeight(1); // xml content editor gets extra space
+        xmlEditorAndNodeInsertPanelSplit.setDividerLocation(Pollo.getInstance().getConfiguration().getSplitPane1Pos());
+        xmlEditorAndNodeInsertPanelSplit.addPropertyChangeListener(new SplitPaneDividerListener());
+        xmlEditorAndNodeInsertPanelSplit.setDividerSize(3);
+        xmlEditorAndNodeInsertPanelSplit.setBorder(BorderFactory.createEmptyBorder());
 
-		// create second splitpane (first split pane - attributesPanel)
-		splitPane1AndAttributesPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, xmlEditorAndNodeInsertPanelSplit, nodeDetailsPanel);
-		splitPane1AndAttributesPanelSplit.setResizeWeight(1); // xml content editor gets extra space
-		splitPane1AndAttributesPanelSplit.setDividerLocation(Pollo.getInstance().getConfiguration().getSplitPane2Pos());
-		splitPane1AndAttributesPanelSplit.addPropertyChangeListener(new SplitPaneDividerListener());
-		splitPane1AndAttributesPanelSplit.setDividerSize(3);
-		splitPane1AndAttributesPanelSplit.setBorder(BorderFactory.createEmptyBorder());
-		add(splitPane1AndAttributesPanelSplit, BorderLayout.CENTER);
+        // create second splitpane (first split pane - attributesPanel)
+        splitPane1AndAttributesPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, xmlEditorAndNodeInsertPanelSplit, nodeDetailsPanel);
+        splitPane1AndAttributesPanelSplit.setResizeWeight(1); // xml content editor gets extra space
+        splitPane1AndAttributesPanelSplit.setDividerLocation(Pollo.getInstance().getConfiguration().getSplitPane2Pos());
+        splitPane1AndAttributesPanelSplit.addPropertyChangeListener(new SplitPaneDividerListener());
+        splitPane1AndAttributesPanelSplit.setDividerSize(3);
+        splitPane1AndAttributesPanelSplit.setBorder(BorderFactory.createEmptyBorder());
+        add(splitPane1AndAttributesPanelSplit, BorderLayout.CENTER);
 
-		NodePathBar nodePathBar = new NodePathBar(xmlEditor, attrPanel);
-		nodePathBar.setBorder(new CompoundBorder(new EmptyBorder(3, 0, 0, 0), BorderFactory.createBevelBorder(BevelBorder.LOWERED)));
-		add(nodePathBar, BorderLayout.SOUTH);
+        NodePathBar nodePathBar = new NodePathBar(xmlEditor, attrPanel);
+        nodePathBar.setBorder(new CompoundBorder(new EmptyBorder(3, 0, 0, 0), BorderFactory.createBevelBorder(BevelBorder.LOWERED)));
+        add(nodePathBar, BorderLayout.SOUTH);
 
-		setXmlModel(model);
-	}
+        setXmlModel(model);
+    }
 
-	public class SplitPaneDividerListener implements PropertyChangeListener
-	{
-		public void propertyChange(PropertyChangeEvent evt)
-		{
-			if (evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY))
-			{
-				PolloConfiguration conf = Pollo.getInstance().getConfiguration();
+    public class SplitPaneDividerListener implements PropertyChangeListener
+    {
+        public void propertyChange(PropertyChangeEvent evt)
+        {
+            if (evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY))
+            {
+                PolloConfiguration conf = Pollo.getInstance().getConfiguration();
 
-				conf.setSplitPane1Pos(xmlEditorAndNodeInsertPanelSplit.getDividerLocation());
-				conf.setSplitPane2Pos(splitPane1AndAttributesPanelSplit.getDividerLocation());
+                conf.setSplitPane1Pos(xmlEditorAndNodeInsertPanelSplit.getDividerLocation());
+                conf.setSplitPane2Pos(splitPane1AndAttributesPanelSplit.getDividerLocation());
 
-				// also change the default window size, since the position of the divider is dependent on the
-				// size of the current window
-				JFrame frame = (JFrame)XmlEditorPanel.this.getTopLevelAncestor();
-				conf.setWindowHeight(frame.getHeight());
-				conf.setWindowWidth(frame.getWidth());
-			}
-		}
-	}
+                // also change the default window size, since the position of the divider is dependent on the
+                // size of the current window
+                JFrame frame = (JFrame)XmlEditorPanel.this.getTopLevelAncestor();
+                conf.setWindowHeight(frame.getHeight());
+                conf.setWindowWidth(frame.getWidth());
+            }
+        }
+    }
 
-	public void setXmlModel(XmlModel xmlModel)
-	{
-		this.xmlModel = xmlModel;
-		xmlEditor.setXmlModel(xmlModel);
-	}
+    public void setXmlModel(XmlModel xmlModel)
+    {
+        this.xmlModel = xmlModel;
+        xmlEditor.setXmlModel(xmlModel);
+    }
 
-	public XmlModel getXmlModel()
-	{
-		return xmlModel;
-	}
+    public XmlModel getXmlModel()
+    {
+        return xmlModel;
+    }
 
-	public XmlEditor getXmlEditor()
-	{
-		return xmlEditor;
-	}
+    public XmlEditor getXmlEditor()
+    {
+        return xmlEditor;
+    }
 
-	public ISchema getSchema()
-	{
-		return schema;
-	}
+    public ISchema getSchema()
+    {
+        return schema;
+    }
 
-	public void showValidationErrorsPanel(Collection errors)
-	{
-		if (xmlEditorAndValidationErrorsSplit == null)
-		{
-			xmlEditorAndValidationErrorsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-			xmlEditorAndValidationErrorsSplit.setDividerSize(3);
-			xmlEditorAndValidationErrorsSplit.setBorder(BorderFactory.createEmptyBorder());
-			xmlEditorAndValidationErrorsSplit.setResizeWeight(1); // xml content editor gets extra space
-			xmlEditorAndValidationErrorsSplit.setDividerLocation(0.7);
-		}
+    public void showValidationErrorsPanel(Collection errors)
+    {
+        if (xmlEditorAndValidationErrorsSplit == null)
+        {
+            xmlEditorAndValidationErrorsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+            xmlEditorAndValidationErrorsSplit.setDividerSize(3);
+            xmlEditorAndValidationErrorsSplit.setBorder(BorderFactory.createEmptyBorder());
+            xmlEditorAndValidationErrorsSplit.setResizeWeight(1); // xml content editor gets extra space
+            xmlEditorAndValidationErrorsSplit.setDividerLocation(0.7);
+        }
 
-		getValidationErrorsPanel(); // to be sure that the panel gets instantiated
+        getValidationErrorsPanel(); // to be sure that the panel gets instantiated
 
-		if (xmlEditorAndNodeInsertPanelSplit.getLeftComponent() != xmlEditorAndValidationErrorsSplit)
-		{
-			xmlEditorAndNodeInsertPanelSplit.remove(xpathAndXmlEditorContainer);
-			xmlEditorAndValidationErrorsSplit.setTopComponent(xpathAndXmlEditorContainer);
-			xmlEditorAndValidationErrorsSplit.setBottomComponent(validationErrorsPanel);
-			xmlEditorAndNodeInsertPanelSplit.setLeftComponent(xmlEditorAndValidationErrorsSplit);
-		}
-		validationErrorsPanel.showErrors(errors);
-	}
+        if (xmlEditorAndNodeInsertPanelSplit.getLeftComponent() != xmlEditorAndValidationErrorsSplit)
+        {
+            xmlEditorAndNodeInsertPanelSplit.remove(xpathAndXmlEditorContainer);
+            xmlEditorAndValidationErrorsSplit.setTopComponent(xpathAndXmlEditorContainer);
+            xmlEditorAndValidationErrorsSplit.setBottomComponent(validationErrorsPanel);
+            xmlEditorAndNodeInsertPanelSplit.setLeftComponent(xmlEditorAndValidationErrorsSplit);
+        }
+        validationErrorsPanel.showErrors(errors);
+    }
 
-	public void hideValidationErrorsPanel()
-	{
-		xmlEditorAndNodeInsertPanelSplit.remove(xmlEditorAndValidationErrorsSplit);
-		xmlEditorAndValidationErrorsSplit.remove(xpathAndXmlEditorContainer);
-		xmlEditorAndNodeInsertPanelSplit.setLeftComponent(xpathAndXmlEditorContainer);
-	}
+    public void hideValidationErrorsPanel()
+    {
+        xmlEditorAndNodeInsertPanelSplit.remove(xmlEditorAndValidationErrorsSplit);
+        xmlEditorAndValidationErrorsSplit.remove(xpathAndXmlEditorContainer);
+        xmlEditorAndNodeInsertPanelSplit.setLeftComponent(xpathAndXmlEditorContainer);
+    }
 
-	public ValidateAction getValidateAction()
-	{
-		return validateAction;
-	}
+    public ValidateAction getValidateAction()
+    {
+        return validateAction;
+    }
 
-	public ValidationErrorsPanel getValidationErrorsPanel()
-	{
-		if (validationErrorsPanel == null)
-		{
-			validationErrorsPanel = new ValidationErrorsPanel(this, attrPanel);
-			validationErrorsPanel.setBorder(ShadowBorder.getInstance());
-		}
-		return validationErrorsPanel;
-	}
+    public ValidationErrorsPanel getValidationErrorsPanel()
+    {
+        if (validationErrorsPanel == null)
+        {
+            validationErrorsPanel = new ValidationErrorsPanel(this, attrPanel);
+            validationErrorsPanel.setBorder(ShadowBorder.getInstance());
+        }
+        return validationErrorsPanel;
+    }
 
 
-	/**
-	 * Removes event listeners.
-	 */
-	public void disconnectFromDom()
-	{
-		xmlEditor.disconnectFromDom();
-		nodeInsertionPanel.disconnectFromDom();
-		nodeDetailsPanel.disconnectFromDom();
-	}
+    /**
+     * Removes event listeners.
+     */
+    public void disconnectFromDom()
+    {
+        xmlEditor.disconnectFromDom();
+        nodeInsertionPanel.disconnectFromDom();
+        nodeDetailsPanel.disconnectFromDom();
+    }
 
-	public void reconnectToDom()
-	{
-		xmlEditor.reconnectToDom();
-		nodeInsertionPanel.reconnectToDom();
-		nodeDetailsPanel.reconnectToDom();
-	}
+    public void reconnectToDom()
+    {
+        xmlEditor.reconnectToDom();
+        nodeInsertionPanel.reconnectToDom();
+        nodeDetailsPanel.reconnectToDom();
+    }
 
-	public void dispose()
-	{
-		queryByXPathPanel.dispose();
-		attrPanel.dispose();
-		remove(xmlEditor);
-	}
+    public void dispose()
+    {
+        queryByXPathPanel.dispose();
+        attrPanel.dispose();
+        remove(xmlEditor);
+    }
 }

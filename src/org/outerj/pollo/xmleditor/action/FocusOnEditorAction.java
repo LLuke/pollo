@@ -13,17 +13,17 @@ import java.awt.event.ActionEvent;
  */
 public class FocusOnEditorAction extends AbstractAction
 {
-	protected XmlEditor xmlEditor;
+    protected XmlEditor xmlEditor;
     protected static final ResourceManager resourceManager = ResourceManager.getManager(FocusOnEditorAction.class);
 
-	public FocusOnEditorAction(XmlEditor xmlEditor)
-	{
-		this.xmlEditor = xmlEditor;
+    public FocusOnEditorAction(XmlEditor xmlEditor)
+    {
+        this.xmlEditor = xmlEditor;
         resourceManager.configureAction(this);
-	}
+    }
 
-	public void actionPerformed(ActionEvent e)
-	{
-		xmlEditor.requestFocus();
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        xmlEditor.requestFocus();
+    }
 }

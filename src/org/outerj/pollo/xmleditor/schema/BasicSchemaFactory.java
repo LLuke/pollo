@@ -13,28 +13,28 @@ import java.util.WeakHashMap;
  */
 public class BasicSchemaFactory implements ISchemaFactory
 {
-	protected WeakHashMap schemaInstances = new WeakHashMap();
-	protected org.apache.log4j.Category logcat =
-		org.apache.log4j.Category.getInstance(BasicSchemaFactory.class.getName());
+    protected WeakHashMap schemaInstances = new WeakHashMap();
+    protected org.apache.log4j.Category logcat =
+        org.apache.log4j.Category.getInstance(BasicSchemaFactory.class.getName());
 
-	public ISchema getSchema(HashMap initParams)
-		throws PolloException
-	{
-		if (!schemaInstances.containsKey(initParams))
-		{
-			try
-			{
-				BasicSchema newSchema = new BasicSchema();
-				newSchema.init(initParams);
-				schemaInstances.put(initParams, newSchema);
-			}
-			catch (Exception e)
-			{
-				logcat.error("[BasicSchemaFactory] Could not create schema.", e);
-				throw new PolloException("[BasicSchemaFactory] Could not create schema.", e);
-			}
-		}
+    public ISchema getSchema(HashMap initParams)
+        throws PolloException
+    {
+        if (!schemaInstances.containsKey(initParams))
+        {
+            try
+            {
+                BasicSchema newSchema = new BasicSchema();
+                newSchema.init(initParams);
+                schemaInstances.put(initParams, newSchema);
+            }
+            catch (Exception e)
+            {
+                logcat.error("[BasicSchemaFactory] Could not create schema.", e);
+                throw new PolloException("[BasicSchemaFactory] Could not create schema.", e);
+            }
+        }
 
-		return (ISchema)schemaInstances.get(initParams);
-	}
+        return (ISchema)schemaInstances.get(initParams);
+    }
 }

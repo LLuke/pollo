@@ -12,11 +12,11 @@ import org.outerj.pollo.xmleditor.displayspec.AttributeSpec;
  */
 public class AttrViewInfo
 {
-	public AttributeSpec attributeSpec;
+    public AttributeSpec attributeSpec;
 
-	public int namePos;
-	public int valuePos;
-	public String value;
-	public String name;
-	public boolean visible;
+    public int namePos;
+    public int valuePos;
+    public String value;
+    public String name;
+    public boolean visible;
 }

@@ -6,6 +6,6 @@ import org.w3c.dom.Document;
 
 public interface ITemplate
 {
-	public XmlModel createNewDocument()
-		throws PolloException;
+    public XmlModel createNewDocument()
+        throws PolloException;
 }

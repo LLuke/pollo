@@ -16,17 +16,17 @@ import java.awt.event.ActionEvent;
 public class NewPolloFrameAction extends AbstractAction
 {
 
-	public NewPolloFrameAction()
-	{
-		ResourceManager resMgr = ResourceManager.getManager(NewPolloFrameAction.class);
+    public NewPolloFrameAction()
+    {
+        ResourceManager resMgr = ResourceManager.getManager(NewPolloFrameAction.class);
         resMgr.configureAction(this);
-	}
+    }
 
 
-	public void actionPerformed(ActionEvent e)
-	{
-		PolloFrame polloFrame = new PolloFrame();
-		Pollo.getInstance().manageFrame(polloFrame);
-		polloFrame.show();
-	}
+    public void actionPerformed(ActionEvent e)
+    {
+        PolloFrame polloFrame = new PolloFrame();
+        Pollo.getInstance().manageFrame(polloFrame);
+        polloFrame.show();
+    }
 }

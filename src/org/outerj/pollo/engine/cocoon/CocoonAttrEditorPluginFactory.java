@@ -11,11 +11,11 @@ import java.util.HashMap;
 
 public class CocoonAttrEditorPluginFactory implements IAttributeEditorPluginFactory
 {
-	public IAttributeEditorPlugin getInstance(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
-		throws PolloException
-	{
-		CocoonAttrEditorPlugin plugin = new CocoonAttrEditorPlugin();
-		plugin.init(initParams, xmlModel, schema, polloFrame);
-		return plugin;
-	}
+    public IAttributeEditorPlugin getInstance(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
+        throws PolloException
+    {
+        CocoonAttrEditorPlugin plugin = new CocoonAttrEditorPlugin();
+        plugin.init(initParams, xmlModel, schema, polloFrame);
+        return plugin;
+    }
 }

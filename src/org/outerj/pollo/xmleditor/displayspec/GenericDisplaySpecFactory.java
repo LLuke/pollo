@@ -6,11 +6,11 @@ import java.util.HashMap;
 
 public class GenericDisplaySpecFactory implements IDisplaySpecificationFactory
 {
-	public IDisplaySpecification getDisplaySpecification(HashMap initParams)
-		throws PolloException
-	{
-		GenericDisplaySpecification displaySpec = new GenericDisplaySpecification();
-		displaySpec.init(initParams);
-		return displaySpec;
-	}
+    public IDisplaySpecification getDisplaySpecification(HashMap initParams)
+        throws PolloException
+    {
+        GenericDisplaySpecification displaySpec = new GenericDisplaySpecification();
+        displaySpec.init(initParams);
+        return displaySpec;
+    }
 }

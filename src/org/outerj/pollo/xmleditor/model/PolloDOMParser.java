@@ -14,14 +14,14 @@ import org.apache.xerces.xni.*;
  */
 public class PolloDOMParser extends DOMParser
 {
-	public PolloDOMParser()
-		throws Exception
-	{
+    public PolloDOMParser()
+        throws Exception
+    {
         setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         setFeature("http://apache.org/xml/features/dom/include-ignorable-whitespace", false);
         setFeature("http://xml.org/sax/features/external-general-entities", false);
         setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-	}
+    }
 
     public void characters(XMLString xmlString, Augmentations augmentations) throws XNIException
     {

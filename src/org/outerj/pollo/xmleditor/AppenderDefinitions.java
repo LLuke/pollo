@@ -8,8 +8,8 @@ package org.outerj.pollo.xmleditor;
  */
 public interface AppenderDefinitions
 {
-	/** appender for all info related to (user) configuration */
-	public static final String CONFIG = "config";
-	public static final String MAIN = "main";
-	public static final String GUI = "gui";
+    /** appender for all info related to (user) configuration */
+    public static final String CONFIG = "config";
+    public static final String MAIN = "main";
+    public static final String GUI = "gui";
 }
