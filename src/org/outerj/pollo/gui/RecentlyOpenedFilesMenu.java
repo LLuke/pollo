@@ -22,7 +22,8 @@ public class RecentlyOpenedFilesMenu extends JMenu
 
 	public RecentlyOpenedFilesMenu(PolloFrame polloFrame)
 	{
-		super ("Recent files");
+		super ("Open Recent File");
+		setIcon(EmptyIcon.getInstance());
 		this.polloFrame = polloFrame;
 	}
 

@@ -54,6 +54,12 @@ public class AboutDialog extends JDialog
 		pack();
 	}
 
+	public void show()
+	{
+		setLocationRelativeTo(getParent());
+		super.show();
+	}
+
 	protected JScrollPane createTextArea(String resourceName)
 	{
 		JTextArea textArea = new JTextArea();

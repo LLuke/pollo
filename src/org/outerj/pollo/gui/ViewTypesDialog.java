@@ -27,12 +27,8 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 	protected JPanel schemaPanel;
 	protected JComboBox schemaFileCombo;
 	protected JButton browseForFileButton;
-	protected JRadioButton xmlSchemaButton;
-	protected JRadioButton relaxNgButton;
+	protected JRadioButton autodetectSchemaButton;
 	protected JRadioButton dtdButton;
-	protected JRadioButton relaxCoreButton;
-	protected JRadioButton relaxNsButton;
-	protected JRadioButton trexButton;
 	protected JRadioButton polloButton;
 
 	protected JPanel displaySpecPanel;
@@ -44,6 +40,7 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 	protected JButton basicDisplaySpecBrowseButton;
 
 	protected JFileChooser schemaChooser;
+	protected JFileChooser displaySpecChooser;
 
 	public ViewTypesDialog(Frame parent)
 	{
@@ -155,30 +152,14 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		ButtonGroup schemaTypeGroup = new ButtonGroup();
 		Box box5 = new Box(BoxLayout.X_AXIS);
 
-		xmlSchemaButton = new JRadioButton("W3C XML Schema");
-		xmlSchemaButton.setSelected(true);
-		schemaTypeGroup.add(xmlSchemaButton);
-		box5.add(xmlSchemaButton);
-
-		relaxNgButton = new JRadioButton("Relax NG");
-		box5.add(relaxNgButton);
-		schemaTypeGroup.add(relaxNgButton);
+		autodetectSchemaButton = new JRadioButton("W3C XML Schema, Relax NG, Relax Core, Relax ns, Trex");
+		autodetectSchemaButton.setSelected(true);
+		schemaTypeGroup.add(autodetectSchemaButton);
+		box5.add(autodetectSchemaButton);
 
 		dtdButton = new JRadioButton("DTD");
 		box5.add(dtdButton);
 		schemaTypeGroup.add(dtdButton);
-
-		relaxCoreButton = new JRadioButton("Relax Core");
-		box5.add(relaxCoreButton);
-		schemaTypeGroup.add(relaxCoreButton);
-
-		relaxNsButton = new JRadioButton("Relax ns");
-		box5.add(relaxNsButton);
-		schemaTypeGroup.add(relaxNsButton);
-
-		trexButton = new JRadioButton("Trex");
-		box5.add(trexButton);
-		schemaTypeGroup.add(trexButton);
 
 		polloButton = new JRadioButton("Pollo");
 		box5.add(polloButton);
@@ -241,6 +222,8 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 		basicDisplaySpecFileField = new JTextField("");
 		box8.add(basicDisplaySpecFileField);
 		basicDisplaySpecBrowseButton = new JButton("Browse...");
+		basicDisplaySpecBrowseButton.setActionCommand("browse-for-displayspec");
+		basicDisplaySpecBrowseButton.addActionListener(this);
 		box8.add(basicDisplaySpecBrowseButton);
 		displaySpecVertBox.add(box8);
 
@@ -337,6 +320,22 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 				polloConfiguration.setSchemaOpenDialogPath(path);
 			}
 		}
+		else if (event.getActionCommand().equals("browse-for-displayspec"))
+		{
+			if (displaySpecChooser == null)
+			{
+				displaySpecChooser = new JFileChooser();
+				displaySpecChooser.setDialogTitle("Choose a display specification");
+				displaySpecChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+			}
+
+			int returnVal = displaySpecChooser.showOpenDialog(this);
+			if (returnVal == JFileChooser.APPROVE_OPTION)
+			{
+				String path = displaySpecChooser.getSelectedFile().getAbsolutePath();
+				basicDisplaySpecFileField.setText(path);
+			}
+		}
 		else if (event.getActionCommand().equals("select-color"))
 		{
 			Color newColor = JColorChooser.showDialog(
@@ -379,12 +378,8 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 	{
 		schemaFileCombo.setEnabled(enabled);
 		browseForFileButton.setEnabled(enabled);
-		relaxCoreButton.setEnabled(enabled);
-		relaxNgButton.setEnabled(enabled);
-		relaxNsButton.setEnabled(enabled);
-		trexButton.setEnabled(enabled);
+		autodetectSchemaButton.setEnabled(enabled);
 		dtdButton.setEnabled(enabled);
-		xmlSchemaButton.setEnabled(enabled);
 		schemaPanel.setEnabled(enabled);
 		displaySpecPanel.setEnabled(enabled);
 		genericRandomColors.setEnabled(enabled);
@@ -442,18 +437,9 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 			{
 				schemaConf.setFactoryClass("org.outerj.pollo.xmleditor.schema.MsvSchemaFactory");
 
-				if (xmlSchemaButton.isSelected())
-					schemaConf.addInitParam("type", "xmlschema");
-				else if (relaxCoreButton.isSelected())
-					schemaConf.addInitParam("type", "relaxcore");
-				else if (relaxNgButton.isSelected())
-					schemaConf.addInitParam("type", "relaxng");
-				else if (relaxNsButton.isSelected())
-					schemaConf.addInitParam("type", "relaxns");
-				else if (trexButton.isSelected())
-					schemaConf.addInitParam("type", "trex");
-				else if (dtdButton.isSelected())
+				if (dtdButton.isSelected())
 					schemaConf.addInitParam("type", "dtd");
+				// other types are auto-detected by MSV
 			}
 
 			viewTypeConf.addSchema(schemaConf);
@@ -477,15 +463,14 @@ public class ViewTypesDialog extends JDialog implements ActionListener
 			}
 			else if (basicDisplaySpec.isSelected())
 			{
-				displaySpecConf.setFactoryClass("org.outerj.pollo.xmleditor.displaySpec.BasicDisplaySpecFactory");
+				displaySpecConf.setFactoryClass("org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory");
 				displaySpecConf.addInitParam("source", basicDisplaySpecFileField.getText());
 				viewTypeConf.addDisplaySpec(displaySpecConf);
 
 				// the display spec chain should always end with a generic implementation (its methods should never return null)
 				DisplaySpecConfItem displaySpec2 = new DisplaySpecConfItem();
 				displaySpec2.setFactoryClass("org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory");
-				displaySpecConf.addInitParam("fixed-color", "230,230,230");
-				viewTypeConf.addDisplaySpec(displaySpecConf);
+				viewTypeConf.addDisplaySpec(displaySpec2);
 			}
 
 
