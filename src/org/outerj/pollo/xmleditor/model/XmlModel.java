@@ -283,6 +283,7 @@ public class XmlModel
 		String encoding = domDocument.getEncoding();
 		OutputFormat outputFormat = new OutputFormat(domDocument, encoding != null ? encoding : "ISO-8859-1", true);
 		outputFormat.setIndent(2);
+		outputFormat.setLineSeparator(System.getProperty("line.separator"));
 
 		return outputFormat;
 	}
