@@ -1,3 +1,29 @@
+version 0.4
+===========
+ This version has been possible through the kind sponsering by Infobjects.
+
+ - A new, more classic, tree view has been introduced next to Pollo's special
+   colorful treeview.
+ - Support more options in the display specifications:
+    - for elements and attributes, a label can be defined to be shown
+      instead of the real element name
+    - for elements and attributes, the text color to display them
+      can be defined.
+    - for elements, an icon to be shown can be specified. By
+      default a box-icon colored in the element's background color
+      is shown.
+    - for elements and attributes, help texts can be defined.
+
+   The XML format of the display specifications has been changed without
+   maintaining backwards compatibility. There is an utility class
+   that can convert the old format to the new one, it is called
+   DisplaySpecificationToZeroDotFour. If you need help on using
+   this, just ask on the mailing list.
+
+ - handle corrupted .pollorc file gracefully
+ - don't do text-wrapping when saving a file
+ - all kind of miscellaneous small stuff
+
 version 0.3.6
 =============
  - Made pollo.bat work on older Windows versions (such as Windows 98)
