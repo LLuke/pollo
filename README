@@ -1,0 +1,16 @@
+How to run Pollo:
+
+- Make sure you have a recent JDK (or JRE) from the 1.3 series installed.
+  You can download one from http://java.sun.com/getjava/
+
+  If you use Linux, I recommend the most recent Sun JDK, 1.3.1_01, since
+  I exprerienced some small problems with earlier versions. In the IBM JDK
+  for Linux, double clicking didn't seem to work.
+
+  Java 1.4 is not yet supported.
+
+- Then type the following command:
+    java -jar pollo.jar
+
+  Alternatively, if you are using Windows, you may also be able to double
+  click on pollo.jar to start Pollo.

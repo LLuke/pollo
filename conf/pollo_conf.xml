@@ -1,0 +1,271 @@
+<pollo>
+	<viewtypes>
+		<viewtype>
+			<name>generic</name>
+			<description>Generic (for any XML file)</description>
+			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
+
+			<schemas>
+				<schema>
+					<factory-class>org.outerj.pollo.xmleditor.schema.GenericSchemaFactory</factory-class>
+				</schema>
+			</schemas>
+
+			<display-specifications>
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>use-colors</param-name>
+						<param-value>true</param-value>
+					</init-param>
+				</display-specification>
+			</display-specifications>
+		</viewtype>
+
+		<viewtype>
+			<name>generic-white</name>
+			<description>Generic B/W (for any XML file)</description>
+			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
+
+			<schemas>
+				<schema>
+					<factory-class>org.outerj.pollo.xmleditor.schema.GenericSchemaFactory</factory-class>
+				</schema>
+			</schemas>
+
+			<display-specifications>
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>use-colors</param-name>
+						<param-value>false</param-value>
+					</init-param>
+				</display-specification>
+			</display-specifications>
+		</viewtype>
+
+		<viewtype>
+			<name>ant</name>
+			<description>Ant 1.3</description>
+			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
+
+			<schemas>
+				<schema>
+					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>antschema.xml</param-value>
+					</init-param>
+				</schema>
+			</schemas>
+
+			<display-specifications>
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>antspec.xml</param-value>
+					</init-param>
+				</display-specification>
+				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>use-colors</param-name>
+						<param-value>true</param-value>
+					</init-param>
+				</display-specification>
+			</display-specifications>
+
+			<attribute-editor-plugins>
+				<attribute-editor-plugin>
+					<factory-class>org.outerj.pollo.engine.ant.AntAttrEditorPluginFactory</factory-class>
+				</attribute-editor-plugin>
+				<attribute-editor-plugin>
+					<factory-class>org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPluginFactory</factory-class>
+				</attribute-editor-plugin>
+			</attribute-editor-plugins>
+		</viewtype>
+
+		<viewtype>
+			<name>sitemap</name>
+			<description>Cocoon 2 Sitemap</description>
+			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
+
+			<schemas>
+				<schema>
+					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>sitemapschema.xml</param-value>
+					</init-param>
+				</schema>
+			</schemas>
+
+			<display-specifications>
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>sitemapspec.xml</param-value>
+					</init-param>
+				</display-specification>
+				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>use-colors</param-name>
+						<param-value>false</param-value>
+					</init-param>
+				</display-specification>
+			</display-specifications>
+
+			<attribute-editor-plugins>
+				<attribute-editor-plugin>
+					<factory-class>org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPluginFactory</factory-class>
+				</attribute-editor-plugin>
+			</attribute-editor-plugins>
+		</viewtype>
+
+		<viewtype>
+			<name>sitemap2</name>
+			<description>Cocoon 2 Sitemap Special</description>
+			<class-name>org.outerj.pollo.engine.cocoon.SitemapEngine</class-name>
+
+			<schemas>
+				<schema>
+					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>sitemapschema.xml</param-value>
+					</init-param>
+				</schema>
+			</schemas>
+
+			<display-specifications>
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>sitemapspec.xml</param-value>
+					</init-param>
+				</display-specification>
+				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>use-colors</param-name>
+						<param-value>false</param-value>
+					</init-param>
+				</display-specification>
+			</display-specifications>
+
+			<attribute-editor-plugins>
+				<attribute-editor-plugin>
+					<factory-class>org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPluginFactory</factory-class>
+				</attribute-editor-plugin>
+			</attribute-editor-plugins>
+		</viewtype>
+
+		<viewtype>
+			<name>xmlschema</name>
+			<description>W3C XML Schema</description>
+			<class-name>org.outerj.pollo.engine.generic.GenericEngine</class-name>
+
+			<schemas>
+				<schema>
+					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>xmlschema_schema.xml</param-value>
+					</init-param>
+				</schema>
+			</schemas>
+
+			<display-specifications>
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>source</param-name>
+						<param-value>xmlschema_spec.xml</param-value>
+					</init-param>
+				</display-specification>
+				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
+				<display-specification>
+					<factory-class>org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory</factory-class>
+					<init-param>
+						<param-name>use-colors</param-name>
+						<param-value>false</param-value>
+					</init-param>
+				</display-specification>
+			</display-specifications>
+
+			<attribute-editor-plugins>
+				<attribute-editor-plugin>
+					<factory-class>org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPluginFactory</factory-class>
+				</attribute-editor-plugin>
+			</attribute-editor-plugins>
+		</viewtype>
+
+	</viewtypes>
+
+
+	<templates>
+		<template>
+			<description>Empty Ant build file</description>
+			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
+			<init-param>
+				<param-name>source</param-name>
+				<param-value>templates/build.xml</param-value>
+			</init-param>
+		</template>
+		<template>
+			<description>Cocoon Sitemap</description>
+			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
+			<init-param>
+				<param-name>source</param-name>
+				<param-value>templates/sitemap.xmap</param-value>
+			</init-param>
+		</template>
+		<template>
+			<description>XML Schema</description>
+			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
+			<init-param>
+				<param-name>source</param-name>
+				<param-value>templates/schema.xsd</param-value>
+			</init-param>
+		</template>
+		<template>
+			<description>XML Schema purchase order example</description>
+			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
+			<init-param>
+				<param-name>source</param-name>
+				<param-value>templates/po.xsd</param-value>
+			</init-param>
+		</template>
+	</templates>
+
+	<xpath-queries>
+		<query>
+			<description>Find all elements named foo</description>
+			<expression>//foo</expression>
+		</query>
+		<query>
+			<description>Find all attributes foo with value bar</description>
+			<expression>//*[@foo='bar']</expression>
+		</query>
+		<query>
+			<description>Find all elements foo with attribute bar containg 'bwurp'</description>
+			<expression>//foo[contains(@bar,'bwurp')]</expression>
+		</query>
+		<query>
+			<description>Count the number of foo elements</description>
+			<expression>count(//foo)</expression>
+		</query>
+		<query>
+			<description>Find all targets in an Ant file</description>
+			<expression>/project/target</expression>
+		</query>
+	</xpath-queries>
+
+</pollo>
