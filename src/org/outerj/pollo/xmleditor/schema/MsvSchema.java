@@ -10,7 +10,6 @@ import com.sun.msv.verifier.ErrorInfo;
 import com.sun.msv.verifier.ValidityViolation;
 import com.sun.msv.verifier.regexp.ExpressionAcceptor;
 import com.sun.msv.verifier.regexp.REDocumentDeclaration;
-import com.sun.msv.datatype.xsd.ListValueType;
 import com.sun.msv.datatype.xsd.EnumerationFacet;
 import com.sun.msv.datatype.xsd.StringType;
 import org.jaxen.SimpleNamespaceContext;
