@@ -2,10 +2,12 @@ package org.outerj.pollo.xmleditor;
 
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.model.InvalidXmlException;
-import org.outerj.pollo.xmleditor.model.Schema;
+import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.xmleditor.schema.ElementSchema;
+import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.view.*;
 import org.outerj.pollo.xmleditor.action.*;
-import org.outerj.pollo.xmleditor.DisplaySpecification.ElementSpec;
+import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +35,8 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
-import org.apache.xpath.XPathAPI;
+import org.jaxen.dom.XPath;
+import org.jaxen.SimpleNamespaceContext;
 
 
 /**
@@ -59,8 +62,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	protected int oldWidth;
 	protected int height = 0;
 	protected XmlModel xmlModel;
-	protected DisplaySpecification displaySpec;
-	protected Schema schema;
+	protected IDisplaySpecification displaySpec;
+	protected ISchema schema;
 	protected boolean antialiasing = false;
 	protected LinkedList nodeClickedListenerList = new LinkedList();
 	protected DragSource dragSource;
@@ -69,6 +72,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 	// actions
 	protected CopyAction copyAction;
+	protected CutAction cutAction;
 	protected RemoveAction removeAction;
 	protected PasteAction pasteBeforeAction;
 	protected PasteAction pasteAfterAction;
@@ -92,6 +96,9 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	protected CollapseExpandAction collapseAllAction;
 	protected CollapseExpandAction expandAllAction;
 
+	protected CollapseExpandAction collapseAction;
+	protected CollapseExpandAction expandAction;
+
 	protected static final int MARGIN_LEFT  = 0;
 	protected static final int MARGIN_TOP   = 0;
 	protected static final int MARGIN_RIGHT = 4;
@@ -102,6 +109,29 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 	public static final int AUTOSCROLL_REGION = 20;
 
+	protected static InputMap inputMap;
+
+	static
+	{
+		inputMap = new InputMap();
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0),   "select-next-node");
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0),     "select-previous-node");
+		inputMap.put(KeyStroke.getKeyStroke('j'), "select-next-node"); // vi
+		inputMap.put(KeyStroke.getKeyStroke('k'), "select-previous-node"); // vi
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete-node");
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, java.awt.Event.CTRL_MASK), "copy-node");
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, java.awt.Event.CTRL_MASK), "cut-node");
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, java.awt.Event.CTRL_MASK), "paste-node");
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, java.awt.Event.CTRL_MASK), "undo");
+		inputMap.put(KeyStroke.getKeyStroke('-'), "collapse");
+		inputMap.put(KeyStroke.getKeyStroke('+'), "expand");
+		inputMap.put(KeyStroke.getKeyStroke('-', java.awt.Event.CTRL_MASK), "collapse-all");
+		inputMap.put(KeyStroke.getKeyStroke('+', java.awt.Event.CTRL_MASK), "expand-all");
+		inputMap.put(KeyStroke.getKeyStroke('o'), "insert-node-after");  // vi
+		inputMap.put(KeyStroke.getKeyStroke('O'), "insert-node-before"); // vi
+		inputMap.put(KeyStroke.getKeyStroke('i'), "insert-node-inside"); // vi
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "edit-details"); // vi
+	}
 
 	/**
 	  Construct a new XmlEditor.
@@ -109,14 +139,14 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	  <p>You also need to call the setXmlModel method to specify what data to show.
 
 	  @param xpathForRoot an xpath expression that selects the element to display as root element.
-	  @param displaySpecFile location of the display specification file, see the class DisplaySpecification for more details.
-	  @param schema the schema to use, see the class Schema for more details.
+	  @param displaySpec an instance of an IDisplaySpecification
+	  @param schema the schema to use, see the interface ISchema for more details.
 	 */
-	public XmlEditor(String xpathForRoot, String displaySpecFile, Schema schema)
+	public XmlEditor(String xpathForRoot, IDisplaySpecification displaySpec, ISchema schema)
 		throws Exception
 	{
 		super();
-		this.displaySpec = DisplaySpecification.getInstance(displaySpecFile);
+		this.displaySpec = displaySpec;
 		this.schema = schema;
 		this.xpathForRoot = xpathForRoot;
 		addMouseListener(this);
@@ -131,6 +161,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 		// init actions
 		copyAction                = new CopyAction(this);
+		cutAction                 = new CutAction(this);
 		removeAction              = new RemoveAction(this);
 		pasteBeforeAction         = new PasteAction(this, PasteAction.PASTE_BEFORE);
 		pasteAfterAction          = new PasteAction(this, PasteAction.PASTE_AFTER);
@@ -161,6 +192,22 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 		collapseAllAction         = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE_ALL);
 		expandAllAction           = new CollapseExpandAction(this, CollapseExpandAction.EXPAND_ALL);
+		collapseAction            = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE);
+		expandAction              = new CollapseExpandAction(this, CollapseExpandAction.EXPAND);
+
+		// init keymap and actionmap
+		setInputMap(WHEN_FOCUSED, inputMap);
+		ActionMap actionMap = getActionMap();
+		actionMap.put("select-next-node",     new SelectNextNodeAction(this));
+		actionMap.put("select-previous-node", new SelectPreviousNodeAction(this));
+		actionMap.put("delete-node",          removeAction);
+		actionMap.put("copy-node",            copyAction);
+		actionMap.put("cut-node",             cutAction);
+		actionMap.put("paste-node",           pasteAfterAction);
+		actionMap.put("collapse",             collapseAction);
+		actionMap.put("expand",               expandAction);
+		actionMap.put("collapse-all",         collapseAllAction);
+		actionMap.put("expand-all",           expandAllAction);
 	}
 
 	/**
@@ -170,6 +217,9 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	{
 		this.xmlModel = xmlModel;
 		this.mainView = null;
+
+		ActionMap actionMap = getActionMap();
+		actionMap.put("undo", xmlModel.getUndo().getUndoAction());
 	}
 
 	public XmlModel getXmlModel()
@@ -177,7 +227,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		return xmlModel;
 	}
 
-	public DisplaySpecification getDisplaySpec()
+	public IDisplaySpecification getDisplaySpec()
 	{
 		return displaySpec;
 	}
@@ -347,6 +397,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 	public void mousePressed(MouseEvent e)
 	{
+		requestFocus();
+
 		// the mouse event is recursively passed through the view object tree until
 		// a view object recognizes that it is the one who is clicked.
 		if (mainView != null)
@@ -379,59 +431,10 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		}
 
 		JPopupMenu popupMenu = new JPopupMenu();
-		if (node instanceof Element)
-		{
-			Element element = (Element)node;
-
-			Element parent = (Element)element.getParentNode();
-
-			JMenu insertBeforeMenu = new JMenu("Insert before");
-			JMenu insertAfterMenu = new JMenu("Insert after");
-			JMenu appendChildMenu = new JMenu("Append child");
-
-			Iterator subElementsIt = schema.getAllowedSubElements((Element)element.getParentNode()).iterator();
-			while (subElementsIt.hasNext())
-			{
-				Schema.SubElement subElement = (Schema.SubElement)subElementsIt.next();
-				ElementSpec elementSpec = displaySpec.getElementSpec(subElement.namespaceURI, subElement.localName);
-				insertBeforeMenu.add(new InsertElementAction(this, element,
-							InsertElementAction.BEFORE, elementSpec));
-				insertAfterMenu.add(new InsertElementAction(this, element,
-							InsertElementAction.AFTER, elementSpec));
-			}
-
-			subElementsIt = schema.getAllowedSubElements(element).iterator();
-			while (subElementsIt.hasNext())
-			{
-				Schema.SubElement subElement = (Schema.SubElement)subElementsIt.next();
-				ElementSpec elementSpec = displaySpec.getElementSpec(subElement.namespaceURI, subElement.localName);
-				appendChildMenu.add(new InsertElementAction(this, element,
-							InsertElementAction.ASCHILD, elementSpec));
-			}
-
-			popupMenu.add(insertBeforeMenu);
-			popupMenu.add(insertAfterMenu);
-			popupMenu.add(appendChildMenu);
-			popupMenu.addSeparator();
-			popupMenu.add(getCommentOutAction());
-			popupMenu.addSeparator();
-			popupMenu.add(getCollapseAllAction());
-			popupMenu.add(getExpandAllAction());
-
-		}
-		else if (node instanceof Comment || node instanceof Text || node instanceof CDATASection)
-		{
-			popupMenu.add(new EditCharacterDataAction(this, (CharacterData)node));
-		}
-
-		if (node instanceof Comment)
-		{
-			popupMenu.add(getUncommentAction());
-		}
-
-		popupMenu.addSeparator();
 
 		popupMenu.add(getCopyAction());
+		popupMenu.add(getCutAction());
+		popupMenu.add(getRemoveAction());
 
 		JMenu pasteMenu = new JMenu("Paste");
 		pasteMenu.add(getPasteBeforeAction());
@@ -462,8 +465,21 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 			cdataMenu.add(getInsertCDataInsideAction());
 		popupMenu.add(cdataMenu);
 
-		popupMenu.addSeparator();
-		popupMenu.add(getRemoveAction());
+		if (node instanceof Element)
+		{
+			popupMenu.addSeparator();
+			popupMenu.add(getCollapseAllAction());
+			popupMenu.add(getExpandAllAction());
+			popupMenu.addSeparator();
+			popupMenu.add(getCommentOutAction());
+
+		}
+
+		if (node instanceof Comment)
+		{
+			popupMenu.addSeparator();
+			popupMenu.add(getUncommentAction());
+		}
 
 		popupMenu.show(this, x, y);
 	}
@@ -621,9 +637,12 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 						if (newNode.getNodeType() == Node.ELEMENT_NODE && !schema.isChildAllowed(parent, (Element)newNode))
 						{
-							event.rejectDrop();
-							JOptionPane.showMessageDialog(getContainingFrame(), ((Element)newNode).getLocalName() + " is not allowed here.");
-							return;
+							// schema tells it is not allowed here, but let the user decide
+							if (JOptionPane.showConfirmDialog(getTopLevelAncestor(), ((Element)newNode).getLocalName() + " is not allowed here. Insert it anyway?", "Let me ask you something...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION)
+							{
+								event.rejectDrop();
+								return;
+							}
 						}
 
 						if (draggingNode != null)
@@ -636,9 +655,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 					{
 						if (newNode.getNodeType() == Node.ELEMENT_NODE && !schema.isChildAllowed((Element)dropNode, (Element)newNode))
 						{
-							event.rejectDrop();
-							JOptionPane.showMessageDialog(getContainingFrame(), newNode.getLocalName() + " is not allowed here.");
-							return;
+							if (JOptionPane.showConfirmDialog(getTopLevelAncestor(), ((Element)newNode).getLocalName() + " is not allowed here. Insert it anyway?", "Let me ask you something...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION)
+							{
+								event.rejectDrop();
+								return;
+							}
 						}
 
 						if (draggingNode != null)
@@ -735,27 +756,20 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		{
 			try
 			{
-				rootElement = (Element)XPathAPI.selectSingleNode(xmlModel.getDocument().getDocumentElement(),
-						xpathForRoot);
+				Element documentElement = xmlModel.getDocument().getDocumentElement();
+				XPath xpath = new XPath(xpathForRoot);
+				SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
+				namespaceContext.addElementNamespaces(xpath.getNavigator(), documentElement);
+				xpath.setNamespaceContext(namespaceContext);
+				rootElement = (Element)xpath.selectSingleNode(documentElement);
 			}
 			catch (Exception e)
 			{
+				System.out.println("Error evaluating XPath for getting root element: " + e);
 				return null;
 			}
 		}
 		return rootElement;
-	}
-
-	protected JFrame getContainingFrame()
-	{
-		Component parent = this.getParent();
-
-		while (parent != null && !(parent instanceof JFrame))
-		{
-			parent = parent.getParent();
-		}
-
-		return (JFrame)parent;
 	}
 
 	/**
@@ -824,6 +838,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 					listener.nodeUnselected(selectedNode);
 				}
 				selectedNode = null;
+				selectedNodeView = null;
 			}
 			catch (Exception e)
 			{
@@ -835,11 +850,24 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		{
 			selectionListeners.add(listener);
 		}
+
+		public void cleanup()
+		{
+			if (selectedNode != null)
+			{
+				((EventTarget)selectedNode).removeEventListener("DOMNodeRemoved", this, false);
+			}
+		}
 	}
 
 	public CopyAction getCopyAction()
 	{
 		return copyAction;
+	}
+
+	public CutAction getCutAction()
+	{
+		return cutAction;
 	}
 
 	public RemoveAction getRemoveAction()
@@ -949,4 +977,70 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		}
 	}
 
+	/**
+	 * Makes sure that the area between the two given parameters is visible,
+	 * if not, scrolls the viewport so that the rectangle is aligned to the bottom
+	 * of the viewport. This is used for keyboard navigation.
+	 */
+	public void scrollAlignBottom(int startV, int height)
+	{
+		JViewport viewPort = (JViewport)getParent();
+		Rectangle rect = viewPort.getViewRect();
+
+		if ((startV > rect.y) && ((startV + height) < (rect.y + rect.height)))
+		{
+			// it is already completely visible
+			return;
+		}
+
+		if (height > rect.height)
+		{
+			rect.translate(0, startV - rect.y);
+		}
+		else
+		{
+			// startV - rect.height + height is the position we want
+			rect.translate(0, startV - rect.height + height - rect.y);
+		}
+
+		scrollRectToVisible(rect);
+	}
+
+	/**
+	 * Makes sure that the area between the two given parameters is visible,
+	 * if not, scrolls the viewport so that the rectangle is aligned to the top
+	 * of the viewport. This is used for keyboard navigation.
+	 */
+	public void scrollAlignTop(int startV, int height)
+	{
+		JViewport viewPort = (JViewport)getParent();
+		Rectangle rect = viewPort.getViewRect();
+
+		if ((startV > rect.y) && ((startV + height) < (rect.y + rect.height)))
+		{
+			// it is already completely visible
+			return;
+		}
+
+		rect.translate(0, startV - rect.y);
+
+		scrollRectToVisible(rect);
+	}
+
+
+	/**
+	 * Returns the root of the view object tree.
+	 */
+	public View getRootView()
+	{
+		return mainView;
+	}
+
+	public void cleanup()
+	{
+		if (mainView != null)
+			mainView.removeEventListeners();
+
+		selectionInfo.cleanup();
+	}
 }
