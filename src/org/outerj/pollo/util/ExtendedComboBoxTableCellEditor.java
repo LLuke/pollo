@@ -10,7 +10,10 @@ import java.util.Iterator;
 /**
  * A TableCellEditor that consists of a combobox with (optionally) some
  * extra components next to it (e.g. a button to browse for a file name, etc.).
- * The extra components are placed left of the dropdown button.
+ * The extra components are placed left of the dropdown button. This is done by
+ * replacing the combobox editor with a panel that contains a textfield and extra
+ * components. Because of this, a whole slew of focus-tricks were needed to get
+ * it working on both java 1.3 and 1.4.
  *
  * <p>Using the methods in the Valuable interface, the contents of the textfield
  * can be manipulated in a uniform way as for the ExtendedTextFieldCellEditor.
@@ -72,10 +75,26 @@ public class ExtendedComboBoxTableCellEditor extends AbstractCellEditor implemen
 			textField.addActionListener( new ActionListener() {
 				public void actionPerformed(ActionEvent e)
 				{
+					// explicitely moving focus back to the table is necessary for java 1.4
+					ExtendedComboBox.this.getParent().requestFocus();
 					ExtendedComboBoxTableCellEditor.this.fireEditingStopped();
+
 				}
 			});
 
+			/* this can be handy for debugging purposes
+			textField.addFocusListener(new FocusListener() {
+				public void focusGained(FocusEvent e)
+				{
+					System.out.println("focus gained");
+				}
+
+				public void focusLost(FocusEvent e)
+				{
+					System.out.println("focus lost");
+				}
+			});
+			*/
 		}
 
 		public void setValue(String value)
@@ -143,6 +162,15 @@ public class ExtendedComboBoxTableCellEditor extends AbstractCellEditor implemen
 				textField.requestFocus();
 			}
 
+			protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
+												int condition, boolean pressed)
+			{
+				if (textField.processKeyBindingPublic(ks, e, condition, pressed))
+					return true;
+				else
+					return super.processKeyBinding(ks, e, condition, pressed);
+			}
+
 		}
 
 
@@ -153,6 +181,23 @@ public class ExtendedComboBoxTableCellEditor extends AbstractCellEditor implemen
 				return true;
 			else
 				return super.processKeyBinding(ks, e, condition, pressed);
+		}
+
+		public void requestFocus()
+		{
+			textField.requestFocus();
+		}
+
+		/**
+		 * This method is overidden from JComboBox. If the popup is being
+		 * hidden, the focus is forced back to the textfield. This is necessary
+		 * because on Java 1.4, the focus was not moved back to the textfield.
+		 */
+		public void setPopupVisible(boolean v)
+		{
+			super.setPopupVisible(v);
+			if (v == false)
+				textField.requestFocus();
 		}
 	}
 }

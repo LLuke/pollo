@@ -6,10 +6,14 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.FocusListener;
 
 /**
  * A TableCellEditor that consists of a textfield with (optionally) some
  * extra components next to it (e.g. a button to browse for a file name, etc.).
+ *
+ * <p>This behaviour is achieved by placing a textfield and the extra components on
+ * a panel, and returning that panel as editor.
  *
  * <p>Using the methods in the Valuable interface, the contents of the textfield
  * can be manipulated in a uniform way as for the ExtendedComboBoxTableCellEditor.
@@ -23,11 +27,18 @@ public class ExtendedTextFieldTableCellEditor extends AbstractCellEditor impleme
 
 	public ExtendedTextFieldTableCellEditor(Component extraStuff)
 	{
-		panel = new JPanel() {
+		// since it is not really the panel itself which is the editor, but
+		// rather the textfield inside it, some methods must be overided to
+		// make it behave like it should.
+		panel = new JPanel()
+		{
 			protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
 												int condition, boolean pressed)
 			{
-				return textField.processKeyBindingPublic(ks, e, condition, pressed);
+				if (textField.processKeyBindingPublic(ks, e, condition, pressed))
+					return true;
+				else
+					return super.processKeyBinding(ks, e, condition, pressed);
 			}
 
 			public void requestFocus()
@@ -46,6 +57,8 @@ public class ExtendedTextFieldTableCellEditor extends AbstractCellEditor impleme
 		textField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
+				// moving the focus back to the parent manually is necessary for java 1.4
+				panel.getParent().requestFocus();
 				ExtendedTextFieldTableCellEditor.this.stopCellEditing();
 			}
 		});
