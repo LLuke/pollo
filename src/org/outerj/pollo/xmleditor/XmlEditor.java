@@ -90,6 +90,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 	protected CollapseExpandAction collapseAllAction;
 	protected CollapseExpandAction expandAllAction;
+	protected CollapseExpandAction toggleAction;
 
 	protected CollapseExpandAction collapseAction;
 	protected CollapseExpandAction expandAction;
@@ -116,14 +117,6 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		inputMap.put(KeyStroke.getKeyStroke('j'), "select-next-node"); // vi
 		inputMap.put(KeyStroke.getKeyStroke('k'), "select-previous-node"); // vi
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete-node");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, java.awt.Event.CTRL_MASK), "copy-node");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, java.awt.Event.CTRL_MASK), "cut-node");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, java.awt.Event.CTRL_MASK), "paste-node");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, java.awt.Event.CTRL_MASK), "undo");
-		inputMap.put(KeyStroke.getKeyStroke('-'), "collapse");
-		inputMap.put(KeyStroke.getKeyStroke('+'), "expand");
-		inputMap.put(KeyStroke.getKeyStroke('-', java.awt.Event.CTRL_MASK), "collapse-all");
-		inputMap.put(KeyStroke.getKeyStroke('+', java.awt.Event.CTRL_MASK), "expand-all");
 		inputMap.put(KeyStroke.getKeyStroke('o'), "insert-node-after");  // vi
 		inputMap.put(KeyStroke.getKeyStroke('O'), "insert-node-before"); // vi
 		inputMap.put(KeyStroke.getKeyStroke('i'), "insert-node-inside"); // vi
@@ -219,13 +212,15 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		uncommentAction           = new UncommentAction(this);
 
 		collapseAllAction         = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE_ALL);
-		resMgr.configureAction("collapseAllAction", collapseAllAction);
+			resMgr.configureAction("collapseAllAction", collapseAllAction);
 		expandAllAction           = new CollapseExpandAction(this, CollapseExpandAction.EXPAND_ALL);
-		resMgr.configureAction("expandAllAction", expandAllAction);
+			resMgr.configureAction("expandAllAction", expandAllAction);
 		collapseAction            = new CollapseExpandAction(this, CollapseExpandAction.COLLAPSE);
-		resMgr.configureAction("collapseAction", collapseAction);
+			resMgr.configureAction("collapseAction", collapseAction);
 		expandAction              = new CollapseExpandAction(this, CollapseExpandAction.EXPAND);
-		resMgr.configureAction("expandAction", expandAction);
+			resMgr.configureAction("expandAction", expandAction);
+		toggleAction              = new CollapseExpandAction(this, CollapseExpandAction.TOGGLE);
+			resMgr.configureAction("toggleAction", toggleAction);
 
 		renderViewToFileAction = new RenderViewToFileAction(this);
 
@@ -240,6 +235,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		actionMap.put("paste-node",           pasteAfterAction);
 		actionMap.put("collapse",             collapseAction);
 		actionMap.put("expand",               expandAction);
+		actionMap.put("toggle",               toggleAction);
 		actionMap.put("collapse-all",         collapseAllAction);
 		actionMap.put("expand-all",           expandAllAction);
 	}
@@ -1094,6 +1090,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	public CollapseExpandAction getExpandAction()
 	{
 		return expandAction;
+	}
+
+	public CollapseExpandAction getToggleAction()
+	{
+		return toggleAction;
 	}
 
 	public CollapseExpandAction getExpandAllAction()
