@@ -3,7 +3,8 @@
 <project default="compile" name="pollo">
   <path id="classpath">
     <pathelement location="build"/>
-    <pathelement location="lib/endorsed/xerces.jar"/>
+    <pathelement location="lib/endorsed/dom3-xmlParserAPIs.jar"/>
+    <pathelement location="lib/endorsed/dom3-xercesImpl.jar"/>
     <pathelement location="lib/commons-digester.jar"/>
     <pathelement location="lib/commons-collections.jar"/>
     <pathelement location="lib/commons-beanutils.jar"/>
@@ -18,7 +19,7 @@
     <pathelement location="lib/xsdlib.jar"/>
     <pathelement location="lib/jhbasic.jar"/>
   </path>
-  <property name="version" value="0.3.3"/>
+  <property name="version" value="0.3.4"/>
   <!--
   <taskdef classname="org.outerj.pollo.engine.ant.PolloAntStructure" name="polloantstructure"/>
   <target name="polloantstructure">
@@ -27,7 +28,7 @@
   -->
   <target name="compile">
     <mkdir dir="build"/>
-    <javac bootclasspath="lib/endorsed/xerces.jar" debug="true"
+	<javac bootclasspath="lib/endorsed/dom3-xmlParserAPIs.jar" debug="true"
       destdir="build" includeJavaRuntime="true" srcdir="src">
       <classpath refid="classpath"/>
     </javac>
@@ -69,5 +70,17 @@
     <jar compress="false" jarfile="pollo.jar">
       <zipfileset dir="build"/>
     </jar>
+  </target>
+  <target name="website">
+    <delete dir="websitebuild"/>
+    <mkdir dir="websitebuild"/>
+    <loadfile property="footer" srcfile="website/footer.html.part"/>
+    <filter token="footer" value="${footer}"/>
+    <copy filtering="true" todir="websitebuild">
+      <fileset defaultexcludes="true" dir="website" includes="*.html"/>
+    </copy>
+    <copy filtering="false" todir="websitebuild">
+      <fileset defaultexcludes="true" dir="website" excludes="*.html,.**"/>
+    </copy>
   </target>
 </project>
