@@ -43,6 +43,9 @@ version 0.4
    display specfication files.
  - When using a DTD as schema, required attributes have an exclamation
    mark next to them in the attribute editor.
+ - Upgraded MSV to nightly build of October 2, 2003. Thanks to Gregory Davis.
+ - The pollo.sh script is now executable from everywhere, you don't
+   have to be in the 'pollo/bin' directory. Thanks to Gregory Davis.
  - This release should work on Java 1.3 again
  - all kind of miscellaneous small stuff
 
