@@ -65,15 +65,15 @@ public class InsertCharacterDataAction extends AbstractAction
 		{
 			case TYPE_TEXT:
 				newNode = xmlEditor.getXmlModel().getDocument().
-					createTextNode("I am a new text node.\nSelect popup menu, edit text to change me!");
+					createTextNode("I'm a new text node.");
 				break;
 			case TYPE_COMMENT:
 				newNode = xmlEditor.getXmlModel().getDocument().
-					createComment("I am a new comment node.\nSelect popup menu, edit text to change me!");
+					createComment("I'm a new comment node.");
 				break;
 			case TYPE_CDATA:
 				newNode = xmlEditor.getXmlModel().getDocument().
-					createCDATASection("I am a new CDATA section.\nSelect popup menu, edit text to change me!");
+					createCDATASection("I'm a new CDATA section.");
 				break;
 		}
 
