@@ -9,7 +9,6 @@ package org.outerj.pollo.texteditor;
  */
 
 import javax.swing.text.Segment;
-import java.util.*;
 
 /**
  * A token marker that splits lines of text into tokens. Each token carries
@@ -22,7 +21,7 @@ import java.util.*;
  * cached.
  *
  * @author Slava Pestov
- * @version $Id: TokenMarker.java,v 1.32 1999/12/13 03:40:30 sp Exp $
+ * @version $Id: TokenMarker.java,v 1.1 2001/11/18 19:30:48 bdumon Exp $
  *
  * @see org.gjt.sp.jedit.syntax.Token
  */

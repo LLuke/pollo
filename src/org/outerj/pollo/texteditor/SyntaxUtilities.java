@@ -8,7 +8,9 @@ package org.outerj.pollo.texteditor;
  * remains intact in all source distributions of this package.
  */
 
-import javax.swing.text.*;
+import javax.swing.text.Segment;
+import javax.swing.text.TabExpander;
+import javax.swing.text.Utilities;
 import java.awt.*;
 
 /**
@@ -16,7 +18,7 @@ import java.awt.*;
  * subsystem.
  *
  * @author Slava Pestov
- * @version $Id: SyntaxUtilities.java,v 1.9 1999/12/13 03:40:30 sp Exp $
+ * @version $Id: SyntaxUtilities.java,v 1.1 2001/11/18 19:30:48 bdumon Exp $
  */
 public class SyntaxUtilities
 {

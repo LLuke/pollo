@@ -1,12 +1,11 @@
 package org.outerj.pollo.texteditor;
 
-import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.model.XmlModel;
-
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
+import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.xml.sax.SAXParseException;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class XmlTextEditorPanel extends JPanel
 {

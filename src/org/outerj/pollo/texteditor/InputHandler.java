@@ -8,11 +8,16 @@ package org.outerj.pollo.texteditor;
  * remains intact in all source distributions of this package.
  */
 
-import javax.swing.text.*;
-import javax.swing.JPopupMenu;
-import java.awt.event.*;
-import java.awt.Component;
-import java.util.*;
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Enumeration;
+import java.util.EventObject;
+import java.util.Hashtable;
 
 /**
  * An input handler converts the user's key strokes into concrete actions.
@@ -23,7 +28,7 @@ import java.util.*;
  * to the implementations of this class to do so.
  *
  * @author Slava Pestov
- * @version $Id: InputHandler.java,v 1.14 1999/12/13 03:40:30 sp Exp $
+ * @version $Id: InputHandler.java,v 1.1 2001/11/18 19:30:48 bdumon Exp $
  * @see org.gjt.sp.jedit.textarea.DefaultInputHandler
  */
 public abstract class InputHandler extends KeyAdapter

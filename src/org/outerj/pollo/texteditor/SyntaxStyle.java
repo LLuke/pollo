@@ -9,13 +9,12 @@ package org.outerj.pollo.texteditor;
  */
 
 import java.awt.*;
-import java.util.StringTokenizer;
 
 /**
  * A simple text style class. It can specify the color, italic flag,
  * and bold flag of a run of text.
  * @author Slava Pestov
- * @version $Id: SyntaxStyle.java,v 1.6 1999/12/13 03:40:30 sp Exp $
+ * @version $Id: SyntaxStyle.java,v 1.1 2001/11/18 19:30:48 bdumon Exp $
  */
 public class SyntaxStyle
 {

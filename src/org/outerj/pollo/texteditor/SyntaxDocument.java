@@ -8,8 +8,11 @@ package org.outerj.pollo.texteditor;
  * remains intact in all source distributions of this package.
  */
 
-import javax.swing.event.*;
-import javax.swing.text.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.Segment;
 import javax.swing.undo.UndoableEdit;
 
 /**
@@ -17,7 +20,7 @@ import javax.swing.undo.UndoableEdit;
  * system.
  *
  * @author Slava Pestov
- * @version $Id: SyntaxDocument.java,v 1.14 1999/12/13 03:40:30 sp Exp $
+ * @version $Id: SyntaxDocument.java,v 1.1 2001/11/18 19:30:48 bdumon Exp $
  */
 public class SyntaxDocument extends PlainDocument
 {

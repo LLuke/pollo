@@ -8,12 +8,13 @@ package org.outerj.pollo.texteditor;
  * remains intact in all source distributions of this package.
  */
 
-import javax.swing.text.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 /**
  * Class with several utility functions used by the text area component.
  * @author Slava Pestov
- * @version $Id: TextUtilities.java,v 1.4 1999/12/13 03:40:30 sp Exp $
+ * @version $Id: TextUtilities.java,v 1.1 2001/11/18 19:30:48 bdumon Exp $
  */
 public class TextUtilities
 {

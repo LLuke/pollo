@@ -1,11 +1,11 @@
 package org.outerj.pollo.texteditor;
 
-import org.outerj.pollo.texteditor.action.UndoAction;
 import org.outerj.pollo.texteditor.action.RedoAction;
+import org.outerj.pollo.texteditor.action.UndoAction;
 
-import javax.swing.undo.UndoManager;
-import javax.swing.text.Segment;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Segment;
+import javax.swing.undo.UndoManager;
 
 public class XmlTextDocument extends SyntaxDocument
 {

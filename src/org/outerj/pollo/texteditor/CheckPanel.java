@@ -1,24 +1,17 @@
 package org.outerj.pollo.texteditor;
 
-import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.dialog.ErrorDialog;
-
 import org.apache.xerces.parsers.SAXParser;
+import org.outerj.pollo.dialog.ErrorDialog;
+import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
 
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.*;
 import javax.swing.text.Segment;
-import java.awt.BorderLayout;
-
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Dimension;
-import java.awt.CardLayout;
 import java.io.CharArrayReader;
-
-import org.xml.sax.SAXParseException;
-import org.xml.sax.InputSource;
 
 /**
  * Panel that shows well-formdness check errors.
@@ -79,7 +72,7 @@ public class CheckPanel extends JPanel implements ActionListener
 			}
 			catch (Exception e)
 			{
-				ErrorDialog errorDialog = new ErrorDialog(null, "An unexpected exception occured during the well-formedness check.", e);
+				ErrorDialog errorDialog = new ErrorDialog((Frame)getTopLevelAncestor(), "An unexpected exception occured during the well-formedness check.", e);
 				errorDialog.show();
 			}
 			messageLabel.setText("The document is well-formed.");

@@ -4,6 +4,8 @@ import org.outerj.pollo.texteditor.action.CopyAction;
 import org.outerj.pollo.texteditor.action.CutAction;
 import org.outerj.pollo.texteditor.action.PasteAction;
 
+import java.awt.*;
+
 public class XmlTextEditor extends JEditTextArea
 {
 	protected CopyAction copyAction;
@@ -17,6 +19,8 @@ public class XmlTextEditor extends JEditTextArea
 		copyAction = new CopyAction(this);
 		cutAction = new CutAction(this);
 		pasteAction = new PasteAction(this);
+
+		setFont(new Font("Monospaced", 0, 12));
 	}
 
 	/**

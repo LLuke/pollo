@@ -8,13 +8,21 @@ package org.outerj.pollo.texteditor;
  * remains intact in all source distributions of this package.
  */
 
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.undo.*;
 import javax.swing.*;
-import java.awt.datatransfer.*;
-import java.awt.event.*;
+import javax.swing.event.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.Segment;
+import javax.swing.text.Utilities;
+import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoableEdit;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -46,7 +54,7 @@ import java.util.Vector;
  *     + "}");</pre>
  *
  * @author Slava Pestov
- * @version $Id: JEditTextArea.java,v 1.36 1999/12/13 03:40:30 sp Exp $
+ * @version $Id: JEditTextArea.java,v 1.1 2001/11/18 19:30:48 bdumon Exp $
  */
 public class JEditTextArea extends JComponent
 {

@@ -8,17 +8,19 @@ package org.outerj.pollo.texteditor;
  * remains intact in all source distributions of this package.
  */
 
-import javax.swing.ToolTipManager;
-import javax.swing.text.*;
-import javax.swing.JComponent;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.Segment;
+import javax.swing.text.TabExpander;
+import javax.swing.text.Utilities;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * The text area repaint manager. It performs double buffering and paints
  * lines of text.
  * @author Slava Pestov
- * @version $Id: TextAreaPainter.java,v 1.24 1999/12/13 03:40:30 sp Exp $
+ * @version $Id: TextAreaPainter.java,v 1.1 2001/11/18 19:30:48 bdumon Exp $
  */
 public class TextAreaPainter extends JComponent implements TabExpander
 {
