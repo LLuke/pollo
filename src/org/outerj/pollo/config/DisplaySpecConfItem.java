@@ -7,14 +7,6 @@ import org.outerj.pollo.xmleditor.exception.PolloException;
 
 public class DisplaySpecConfItem extends ConfItem
 {
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
-
-    public DisplaySpecConfItem()
-    {
-        logcat.debug("New DisplaySpecConfItem created");
-    }
-
     public IDisplaySpecification createDisplaySpec()
         throws PolloException
     {
@@ -28,8 +20,7 @@ public class DisplaySpecConfItem extends ConfItem
         }
         catch (Exception e)
         {
-            logcat.error("Exception creating display specification", e);
-            throw new PolloException("[DisplaySpecConfItem] Error creating display specification.", e);
+            throw new PolloException("Error creating display specification.", e);
         }
         return displaySpec;
     }

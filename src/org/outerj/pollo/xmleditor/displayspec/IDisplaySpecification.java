@@ -14,6 +14,9 @@ import java.awt.*;
  */
 public interface IDisplaySpecification
 {
+    public static final int POLLO_TREE = 1;
+    public static final int CLASSIC_TREE = 2;
+
     /**
      * Get the background fill color.
      */
@@ -29,4 +32,6 @@ public interface IDisplaySpecification
     public ElementSpec getElementSpec(String namespaceURI, String localName, Element parent);
 
     public ElementSpec getElementSpec(Element element);
+
+    public int getTreeType();
 }

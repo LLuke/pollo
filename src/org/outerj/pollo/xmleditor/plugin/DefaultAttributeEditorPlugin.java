@@ -15,24 +15,20 @@ import java.util.HashMap;
  */
 public class DefaultAttributeEditorPlugin implements IAttributeEditorPlugin
 {
-    XmlModel xmlModel;
-    ISchema schema;
+    protected XmlModel xmlModel;
+    protected ISchema schema;
+    protected AttributeEditorSupport editorSupport;
 
     public void init(HashMap initParams, XmlModel xmlModel, ISchema schema)
     {
         this.xmlModel = xmlModel;
         this.schema = schema;
+        this.editorSupport = new AttributeEditorSupport(schema);
     }
 
     public TableCellEditor getAttributeEditor(Element element, String namespaceURI, String localName)
     {
-        String [] values = schema.getPossibleAttributeValues(element, namespaceURI, localName);
-        if (values != null)
-        {
-            JComboBox combo = new JComboBox(values);
-            combo.setEditable(true);
-            return new DefaultCellEditor(combo);
-        }
-        return null;
+        editorSupport.reset(element, namespaceURI, localName);
+        return editorSupport.getEditor();
     }
 }

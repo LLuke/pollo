@@ -69,7 +69,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
         xmlEditor.getSelectionInfo().addListener(nodeDetailsPanel);
         nodeDetailsPanel.setBorder(ShadowBorder.getInstance());
 
-        attrPanel = new AttributesPanel(model, schema, attrEditorPlugin, xmlEditor);
+        attrPanel = new AttributesPanel(model, schema, attrEditorPlugin, xmlEditor, displaySpec);
         xmlEditor.getSelectionInfo().addListener(attrPanel);
         nodeDetailsPanel.add(Node.ELEMENT_NODE, attrPanel);
 
@@ -149,9 +149,23 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
         splitPane1AndAttributesPanelSplit.setBorder(BorderFactory.createEmptyBorder());
         add(splitPane1AndAttributesPanelSplit, BorderLayout.CENTER);
 
+        Box statusBars = new Box(BoxLayout.Y_AXIS);
+
+        HelpBar helpBar = new HelpBar(xmlEditor, attrPanel);
+        helpBar.setBorder(new CompoundBorder(new EmptyBorder(3, 0, 0, 0), BorderFactory.createBevelBorder(BevelBorder.LOWERED)));
+        Dimension preferredSize = helpBar.getPreferredSize();
+        preferredSize.width = Integer.MAX_VALUE;
+        helpBar.setMaximumSize(preferredSize);
+        statusBars.add(helpBar);
+
         NodePathBar nodePathBar = new NodePathBar(xmlEditor, attrPanel);
         nodePathBar.setBorder(new CompoundBorder(new EmptyBorder(3, 0, 0, 0), BorderFactory.createBevelBorder(BevelBorder.LOWERED)));
-        add(nodePathBar, BorderLayout.SOUTH);
+        preferredSize = nodePathBar.getPreferredSize();
+        preferredSize.width = Integer.MAX_VALUE;
+        nodePathBar.setMaximumSize(preferredSize);
+        statusBars.add(nodePathBar);
+
+        add(statusBars, BorderLayout.SOUTH);
 
         setXmlModel(model);
     }

@@ -6,6 +6,8 @@ import org.outerj.pollo.xmleditor.schema.AttributeSchema;
 import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.util.DomUtils;
 import org.outerj.pollo.xmleditor.util.QuickSort;
+import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
+import org.outerj.pollo.xmleditor.displayspec.AttributeSpec;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -23,8 +25,8 @@ import java.util.Iterator;
 /**
   A TableModel for the attributes of a DOM element.
   <p>
-  The attributes are read once during the {@link #setElement(org.w3c.dom.Element) setElement} method, and for each
-  attribute an instance of {@link org.outerj.pollo.xmleditor.AttributesTableModel.TempAttrEditInfo TempAttrEditInfo}
+  The attributes are read once during the {@link #setElement(org.w3c.dom.Element, org.outerj.pollo.xmleditor.displayspec.ElementSpec) setElement} method, and for each
+  attribute an instance of {@link org.outerj.pollo.xmleditor.attreditor.AttributesTableModel.TempAttrEditInfo TempAttrEditInfo}
   is created. These are put in an ArrayList.
   <p>
   One of the reasons for working this way is because the attributes of an
@@ -51,6 +53,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
     protected ISchema schema;
     protected XmlModel xmlModel;
     protected QuickSort sorter = new QuickSort(new TempAttrEditInfoComparator());
+    protected ElementSpec elementSpec;
 
 
     /**
@@ -86,7 +89,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
         switch (column)
         {
             case 0:
-                return taei.getQName();
+                return taei.getLabel();
             case 1:
                 return taei.value;
         }
@@ -155,7 +158,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
       <p>
       null is an allowed value.
      */
-    public void setElement(Element element)
+    public void setElement(Element element, ElementSpec elementSpec)
     {
         // do some cleanup of the previous element.
         if (this.element != null)
@@ -163,6 +166,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
             ((EventTarget)this.element).removeEventListener("DOMAttrModified", this, false);
         }
         this.element = element;
+        this.elementSpec = elementSpec;
         this.attributes.clear();
 
         if (element == null)
@@ -180,6 +184,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
             taei.name = attr.getLocalName();
             taei.value = attr.getValue();
             taei.isNew = false;
+            taei.attrSpec = elementSpec.getAttributeSpec(taei.uri, taei.name);
 
             attributes.add(taei);
 
@@ -207,6 +212,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
                 taei.value = null;
                 taei.isNew = true;
                 taei.attrSchema = attrSchema;
+                taei.attrSpec = elementSpec.getAttributeSpec(taei.uri, taei.name);
 
                 attributes.add(taei);
             }
@@ -270,6 +276,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
         taei.prefix = prefix;
         taei.uri = namespaceURI;
         taei.name = localName;
+        taei.attrSpec = elementSpec.getAttributeSpec(taei.uri, taei.name);
         taei.value = null;
         taei.isNew = true;
 
@@ -284,7 +291,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
      * There is one instance of this class for each attribute.
      * <p>
      * Note: out of pure laziness, and since this class is only used internally inside
-     * {@link org.outerj.pollo.xmleditor.AttributesTableModel AttributesTableModel}, I havn't written
+     * {@link org.outerj.pollo.xmleditor.attreditor.AttributesTableModel AttributesTableModel}, I havn't written
      * getters/setters yet for the attributes.
      */
     protected class TempAttrEditInfo
@@ -295,10 +302,19 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
         public String value;
         public boolean isNew;
         public AttributeSchema attrSchema;
+        public AttributeSpec attrSpec;
 
         public String getQName()
         {
             return DomUtils.getQName(prefix, name);
+        }
+
+        public String getLabel()
+        {
+            if (attrSpec != null && attrSpec.label != null) {
+                return attrSpec.label;
+            } else
+                return getQName();
         }
     }
 
@@ -306,9 +322,9 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
     {
         public int compare(Object obj1, Object obj2)
         {
-            String s1 = ((TempAttrEditInfo)obj1).getQName();
-            String s2 = ((TempAttrEditInfo)obj2).getQName();
-            return s1.compareTo(s2);
+            String s1 = ((TempAttrEditInfo)obj1).getLabel();
+            String s2 = ((TempAttrEditInfo)obj2).getLabel();
+            return s1.compareToIgnoreCase(s2);
         }
     }
 
@@ -332,7 +348,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
         {
             if (!doingApplyChanges)
             {
-                setElement(element);
+                setElement(element, elementSpec);
                 fireTableChanged(new TableModelEvent(this));
             }
         }
@@ -347,11 +363,19 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 
     public void disconnectFromDom()
     {
-        setElement(null);
+        setElement(null, null);
     }
 
     public void reconnectToDom()
     {
         disconnectFromDom();
+    }
+
+    public String getHelpText(int row)
+    {
+        TempAttrEditInfo taei = (TempAttrEditInfo)attributes.get(row);
+        if (taei.attrSpec != null)
+            return taei.attrSpec.help;
+        return null;
     }
 }

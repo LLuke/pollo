@@ -32,7 +32,7 @@ public class GenericSchema implements ISchema
 
     public String [] getPossibleAttributeValues(Element element, String namespaceURI, String localName)
     {
-        return new String[0];
+        return null;
     }
 
     public Collection getAllowedSubElements(Element element)

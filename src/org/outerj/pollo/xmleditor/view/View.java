@@ -19,7 +19,7 @@ import java.awt.event.MouseEvent;
  */
 public interface View extends EventListener
 {
-    public void paint(Graphics gr, int startHorizontal, int startVertical);
+    public void paint(Graphics2D gr, int startHorizontal, int startVertical);
 
     /**
      * The layout method is responsible for layouting the view, eg
@@ -124,6 +124,8 @@ public interface View extends EventListener
 
     public View getPrevious(boolean visible);
 
+    public View getParent();
+
     public void markAsSelected(int startH, int startV);
 
     /**
@@ -138,4 +140,22 @@ public interface View extends EventListener
      * if it is not found.
      */
     public View findNode(Node node);
+
+    public boolean hasChildren();
+
+    /**
+     * Gets the vertical coordinate of the middle of the first line (which should
+     * also be the middle of the collapse sign if there is one).
+     */
+    public int getFirstLineCenterPos();
+
+    /**
+     * Returns a help text to be displayed for this node. Returns null if no help is available.
+     */
+    public String getHelp();
+
+    /**
+     * Returns the label for this node, if it has any.
+     */
+    public String getLabel();
 }

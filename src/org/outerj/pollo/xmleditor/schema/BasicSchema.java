@@ -136,9 +136,9 @@ public class BasicSchema implements ISchema
         }
     }
 
-    protected void addElementSchema(String elementPath, ElementSchema elementSchema, NamespaceSupport namespaceSupport)
+    protected void addElementSchema(String elementPath, ElementSchema elementSchema, NestedNodeMap.NamespaceResolver resolver) throws Exception
     {
-        elementSchemas.put(elementPath, elementSchema, namespaceSupport);
+        elementSchemas.put(elementPath, elementSchema, resolver);
     }
 
     protected AttributeSchema getAttributeSchema(Element element, String namespaceURI, String localName)
@@ -273,7 +273,23 @@ public class BasicSchema implements ISchema
             if (localName.equals("element"))
             {
                 inElement = false;
-                addElementSchema(elementPath, currentElementSchema, nsSupport);
+                try
+                {
+                    addElementSchema(elementPath, currentElementSchema, new NestedNodeMap.NamespaceResolver()
+                    {
+                        public String[] parseName(String name) throws Exception
+                        {
+                            String[] parts = new String[3];
+                            nsSupport.processName(name, parts, false);
+                            if (parts[0].equals("")) parts[0] = null;
+                            return parts;
+                        }
+                    });
+                }
+                catch (Exception e)
+                {
+                    throw new SAXException(e.getMessage(), e);
+                }
                 currentElementSchema = null;
             }
             else if (localName.equals("attribute"))

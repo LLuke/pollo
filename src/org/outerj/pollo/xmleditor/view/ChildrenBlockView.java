@@ -2,6 +2,7 @@ package org.outerj.pollo.xmleditor.view;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.XmlTransferable;
+import org.outerj.pollo.xmleditor.view.View;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -21,10 +22,7 @@ public abstract class ChildrenBlockView extends BlockView
 {
     private int contentHeight;
     private Node node;
-    private ArrayList childViewList = new ArrayList(10);
-
-    // some rendering constants
-    protected static final int SPACING_VERTICAL = 5;
+    protected ArrayList childViewList = new ArrayList(5);
 
     protected static final int NOT_CALCULATED    = -1;
 
@@ -39,26 +37,24 @@ public abstract class ChildrenBlockView extends BlockView
     }
 
 
-    public void paint(Graphics gr, int startH, int startV)
+    public void paint(Graphics2D gr, int startH, int startV)
     {
-        Graphics2D g = (Graphics2D)gr;
-
         if (childViewList.size()  > 0)
         {
             // now draw the children, but only those that need updating
             Iterator childrenIt = childViewList.iterator();
 
-            int clipStartVertical = (int)g.getClipBounds().getY();
-            int clipEndVertical = clipStartVertical + (int)g.getClipBounds().getHeight();
+            int clipStartVertical = (int)gr.getClipBounds().getY();
+            int clipEndVertical = clipStartVertical + (int)gr.getClipBounds().getHeight();
             if (!isCollapsed())
             {
-                int childVertPos = startV + getHeaderHeight() + SPACING_VERTICAL;
+                int childVertPos = startV + getHeaderHeight() + getVerticalSpacing();
                 while (childrenIt.hasNext())
                 {
                     View view = (View)childrenIt.next();
                     if (view.needsRepainting(childVertPos, clipStartVertical, clipEndVertical))
-                        view.paint(g, startH + getLeftMargin(), childVertPos);
-                    childVertPos += view.getHeight() + SPACING_VERTICAL;
+                        view.paint(gr, startH + getLeftMargin(), childVertPos);
+                    childVertPos += view.getHeight() + getVerticalSpacing();
                 }
             }
         }
@@ -123,7 +119,7 @@ public abstract class ChildrenBlockView extends BlockView
     public void mousePressed(MouseEvent e, int startH, int startV)
     {
         Iterator childrenIt = childViewList.iterator();
-        int childVertPos = startV + getHeaderHeight() + SPACING_VERTICAL;
+        int childVertPos = startV + getHeaderHeight() + getVerticalSpacing();
         while (childrenIt.hasNext())
         {
             View childView = (View)childrenIt.next();
@@ -132,7 +128,7 @@ public abstract class ChildrenBlockView extends BlockView
                 childView.mousePressed(e, startH + getLeftMargin(), childVertPos);
                 break;
             }
-            childVertPos += childView.getHeight() + SPACING_VERTICAL;
+            childVertPos += childView.getHeight() + getVerticalSpacing();
         }
     }
 
@@ -159,10 +155,10 @@ public abstract class ChildrenBlockView extends BlockView
                 while (childrenIt.hasNext())
                 {
                     View view = (View)childrenIt.next();
-                    totalChildrenHeight += view.getHeight() + SPACING_VERTICAL;
+                    totalChildrenHeight += view.getHeight() + getVerticalSpacing();
                 }
 
-                contentHeight = totalChildrenHeight + SPACING_VERTICAL;
+                contentHeight = totalChildrenHeight + getVerticalSpacing();
             }
             else
             {
@@ -238,7 +234,7 @@ public abstract class ChildrenBlockView extends BlockView
 
         for (int i = 0; i < children.getLength(); i++)
         {
-            Node node = (Node)children.item(i);
+            Node node = children.item(i);
             if (XmlEditor.isNodeTypeSupported(node.getNodeType()))
             {
                 View correspondingView = null;
@@ -277,7 +273,7 @@ public abstract class ChildrenBlockView extends BlockView
 
         for (int i = 0; i < children.getLength(); i++)
         {
-            Node node = (Node)children.item(i);
+            Node node = children.item(i);
             if ((node == removedChild))
             {
                 View correspondingView = (View)childViewList.get(relevantChildNodeCounter);
@@ -324,7 +320,7 @@ public abstract class ChildrenBlockView extends BlockView
     public void dragGestureRecognized(DragGestureEvent event, int startH, int startV)
     {
         Iterator childrenIt = childViewList.iterator();
-        int childVertPos = startV + getHeaderHeight() + SPACING_VERTICAL;
+        int childVertPos = startV + getHeaderHeight() + getVerticalSpacing();
         Point p = event.getDragOrigin();
         while (childrenIt.hasNext())
         {
@@ -334,59 +330,126 @@ public abstract class ChildrenBlockView extends BlockView
                 childView.dragGestureRecognized(event, startH + getLeftMargin(), childVertPos);
                 break;
             }
-            childVertPos += childView.getHeight() + SPACING_VERTICAL;
+            childVertPos += childView.getHeight() + getVerticalSpacing();
         }
     }
 
 
     public void dragOver(DropTargetDragEvent event, int startH, int startV)
     {
-        Iterator childrenIt = childViewList.iterator();
-        int childVertPos = startV + getHeaderHeight() + SPACING_VERTICAL;
-        View childView = null;
-        boolean lastOne = false;
-        Point p = event.getLocation();
-        while (childrenIt.hasNext() || (lastOne = true))
-        {
-            if (!lastOne)
-                childView = (View)childrenIt.next();
+        // here we handle the dragging between the nodes
 
-            if (!lastOne && p.getY() > childVertPos && p.getY() < childVertPos + childView.getHeight())
+        // There is some difference in handling for the cases where getVerticalSpacing is 0 or not 0.
+        // If it is not null, we will be checking if we drag in the spacing area, otherwise if we drag
+        // in a "sensitivity" area. Especially, the handling where elements ends is different: if
+        // getVerticalSpacing() returns 0, nested elements will vertically end on the same Y position,
+        // and hence we'll need to check the X coordinate to determine of which element the dragged node
+        // will become a child.
+
+        Iterator childrenIt = childViewList.iterator();
+        int childVertPos = startV + getHeaderHeight() + getVerticalSpacing();
+        int previousChildVertPos = childVertPos;
+        int lastChildStartV = childVertPos;
+        View childView = null;
+        View previousChildView = null;
+        Point p = event.getLocation();
+        while (childrenIt.hasNext())
+        {
+            childView = (View)childrenIt.next();
+
+            if (getVerticalSpacing() == 0 && p.getY() > (childVertPos - getDragSensitivityArea()) && p.getY() < childVertPos + getDragSensitivityArea())
             {
-                childView.dragOver(event, startH + getLeftMargin(), childVertPos);
-                break;
+                if (previousChildView != null &&  previousChildView.hasChildren() && !previousChildView.isCollapsed() && p.getX() > startH + getDragLineLeftMargin())
+                {
+                    previousChildView.dragOver(event, startH + getLeftMargin(), previousChildVertPos);
+                    return;
+                }
+                else if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor))
+                {
+                    drawDragOverEffectLine(startH, childVertPos - 1);
+                    xmlEditor.setDropData(xmlEditor.DROP_ACTION_INSERT_BEFORE, childView.getNode());
+                    event.acceptDrag(event.getDropAction());
+                }
+                return;
             }
-            else if (p.getY() > (childVertPos - SPACING_VERTICAL) && p.getY() < childVertPos)
+            else if (getVerticalSpacing() != 0 && p.getY() > (childVertPos - getVerticalSpacing()) && p.getY() < childVertPos)
             {
                 if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor))
                 {
-                    // draw drag over effect
-                    Rectangle rect = new Rectangle(startH + getLeftMargin(), childVertPos - 3, width, 2);
-                    xmlEditor.setDragOverEffectRedraw(rect);
-                    Graphics2D graphics = (Graphics2D)xmlEditor.getGraphics();
-                    graphics.setColor(new Color(255, 0, 0));
-                    graphics.fill(rect);
-
-                    if (!lastOne)
-                        xmlEditor.setDropData(xmlEditor.DROP_ACTION_INSERT_BEFORE, childView.getNode());
-                    else
-                        xmlEditor.setDropData(xmlEditor.DROP_ACTION_APPEND_CHILD, 
-                                childView.getNode().getParentNode());
-                }
-                if (event.isDataFlavorSupported(XmlTransferable.xmlFlavor))
+                    drawDragOverEffectLine(startH, childVertPos - 3);
+                    xmlEditor.setDropData(xmlEditor.DROP_ACTION_INSERT_BEFORE, childView.getNode());
                     event.acceptDrag(event.getDropAction());
+                }
                 return;
+            }
+            else if (p.getY() > childVertPos && p.getY() < childVertPos + childView.getHeight())
+            {
+                childView.dragOver(event, startH + getLeftMargin(), childVertPos);
+                break;
             }
             else
             {
                 xmlEditor.setDropData(xmlEditor.DROP_ACTION_NOT_ALLOWED, null);
                 event.rejectDrag();
             }
-            childVertPos += childView.getHeight() + SPACING_VERTICAL;
 
-            if (lastOne == true)
-                break;
+            previousChildVertPos = childVertPos;
+            previousChildView = childView;
+            lastChildStartV = childVertPos;
+            childVertPos += childView.getHeight() + getVerticalSpacing();
         }
+
+        // after the last one
+        if ((getVerticalSpacing() == 0 && p.getY() > (childVertPos - getDragSensitivityArea()) && p.getY() < childVertPos + getDragSensitivityArea())
+        || (getVerticalSpacing() != 0 && p.getY() > (childVertPos - getVerticalSpacing()) && p.getY() < childVertPos))
+        {
+            if (getVerticalSpacing() == 0 && childView.hasChildren() && !childView.isCollapsed() && p.getX() > startH + getLeftMargin() + getDragLineLeftMargin())
+            {
+                childView.dragOver(event, startH + getLeftMargin(), previousChildVertPos);
+            }
+            else
+            {
+                if (getVerticalSpacing() == 0 && childView.hasChildren() && !childView.isCollapsed())
+                {
+                    drawDragOverAngle(startH, lastChildStartV, childView);
+                }
+                else
+                {
+                    drawDragOverEffectLine(startH, childVertPos - (getVerticalSpacing() == 0 ? 1 : 3));
+                }
+                xmlEditor.setDropData(xmlEditor.DROP_ACTION_APPEND_CHILD, childView.getNode().getParentNode());
+                event.acceptDrag(event.getDropAction());
+            }
+        }
+    }
+
+    protected void drawDragOverEffectLine(int startH, int vertPos)
+    {
+        int horPos = (getVerticalSpacing() == 0 ? getDragLineLeftMargin() : getLeftMargin());
+        Shape shape = new Rectangle(startH + horPos, vertPos, width - horPos, 2);
+
+        xmlEditor.setDragOverEffectRedraw(shape);
+        Graphics2D graphics = (Graphics2D)xmlEditor.getGraphics();
+        graphics.setColor(new Color(255, 0, 0));
+        graphics.fill(shape);
+    }
+
+    protected void drawDragOverAngle(int startH, int childStartV, View lastChildView)
+    {
+        Polygon poly = new Polygon();
+        int x = startH + getLeftMargin() + BORDER_WIDTH + HALF_COLLAPSE_SIGN_SIZE;
+        int topY = childStartV + lastChildView.getFirstLineCenterPos() + HALF_COLLAPSE_SIGN_SIZE;
+        poly.addPoint(x, topY);
+        poly.addPoint(x + 2, topY);
+        poly.addPoint(x + 2, childStartV + lastChildView.getHeight());
+        poly.addPoint(startH + width, childStartV + lastChildView.getHeight());
+        poly.addPoint(startH + width, childStartV + lastChildView.getHeight() + 2);
+        poly.addPoint(x, childStartV + lastChildView.getHeight() + 2);
+
+        xmlEditor.setDragOverEffectRedraw(poly);
+        Graphics2D graphics = (Graphics2D)xmlEditor.getGraphics();
+        graphics.setColor(new Color(255, 0, 0));
+        graphics.fill(poly);
     }
 
     public void collapseAll()
@@ -440,13 +503,13 @@ public abstract class ChildrenBlockView extends BlockView
 
         if (!isCollapsed())
         {
-            int childVertPos = startV + getHeaderHeight() + SPACING_VERTICAL;
+            int childVertPos = startV + getHeaderHeight() + getVerticalSpacing();
             while (childrenIt.hasNext())
             {
                 View view = (View)childrenIt.next();
                 if (view == wantedView)
                     return childVertPos;
-                childVertPos += view.getHeight() + SPACING_VERTICAL;
+                childVertPos += view.getHeight() + getVerticalSpacing();
             }
         }
         else
@@ -563,4 +626,16 @@ public abstract class ChildrenBlockView extends BlockView
             previousParent = parentNode;
         }
     }
+
+    /**
+     * @return the spacing between children.
+     */
+    protected abstract int getVerticalSpacing();
+
+    /**
+     * Only applicable if getVerticalSpacing() returns 0.
+     */
+    protected abstract int getDragSensitivityArea();
+
+    protected abstract int getDragLineLeftMargin();
 }

@@ -10,14 +10,6 @@ import org.outerj.pollo.PolloFrame;
 
 public class AttrEditorPluginConfItem extends ConfItem
 {
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
-
-    public AttrEditorPluginConfItem()
-    {
-        logcat.debug("New AttrEditorPluginConfItem created");
-    }
-
     public IAttributeEditorPlugin createPlugin(XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
         throws PolloException
     {
@@ -30,7 +22,6 @@ public class AttrEditorPluginConfItem extends ConfItem
         }
         catch (Exception e)
         {
-            logcat.error("[AttrEditorPluginConfItem] Error creating plugin", e);
             throw new PolloException("[AttrEditorPluginConfItem] Error creating plugin.", e);
         }
         return plugin;

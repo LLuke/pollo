@@ -1,10 +1,12 @@
 package org.outerj.pollo.config;
 
-import org.apache.commons.digester.Digester;
 import org.apache.avalon.framework.configuration.*;
 import org.outerj.pollo.xmleditor.exception.PolloConfigurationException;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.mxp1.MXParser;
 
 import java.io.File;
+import java.io.InputStream;
 import java.awt.*;
 
 /**
@@ -22,67 +24,23 @@ public class PolloConfigurationFactory
         throws PolloConfigurationException
     {
         final PolloConfiguration polloConfiguration = new PolloConfiguration();
+        Parser parser = new Parser(polloConfiguration);
 
-        Digester digester = new Digester();
-        digester.push(polloConfiguration);
-
-        // rules for viewtypes
-        digester.addObjectCreate("pollo/viewtypes/viewtype", "org.outerj.pollo.config.ViewTypeConf");
-        digester.addSetNext("pollo/viewtypes/viewtype", "addViewType");
-        digester.addCallMethod("*/viewtype/class-name", "setClassName", 0);
-        digester.addCallMethod("*/viewtype/name", "setName", 0);
-        digester.addCallMethod("*/viewtype/description", "setDescription", 0);
-
-        // rules common for schemas, display specifications, plugins, and templates
-        digester.addCallMethod("*/factory-class", "setFactoryClass", 0);
-        digester.addCallMethod("*/init-param", "addInitParam", 2);
-        digester.addCallParam("*/init-param/param-name", 0);
-        digester.addCallParam("*/init-param/param-value", 1);
-
-        // schemas
-        digester.addObjectCreate("pollo/viewtypes/viewtype/schemas/schema",
-                "org.outerj.pollo.config.SchemaConfItem");
-        digester.addSetNext("pollo/viewtypes/viewtype/schemas/schema", "addSchema");
-
-        // display specifications
-        digester.addObjectCreate("pollo/viewtypes/viewtype/display-specifications/display-specification",
-                "org.outerj.pollo.config.DisplaySpecConfItem");
-        digester.addSetNext("pollo/viewtypes/viewtype/display-specifications/display-specification", "addDisplaySpec");
-
-        // attribute editor plugins
-        digester.addObjectCreate("pollo/viewtypes/viewtype/attribute-editor-plugins/attribute-editor-plugin",
-                "org.outerj.pollo.config.AttrEditorPluginConfItem");
-        digester.addSetNext("pollo/viewtypes/viewtype/attribute-editor-plugins/attribute-editor-plugin", "addAttrEditorPlugin");
-
-        // action plugins
-        digester.addObjectCreate("pollo/viewtypes/viewtype/action-plugins/action-plugin",
-                "org.outerj.pollo.config.ActionPluginConfItem");
-        digester.addSetNext("pollo/viewtypes/viewtype/action-plugins/action-plugin", "addActionPlugin");
-
-        // templates
-        digester.addObjectCreate("pollo/templates/template", "org.outerj.pollo.config.TemplateConfItem");
-        digester.addCallMethod("pollo/templates/template/description", "setDescription", 0);
-        digester.addSetNext("pollo/templates/template", "addTemplate");
-
-        // xpath queries
-        digester.addObjectCreate("pollo/xpath-queries/query", "org.outerj.pollo.config.XPathQuery");
-        digester.addCallMethod("pollo/xpath-queries/query/description", "setDescription", 0);
-        digester.addCallMethod("pollo/xpath-queries/query/expression", "setExpression", 0);
-        digester.addSetNext("pollo/xpath-queries/query", "addXPathQuery");
-
+        InputStream is = null;
         try
         {
-            digester.parse(PolloConfigurationFactory.class.getClassLoader()
-                    .getResourceAsStream("pollo_conf.xml"));
+            is = PolloConfigurationFactory.class.getClassLoader()
+                    .getResourceAsStream("pollo_conf.xml");
+            parser.parse(is);
         }
         catch (Exception e)
         {
-            logcat.error("PolloConfiguration: exception parsing the configuration file", e);
-            throw new PolloConfigurationException("Exception parsing the configuration file.", e);
+            throw new PolloConfigurationException("Exception parsing the pollo_conf.xml configuration file.", e);
         }
         finally
         {
-            digester.clear();
+            if (is != null)
+                try { is.close(); } catch (Exception e) { e.printStackTrace(); }
         }
 
         //
@@ -95,13 +53,10 @@ public class PolloConfigurationFactory
         {
             if (file.exists())
                 config = new DefaultConfigurationBuilder().buildFromFile(file);
-            else
-                logcat.info("No user configuration file found at: " + file);
         }
         catch (Exception e)
         {
-            logcat.error("PolloConfiguration: exception parsing the user configuration file", e);
-            throw new PolloConfigurationException("Exception parsing the user configuration file.", e);
+            logcat.error("Exception parsing the user configuration file " + file.getAbsolutePath() + ", but will start up anyway", e);
         }
 
         if (config == null)
@@ -151,4 +106,263 @@ public class PolloConfigurationFactory
 
         return polloConfiguration;
     }
+
+    public static class Parser
+    {
+        private XmlPullParser parser;
+        private final PolloConfiguration polloConf;
+
+        public Parser(PolloConfiguration polloConf)
+        {
+            this.polloConf = polloConf;
+        }
+
+        public void parse(InputStream is) throws Exception
+        {
+            parser = new MXParser();
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+            parser.setInput(is, null);
+            int eventType = parser.getEventType();
+
+            while (eventType != XmlPullParser.END_DOCUMENT)
+            {
+                eventType = parser.next();
+                if (eventType == XmlPullParser.START_TAG)
+                {
+                    if (!parser.getName().equals("pollo"))
+                        throw new Exception("Root element should be called \"pollo\"");
+
+                    // run over the children of the root element
+                    eventType = parser.next();
+                    while (eventType != XmlPullParser.END_TAG)
+                    {
+                        if (eventType == XmlPullParser.START_TAG)
+                        {
+                            if (parser.getName().equals("viewtypes"))
+                                readViewTypes();
+                            else if (parser.getName().equals("templates"))
+                            {
+                                readConfItems("template", new ConfItemParserAssistant()
+                                {
+                                    public ConfItem newConfItem()
+                                    {
+                                        return new TemplateConfItem();
+                                    }
+
+                                    public void addConfItem(ConfItem confItem)
+                                    {
+                                        polloConf.addTemplate((TemplateConfItem)confItem);
+                                    }
+
+                                    public void readExtraAttributes(ConfItem confItem, XmlPullParser parser) throws Exception
+                                    {
+                                        String description = getAttribute("description");
+                                        ((TemplateConfItem)confItem).setDescription(description);
+                                    }
+                                });
+                            }
+                            else if (parser.getName().equals("xpath-queries"))
+                                readXPathQueries();
+                            else
+                                throw new Exception("Unexpected element \"" + parser.getName() + "\" on line " + parser.getLineNumber());
+                        }
+                        eventType = parser.next();
+                    }
+
+                    // we're not interested in the rest of the file
+                    break;
+                }
+            }
+        }
+
+        private void readViewTypes() throws Exception
+        {
+            int eventType = parser.next();
+            while (eventType != XmlPullParser.END_TAG)
+            {
+                if (eventType == XmlPullParser.START_TAG)
+                {
+                    if (!parser.getName().equals("viewtype"))
+                        throw new Exception("Unexpected element \"" + parser.getName() + "\" on line " + parser.getLineNumber());
+
+                    final ViewTypeConf viewTypeConf = new ViewTypeConf();
+                    viewTypeConf.setName(getAttribute("name"));
+                    viewTypeConf.setDescription(getAttribute("description"));
+
+                    eventType = parser.next();
+                    while (eventType != XmlPullParser.END_TAG)
+                    {
+                        if (eventType == XmlPullParser.START_TAG)
+                        {
+                            if (parser.getName().equals("schemas"))
+                            {
+                                readConfItems("schema", new ConfItemParserAssistant()
+                                {
+                                    public ConfItem newConfItem()
+                                    {
+                                        return new SchemaConfItem();
+                                    }
+
+                                    public void addConfItem(ConfItem confItem)
+                                    {
+                                        viewTypeConf.addSchema((SchemaConfItem)confItem);
+                                    }
+
+                                    public void readExtraAttributes(ConfItem confItem, XmlPullParser parser) {}
+                                });
+                            }
+                            else if (parser.getName().equals("display-specifications"))
+                            {
+                                readConfItems("display-specification", new ConfItemParserAssistant()
+                                {
+                                    public ConfItem newConfItem()
+                                    {
+                                        return new DisplaySpecConfItem();
+                                    }
+
+                                    public void addConfItem(ConfItem confItem)
+                                    {
+                                        viewTypeConf.addDisplaySpec((DisplaySpecConfItem)confItem);
+                                    }
+
+                                    public void readExtraAttributes(ConfItem confItem, XmlPullParser parser) {}
+                                });
+                            }
+                            else if (parser.getName().equals("attribute-editor-plugins"))
+                            {
+                                readConfItems("attribute-editor-plugin", new ConfItemParserAssistant()
+                                {
+                                    public ConfItem newConfItem()
+                                    {
+                                        return new AttrEditorPluginConfItem();
+                                    }
+
+                                    public void addConfItem(ConfItem confItem)
+                                    {
+                                        viewTypeConf.addAttrEditorPlugin((AttrEditorPluginConfItem)confItem);
+                                    }
+
+                                    public void readExtraAttributes(ConfItem confItem, XmlPullParser parser) {}
+                                });
+                            }
+                            else if (parser.getName().equals("action-plugins"))
+                            {
+                                readConfItems("action-plugin", new ConfItemParserAssistant()
+                                {
+                                    public ConfItem newConfItem()
+                                    {
+                                        return new ActionPluginConfItem();
+                                    }
+
+                                    public void addConfItem(ConfItem confItem)
+                                    {
+                                        viewTypeConf.addActionPlugin((ActionPluginConfItem)confItem);
+                                    }
+
+                                    public void readExtraAttributes(ConfItem confItem, XmlPullParser parser) {}
+                                });
+                            }
+                            else
+                                throw new Exception("Unexpected element \"" + parser.getName() + "\" on line " + parser.getLineNumber());
+                        }
+                        eventType = parser.next();
+                    }
+
+                    polloConf.addViewType(viewTypeConf);
+                }
+                eventType = parser.next();
+            }
+        }
+
+        private void readConfItems(String elementName, ConfItemParserAssistant assistant) throws Exception
+        {
+            int eventType = parser.next();
+            while (eventType != XmlPullParser.END_TAG)
+            {
+                if (eventType == XmlPullParser.START_TAG)
+                {
+                    if (parser.getName().equals(elementName))
+                    {
+                        ConfItem confItem = assistant.newConfItem();
+                        String factory = getAttribute("factory");
+                        confItem.setFactoryClass(factory);
+                        assistant.readExtraAttributes(confItem, parser);
+
+                        // read init parameters
+                        eventType = parser.next();
+                        while (eventType != XmlPullParser.END_TAG)
+                        {
+                            if (eventType == XmlPullParser.START_TAG)
+                            {
+                                if (!parser.getName().equals("parameter"))
+                                    throw new Exception("Unexpected element \"" + parser.getName() + "\" on line " + parser.getLineNumber());
+
+                                String name = getAttribute("name");
+                                String value = getAttribute("value");
+
+                                confItem.addInitParam(name, value);
+                                goToEndElement();
+                            }
+                            eventType = parser.next();
+                        }
+                        assistant.addConfItem(confItem);
+                    }
+                    else
+                        throw new Exception("Unexpected element \"" + parser.getName() + "\" on line " + parser.getLineNumber());
+                }
+                eventType = parser.next();
+            }
+        }
+
+        public void readXPathQueries() throws Exception
+        {
+            int eventType = parser.next();
+            while (eventType != XmlPullParser.END_TAG)
+            {
+                if (eventType == XmlPullParser.START_TAG)
+                {
+                    if (!parser.getName().equals("query"))
+                        throw new Exception("Unexpected element \"" + parser.getName() + "\" on line " + parser.getLineNumber());
+                    String description = getAttribute("description");
+                    String expression = getAttribute("expression");
+
+                    XPathQuery xpathQuery = new XPathQuery();
+                    xpathQuery.setDescription(description);
+                    xpathQuery.setExpression(expression);
+                    polloConf.addXPathQuery(xpathQuery);
+                    goToEndElement();
+                }
+                eventType = parser.next();
+            }
+        }
+
+        private void goToEndElement() throws Exception
+        {
+            int eventType = parser.next();
+            while (eventType != XmlPullParser.END_TAG)
+            {
+                if (eventType == XmlPullParser.START_TAG)
+                    goToEndElement();
+                eventType = parser.next();
+            }
+        }
+
+        private String getAttribute(String name) throws Exception
+        {
+            String value = parser.getAttributeValue(XmlPullParser.NO_NAMESPACE, name);
+            if (value == null)
+                throw new Exception("Missing attribute " + name + " on element " + parser.getName() + " on line " + parser.getLineNumber());
+            return value;
+        }
+    }
+
+    public interface ConfItemParserAssistant
+    {
+        public ConfItem newConfItem();
+
+        public void addConfItem(ConfItem confItem);
+
+        public void readExtraAttributes(ConfItem confItem, XmlPullParser parser) throws Exception;
+    }
+
 }

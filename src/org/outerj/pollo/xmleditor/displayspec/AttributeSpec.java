@@ -1,5 +1,7 @@
 package org.outerj.pollo.xmleditor.displayspec;
 
+import java.awt.*;
+
 /**
  * Class that holds information about how to display an
  * attribute. Since no such properties are maintained
@@ -14,4 +16,7 @@ public class AttributeSpec
 {
     public String nsUri;
     public String localName;
+    public Color textColor;
+    public String help;
+    public String label;
 }

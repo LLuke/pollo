@@ -3,13 +3,13 @@ package org.outerj.pollo.xmleditor.view;
 import org.outerj.pollo.xmleditor.NodeClickedEvent;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.XmlTransferable;
+import org.outerj.pollo.xmleditor.view.View;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.events.Event;
 
 import java.awt.*;
-import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.event.MouseEvent;
@@ -23,12 +23,14 @@ public class DocumentBlockView extends ChildrenBlockView
     protected IDisplaySpecification displaySpec;
     protected String title;
     protected Color documentColor = new Color(200, 200, 200);
+    protected final ViewStrategy viewStrategy;
 
-    public DocumentBlockView(View parentView, Document document, XmlEditor xmlEditor)
+    public DocumentBlockView(View parentView, Document document, XmlEditor xmlEditor, ViewStrategy viewStrategy)
     {
         super(parentView, document, xmlEditor);
         this.document = document;
         this.displaySpec = xmlEditor.getDisplaySpec();
+        this.viewStrategy = viewStrategy;
 
         StringBuffer titleBuffer = new StringBuffer();
         titleBuffer.append("XML");
@@ -45,23 +47,13 @@ public class DocumentBlockView extends ChildrenBlockView
         title = titleBuffer.toString();
     }
 
-    public void paint(Graphics gr, int startH, int startV)
+    public void paint(Graphics2D gr, int startH, int startV)
     {
-        Graphics2D g = (Graphics2D)gr;
+        gr.setColor(documentColor);
 
-        g.setColor(documentColor);
+        gr.fill(new Rectangle(startH, startV, startH + width, startV + titleHeight));
 
-        g.fill(new Rectangle(startH, startV, startH + width, startV + titleHeight));
-
-        if (xmlEditor.getSelectedNode() == document)
-        {
-            Rectangle surroundingRect = new Rectangle(startH, startV, startH + width, startV + getHeight());
-            g.setColor(Color.black);
-            g.setStroke(BlockView.STROKE_HEAVY);
-            g.draw(surroundingRect);
-        }
-    
-        g.setStroke(BlockView.STROKE_LIGHT);
+        viewStrategy.drawDocumentFrame(gr, startH, startV, this);
 
         if (hasChildren())
         {
@@ -70,9 +62,9 @@ public class DocumentBlockView extends ChildrenBlockView
 
         int baseline = startV + xmlEditor.getElementNameFontMetrics().getAscent() + 2;
         // draw the element name
-        g.setFont(xmlEditor.getElementNameFont());
-        g.setColor(Color.white);
-        g.drawString(title, startH + 20, baseline);
+        gr.setFont(xmlEditor.getElementNameFont());
+        gr.setColor(Color.white);
+        gr.drawString(title, startH + 20, baseline);
     }
 
     public void layout(int width)
@@ -240,5 +232,26 @@ public class DocumentBlockView extends ChildrenBlockView
     public boolean isCollapsed()
     {
         return false;
+    }
+
+    protected int getDragLineLeftMargin()
+    {
+        return getLeftMargin();
+    }
+
+    public int getFirstLineCenterPos()
+    {
+        // irrelevant, will never be called
+        return 0;
+    }
+
+    protected int getVerticalSpacing()
+    {
+        return viewStrategy.getVerticalSpacing();
+    }
+
+    protected int getDragSensitivityArea()
+    {
+        return viewStrategy.getDragSensitivityArea();
     }
 }

@@ -2,12 +2,10 @@ package org.outerj.pollo.xmleditor;
 
 import org.outerj.pollo.xmleditor.attreditor.AttributesPanel;
 import org.outerj.pollo.xmleditor.attreditor.AttributesTableModel;
-import org.outerj.pollo.xmleditor.util.DomUtils;
-import org.w3c.dom.Element;
+import org.outerj.pollo.xmleditor.view.View;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -22,6 +20,7 @@ public class NodePathBar extends JLabel implements SelectionListener, ListSelect
 {
     protected JTable attributesTable;
     protected AttributesTableModel attrTableModel;
+    protected XmlEditor xmlEditor;
 
     public NodePathBar(XmlEditor xmlEditor, AttributesPanel attrPanel)
     {
@@ -32,6 +31,7 @@ public class NodePathBar extends JLabel implements SelectionListener, ListSelect
 
         attributesTable = attrPanel.getAttributesTable();
         attrTableModel = attrPanel.getAttributesTableModel();
+        this.xmlEditor = xmlEditor;
     }
 
     public void nodeUnselected(Node node)
@@ -41,40 +41,24 @@ public class NodePathBar extends JLabel implements SelectionListener, ListSelect
 
     public void nodeSelected(Node node)
     {
-        setText(getPath(node));
+        setText(getPath());
     }
 
-    public String getPath(Node node)
+    public String getPath()
     {
-        if (node.getNodeType() ==  Node.DOCUMENT_NODE)
-            return "/";
+        StringBuffer path = new StringBuffer(50);
+        View view = xmlEditor.getSelectionInfo().getSelectedNodeView();
 
-        StringBuffer path = new StringBuffer();
-
-        switch (node.getNodeType())
+        while (view != null)
         {
-            case Node.COMMENT_NODE:
-                path.append("/comment()");
-                break;
-            case Node.TEXT_NODE:
-            case Node.CDATA_SECTION_NODE:
-                path.append("/text()");
-                break;
-            case Node.PROCESSING_INSTRUCTION_NODE:
-                path.append("/processing-instruction()");
-                break;
-            case Node.ELEMENT_NODE:
-                path.append("/" + DomUtils.getQName((Element)node));
-                break;
+            String label = view.getLabel();
+            if (label != null)
+            {
+                path.insert(0, label);
+                path.insert(0, '/');
+            }
+            view = view.getParent();
         }
-
-        Node parent = node.getParentNode();
-        while(parent.getNodeType() == Node.ELEMENT_NODE)
-        {
-            path.insert(0, "/" + DomUtils.getQName((Element)parent));
-            parent = parent.getParentNode();
-        }
-
         return path.toString();
     }
 
@@ -83,7 +67,7 @@ public class NodePathBar extends JLabel implements SelectionListener, ListSelect
         int row = attributesTable.getSelectedRow();
         if (row != -1)
         {
-            String path = getPath(attrTableModel.getElement());
+            String path = getPath();
             path += "/@" + attrTableModel.getValueAt(row, 0);
             setText(path);
         }

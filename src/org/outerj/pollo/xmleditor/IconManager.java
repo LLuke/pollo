@@ -17,10 +17,6 @@ public class IconManager
 {
     protected static HashMap icons = new HashMap();
 
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.GUI);
-
-
     /**
      * This method can return null, it will not throw an exception.
      *
@@ -39,7 +35,8 @@ public class IconManager
             }
             catch (Exception e)
             {
-                logcat.error("[IconManager] Could not load the icon " + iconpath, e);
+                System.out.println("Could not load the icon " + iconpath);
+                e.printStackTrace();
             }
         }
 

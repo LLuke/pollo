@@ -22,7 +22,7 @@ public class BasicDisplaySpecFactory implements IDisplaySpecificationFactory
             }
             catch (Exception e)
             {
-                throw new PolloException("[BasicDisplaySpecFactory] Could not create display specification.", e);
+                throw new PolloException("Could not create display specification.", e);
             }
         }
 

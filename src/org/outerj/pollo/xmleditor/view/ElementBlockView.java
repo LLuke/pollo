@@ -3,6 +3,7 @@ package org.outerj.pollo.xmleditor.view;
 import org.outerj.pollo.xmleditor.NodeClickedEvent;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.XmlTransferable;
+import org.outerj.pollo.xmleditor.view.View;
 import org.outerj.pollo.xmleditor.displayspec.AttributeSpec;
 import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
@@ -29,9 +30,10 @@ public class ElementBlockView extends ChildrenBlockView
     protected String elementName;
     protected int titleHeight = 10;
     protected int collapseSignTop;
-    protected Element element;
+    protected final Element element;
     protected Shape elementShape;
     protected IDisplaySpecification displaySpec;
+    protected final ViewStrategy viewStrategy;
 
     // everything for the attributes
     /** To store layout information for the attributes defined in the display specification */
@@ -41,18 +43,17 @@ public class ElementBlockView extends ChildrenBlockView
     protected boolean attributeLayoutUptodate = false;
 
     // some rendering constants
-    protected static final int BORDER_WIDTH = 6;
     protected static final int SPACING_HORIZONTAL = 7;
     protected static final int EMPTY_CONTENT_HEIGHT = 10;
     protected static final int COLLAPS_ICON_WIDTH = 15;
-    protected static final int END_MARKER_HEIGHT = 10;
     protected static final int ATTR_SPACING = 9;
     protected static final int ATTR_NAME_VALUE_SPACING = 2;
 
-    public ElementBlockView(View parentView, Element element, XmlEditor xmlEditor)
+    public ElementBlockView(View parentView, Element element, XmlEditor xmlEditor, ViewStrategy viewStrategy)
     {
         super(parentView, element, xmlEditor);
         this.element = element;
+        this.viewStrategy = viewStrategy;
 
         // register this view as an eventlistener for changes to the element
         ((EventTarget)element).addEventListener("DOMAttrModified", this, false);
@@ -72,126 +73,51 @@ public class ElementBlockView extends ChildrenBlockView
         }
 
         // make the string for the element name
-        String prefix = element.getPrefix();
-        String qname = element.getLocalName();
-        if (prefix != null && prefix.length() > 0)
-            qname = prefix + ":" + qname;
-        this.elementName = qname;
+        if (elementSpec.label != null)
+        {
+            this.elementName = elementSpec.label;
+        }
+        else
+        {
+            String prefix = element.getPrefix();
+            String qname = element.getLocalName();
+            if (prefix != null && prefix.length() > 0)
+                qname = prefix + ":" + qname;
+            this.elementName = qname;
+        }
     }
 
-    public void paint(Graphics gr, int startH, int startV)
+    public void paint(Graphics2D gr, int startH, int startV)
     {
-        Graphics2D g = (Graphics2D)gr;
+        viewStrategy.paintElementSurroundings(gr, startH, startV, this);
 
-        // make the shape
-        if (hasChildren())
-        {
-            elementShape = getElementShape(g, startH, startV);
-        }
-        else
-        {
-            // just draw a rectangle
-            elementShape = new Rectangle(startH, startV, width, titleHeight);
-        }
-
-        g.setColor(elementSpec.backgroundColor);
-        g.fill(elementShape);
-
-        g.setColor(Color.black);
-        if (xmlEditor.getSelectedNode() == element)
-            g.setStroke(BlockView.STROKE_HEAVY);
-        else
-            g.setStroke(BlockView.STROKE_LIGHT);
-
-        g.draw(elementShape);
-
-        g.setStroke(BlockView.STROKE_LIGHT);
         if (hasChildren())
         {
             // draw + or - sign
-            drawCollapseSign(g, isCollapsed(), startH + BORDER_WIDTH, startV + collapseSignTop);
+            drawCollapseSign(gr, isCollapsed(), startH + BORDER_WIDTH, startV + collapseSignTop);
 
             super.paint(gr, startH, startV);
         }
 
-        int baseline = startV + max(xmlEditor.getElementNameFontMetrics().getAscent(),
+        // draw icon
+        int iconV = startV + (titleHeight / 2) - (ICON_SIZE / 2);
+        int iconH = startH + BORDER_WIDTH + COLLAPSE_SIGN_SIZE + COLLAPSESIGN_ICON_SPACING;
+        elementSpec.icon.paintIcon(xmlEditor, gr, iconH, iconV);
+
+        int baseline = startV + max(new int[] {xmlEditor.getElementNameFontMetrics().getAscent(),
                 xmlEditor.getAttributeNameFontMetrics().getAscent(),
-                xmlEditor.getAttributeValueFontMetrics().getAscent()) + 2;
+                xmlEditor.getAttributeValueFontMetrics().getAscent()}) + 2;
+
         // draw the element name
-        g.setFont(xmlEditor.getElementNameFont());
-        g.drawString(elementName, startH + 20, baseline);
+        gr.setFont(xmlEditor.getElementNameFont());
+        int elementNameH = iconH + ICON_SIZE + 1;
+        gr.setColor(elementSpec.textColor);
+        gr.drawString(elementName, elementNameH, baseline);
 
-        drawAttributes(g, attrViewInfoList, startH, baseline);
+        drawAttributes(gr, attrViewInfoList, startH, baseline);
         if (extraAttrViewInfoList != null)
-            drawAttributes(g, extraAttrViewInfoList, startH, baseline);
+            drawAttributes(gr, extraAttrViewInfoList, startH, baseline);
     }
-
-    protected Shape getElementShape(Graphics2D g, int startH, int startV)
-    {
-        // because of a clipping bug in Java (which is probably caused by a coordinate-size limitation
-        // of the underlying windowing systems), java cannot correctly clip large shapes, therefore
-        // we'll clip the largest parts ourselves.
-
-        int clipStartVertical = (int)g.getClipBounds().getY();
-        int clipEndVertical = clipStartVertical + (int)g.getClipBounds().getHeight();
-
-        final int margin = 4; // a margin to account for the border widths
-
-        // case 1: only the middle part is visible
-        if (!isCollapsed() && (startV + titleHeight + margin < clipStartVertical) && (startV + titleHeight + getContentHeight() - margin > clipEndVertical))
-        {
-            return new Rectangle(startH, clipStartVertical - margin , BORDER_WIDTH, clipEndVertical - clipStartVertical + margin + margin);
-        }
-        // the top and the middle parts are visible, bottom part is not
-        else if (!isCollapsed() && startV + margin > clipStartVertical && (startV + titleHeight + getContentHeight() - margin > clipEndVertical))
-        {
-            Polygon poly = new Polygon();
-            // starting at the top left point
-            poly.addPoint(startH, startV);
-            poly.addPoint(startH + width, startV);
-            poly.addPoint(startH + width, startV + titleHeight);
-            poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight);
-            poly.addPoint(startH + BORDER_WIDTH, clipEndVertical + margin);
-            poly.addPoint(startH, clipEndVertical + margin);
-            return poly;
-        }
-        // the middle and the bottom parts are visible, the top part is not
-        else if (!isCollapsed() && (startV + titleHeight + margin < clipStartVertical) && (startV + titleHeight + margin < clipStartVertical))
-        {
-            Polygon poly = new Polygon();
-            // starting at the top left point
-            poly.addPoint(startH, clipStartVertical - margin);
-            poly.addPoint(startH + BORDER_WIDTH, clipStartVertical - margin);
-            poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight + getContentHeight());
-            poly.addPoint(startH + BORDER_WIDTH + 4, startV + titleHeight + getContentHeight());
-            poly.addPoint(startH, startV + titleHeight + getContentHeight() + END_MARKER_HEIGHT);
-            return poly;
-        }
-        // all other cases: return the whole shape. If the java clipping bug would eventually be solved, this
-        // is the only part we need to keep.
-        else
-        {
-            Polygon poly = new Polygon();
-            // starting at the top left point
-            poly.addPoint(startH, startV);
-            poly.addPoint(startH + width, startV);
-            poly.addPoint(startH + width, startV + titleHeight);
-            if (!isCollapsed())
-            {
-                poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight);
-                poly.addPoint(startH + BORDER_WIDTH, startV + titleHeight + getContentHeight());
-                poly.addPoint(startH + BORDER_WIDTH + 4, startV + titleHeight + getContentHeight());
-                poly.addPoint(startH, startV + titleHeight + getContentHeight() + END_MARKER_HEIGHT);
-            }
-            else
-            {
-                poly.addPoint(startH + BORDER_WIDTH + 4, startV + titleHeight);
-                poly.addPoint(startH, startV + titleHeight + END_MARKER_HEIGHT);
-            }
-            return poly;
-        }
-    }
-
 
     protected void drawAttributes(Graphics2D g, ArrayList myAttrViewInfoList, int startH, int baseline)
     {
@@ -213,6 +139,10 @@ public class ElementBlockView extends ChildrenBlockView
             attrViewInfo = (AttrViewInfo)myAttrViewInfoList.get(i);
             if (attrViewInfo.visible)
             {
+                // attribute color
+                Color textColor = attrViewInfo.attributeSpec != null ? attrViewInfo.attributeSpec.textColor : Color.black;
+                g.setColor(textColor);
+
                 // attribute name
                 g.setFont(xmlEditor.getAttributeNameFont());
                 remainingAttrSpace = width - attrViewInfo.namePos;
@@ -222,7 +152,6 @@ public class ElementBlockView extends ChildrenBlockView
                     int c = clipText(attrViewInfo.name, remainingAttrSpace, g.getFontMetrics(), dotsWidth);
                     g.drawString(attrViewInfo.name.substring(0, c) + "...", startH + attrViewInfo.namePos, baseline);
                     break;
-
                 }
                 else
                 {
@@ -253,8 +182,9 @@ public class ElementBlockView extends ChildrenBlockView
     public void layout(int width)
     {
         // init
-        this.titleHeight = max(xmlEditor.getElementNameFontMetrics().getHeight(),
-                xmlEditor.getAttributeNameFontMetrics().getHeight(), xmlEditor.getAttributeValueFontMetrics().getHeight())
+        this.titleHeight = max(new int[] {xmlEditor.getElementNameFontMetrics().getHeight(),
+                xmlEditor.getAttributeNameFontMetrics().getHeight(),
+                xmlEditor.getAttributeValueFontMetrics().getHeight(), ICON_SIZE})
                 + 4;
         this.width = width;
 
@@ -266,17 +196,6 @@ public class ElementBlockView extends ChildrenBlockView
         // layout the children of this view
         super.layout(width);
     }
-
-    private int max(int val1, int val2, int val3)
-    {
-        if (val1 > val2 && val1 > val3)
-            return val1;
-        else if (val2 > val1 && val2 > val3)
-            return val2;
-        else
-            return val3;
-    }
-
 
     /**
      * This method calculates the positions off the attributes. Called during initial layout
@@ -296,7 +215,7 @@ public class ElementBlockView extends ChildrenBlockView
         boolean[] processed = new boolean[allAttributes.getLength()];
 
         int elementNameWidth = xmlEditor.getElementNameFontMetrics().stringWidth(elementName);
-        int attrPos = BORDER_WIDTH + COLLAPS_ICON_WIDTH + elementNameWidth + ATTR_SPACING;
+        int attrPos = BORDER_WIDTH + COLLAPSE_SIGN_SIZE + COLLAPSESIGN_ICON_SPACING + ICON_SIZE + elementNameWidth + ATTR_SPACING;
         AttrViewInfo attrViewInfo;
         Attr attr;
 
@@ -318,13 +237,20 @@ public class ElementBlockView extends ChildrenBlockView
                 attrViewInfo.value = attr.getValue();
                 if (attrViewInfo.name == null)
                 {
-                    String prefix = attr.getPrefix();
-                    String qname = attr.getLocalName();
-                    if (prefix != null)
-                        qname = prefix + ":" + qname;
+                    if (attrViewInfo.attributeSpec.label != null)
+                    {
+                        attrViewInfo.name = attrViewInfo.attributeSpec.label + ":";
+                    }
+                    else
+                    {
+                        String prefix = attr.getPrefix();
+                        String qname = attr.getLocalName();
+                        if (prefix != null)
+                            qname = prefix + ":" + qname;
 
-                    qname += ":"; // this is the colon seperating name and value
-                    attrViewInfo.name = qname;
+                        qname += ":"; // this is the colon seperating name and value
+                        attrViewInfo.name = qname;
+                    }
                 }
                 attrViewInfo.namePos = attrPos;
                 attrPos += attrNameFontMetrics.stringWidth(attrViewInfo.name);
@@ -386,7 +312,7 @@ public class ElementBlockView extends ChildrenBlockView
     {
         int numberOfNodes = nodeMap.getLength();
         for (int i = 0; i < numberOfNodes; i++) {
-            Node a = (Node)nodeMap.item(i);
+            Node a = nodeMap.item(i);
             String aNamespaceURI = a.getNamespaceURI();
             String aLocalName = a.getLocalName();
             if (namespaceURI == null) {
@@ -428,11 +354,7 @@ public class ElementBlockView extends ChildrenBlockView
             else
                 collapse();
         }
-        else if ( /* title */ (e.getY() > startV && e.getY() < startV + titleHeight
-               && e.getX() > startH + BORDER_WIDTH)
-                || (/* vertical bar */ !isCollapsed()
-                && e.getY() > startV && e.getY() < startV + titleHeight + getContentHeight() + END_MARKER_HEIGHT
-                && e.getX() >= startH && e.getX() <= startH + BORDER_WIDTH) )
+        else if (viewStrategy.selectsElement(e, startH, startV, this))
         {
             NodeClickedEvent nce = new NodeClickedEvent(element, e);
             xmlEditor.fireNodeClickedEvent(nce);
@@ -562,7 +484,7 @@ public class ElementBlockView extends ChildrenBlockView
             */
             return;
         }
-        else if (p.getX() > startH && p.getX() < (startH + width) ) // maybe it's between to elements
+        else if (p.getX() > startH && p.getX() < (startH + width) ) // maybe it's between two elements
         {
             super.dragOver(event, startH, startV);
         }
@@ -599,13 +521,43 @@ public class ElementBlockView extends ChildrenBlockView
         return titleHeight;
     }
 
-    public int getFooterHeight()
-    {
-        return END_MARKER_HEIGHT;
-    }
-
     public int getLeftMargin()
     {
         return BORDER_WIDTH + SPACING_HORIZONTAL;
+    }
+
+    protected int getDragLineLeftMargin()
+    {
+        return getLeftMargin() + BORDER_WIDTH;
+    }
+
+    public int getFirstLineCenterPos()
+    {
+        return collapseSignTop + HALF_COLLAPSE_SIGN_SIZE;
+    }
+
+    public int getFooterHeight()
+    {
+        return viewStrategy.getFooterHeight();
+    }
+
+    protected int getVerticalSpacing()
+    {
+        return viewStrategy.getVerticalSpacing();
+    }
+
+    protected int getDragSensitivityArea()
+    {
+        return viewStrategy.getDragSensitivityArea();
+    }
+
+    public String getHelp()
+    {
+        return elementSpec.help;
+    }
+
+    public String getLabel()
+    {
+        return elementName;
     }
 }

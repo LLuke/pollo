@@ -225,7 +225,9 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
                                 }
                             }
                             data[0] = insertUnlistedElement;
-                            quickSort.sortPartial(data, 1);
+                            //quickSort.sortPartial(data, 1);
+                            quickSort.sortPartial(data, 1, subElementsList.size());
+                            quickSort.sortPartial(data, subElementsList.size() + 1);
                             this.setListData(data);
                         }
                         break;
@@ -255,7 +257,8 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
                                 }
                             }
                             data[0] = insertUnlistedElement;
-                            quickSort.sortPartial(data, 1);
+                            quickSort.sortPartial(data, 1, subElementsList.size());
+                            quickSort.sortPartial(data, subElementsList.size() + 1);
                             this.setListData(data);
                         }
                         else if (node instanceof Document)
@@ -447,13 +450,14 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
             if (value instanceof ElementSpec)
             {
                 ElementSpec elementSpec = (ElementSpec)value;
-                setText(elementSpec.localName);
+                setText(elementSpec.getLabel());
                 setIcon(elementSpec.icon);
                 setFont(list.getFont());
             }
             else if (value instanceof InsertUnlistedElement)
             {
                 setText(value.toString());
+                setFont(list.getFont());
                 setIcon(null);
             }
             else if (value instanceof String)

@@ -6,7 +6,6 @@ import org.outerj.pollo.xmleditor.schema.ISchema;
 
 import javax.swing.table.TableCellEditor;
 import javax.swing.*;
-import java.util.HashMap;
 import java.awt.*;
 
 

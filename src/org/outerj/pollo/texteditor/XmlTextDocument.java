@@ -13,9 +13,6 @@ public class XmlTextDocument extends SyntaxDocument
     protected UndoAction undoAction;
     protected RedoAction redoAction;
 
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.MAIN);
-
     public XmlTextDocument()
     {
         super();
@@ -171,7 +168,7 @@ public class XmlTextDocument extends SyntaxDocument
 
         if (m < seg.count && seg.array[m] == q)
         {
-            logcat.info("[XmlTextDocument] Detected encoding for saving file: " + encoding);
+            //System.out.println("Detected encoding for saving file: " + encoding);
             return encoding.toString();
         }
 

@@ -3,6 +3,7 @@ package org.outerj.pollo.xmleditor.view;
 import org.w3c.dom.*;
 import org.w3c.dom.events.Event;
 import org.outerj.pollo.xmleditor.*;
+import org.outerj.pollo.xmleditor.view.View;
 
 import java.awt.*;
 import java.awt.dnd.*;
@@ -16,21 +17,21 @@ public class EntityReferenceView extends BlockView
     protected EntityReference entityReference;
     protected Font font;
     protected FontMetrics fontMetrics;
-    protected static final Color backgroundColor = Color.white;
-    protected static final int LEFT_MARGIN = 5;
+    protected final ViewStrategy viewStrategy;
 
-    public EntityReferenceView(View parentView, EntityReference entityReference, XmlEditor xmlEditor)
+    public EntityReferenceView(View parentView, EntityReference entityReference, XmlEditor xmlEditor, ViewStrategy viewStrategy)
     {
         super(parentView, xmlEditor);
         this.entityReference = entityReference;
+        this.viewStrategy = viewStrategy;
     }
 
-    public void paint(Graphics g, int startH, int startV)
+    public void paint(Graphics2D g, int startH, int startV)
     {
-        drawFrame((Graphics2D)g, startH, startV);
+        drawFrame(g, startH, startV);
 
         int verticalOffset = startV + fontMetrics.getAscent();
-        int horizontalOffset = startH + LEFT_MARGIN;
+        int horizontalOffset = startH + BORDER_WIDTH + COLLAPSE_SIGN_SIZE + COLLAPSESIGN_ICON_SPACING + 2;
         g.setFont(font);
         g.setColor(Color.red);
         g.drawString("&", horizontalOffset, verticalOffset);
@@ -44,21 +45,9 @@ public class EntityReferenceView extends BlockView
         g.drawString(";", horizontalOffset, verticalOffset);
     }
 
-    public void drawFrame(Graphics2D g, int startH, int startV)
+    public void drawFrame(Graphics2D gr, int startH, int startV)
     {
-        Rectangle frame = new Rectangle(startH, startV, width, getHeight());
-
-        g.setColor(backgroundColor);
-        g.fill(frame);
-
-        g.setColor(Color.black);
-        if (xmlEditor.getSelectedNode() == entityReference)
-            g.setStroke(BlockView.STROKE_HEAVY);
-        else
-            g.setStroke(BlockView.STROKE_LIGHT);
-
-        g.draw(frame);
-        g.setStroke(BlockView.STROKE_LIGHT);
+        viewStrategy.drawEntityReferenceFrame(gr, startH, startV, this);
     }
 
     public void layout(int width)
@@ -143,5 +132,10 @@ public class EntityReferenceView extends BlockView
     public void handleEvent(Event evt)
     {
         System.out.println("WARNING: unprocessed dom event:" + evt.getType());
+    }
+
+    public int getFirstLineCenterPos()
+    {
+        return getHeight() / 2;
     }
 }

@@ -32,13 +32,18 @@ public class NestedNodeMap
         hashMap.put(getHashString(namespaceURI, localName), newNodeEntry);
     }
 
+    public interface NamespaceResolver
+    {
+        String[] parseName(String name) throws Exception;
+    }
+
     /**
      * Puts an object in the map, whose key is a (possibly) a nested
      * element path, e.g. "parentelement/childelement". Thus the element
      * names are separated by slashes, but the element path should not start
      * with a slash.
      */
-    public void put(String nestedElementPath, Object value, NamespaceSupport namespaceSupport)
+    public void put(String nestedElementPath, Object value, NamespaceResolver nsResolver) throws Exception
     {
         String currentElement = null;
         String restOfThePath = null;
@@ -54,9 +59,8 @@ public class NestedNodeMap
         }
 
         // split element name in namespaceURI and localName parts
-        String[] nameParts = new String[3];
-        nameParts = namespaceSupport.processName(currentElement, nameParts, false);
-        String namespaceURI = nameParts[0].equals("") ? null : nameParts[0];
+        String[] nameParts = nsResolver.parseName(currentElement);
+        String namespaceURI = nameParts[0];
         String localName = nameParts[1];
 
         NodeEntry nodeEntry = null;
@@ -69,7 +73,7 @@ public class NestedNodeMap
         {
             if (nodeEntry.nestedNodes == null)
                 nodeEntry.nestedNodes = new NestedNodeMap();
-            nodeEntry.nestedNodes.put(restOfThePath, value, namespaceSupport);
+            nodeEntry.nestedNodes.put(restOfThePath, value, nsResolver);
         }
         else
         {

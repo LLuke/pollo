@@ -17,9 +17,6 @@ import java.util.List;
 
 public class PolloConfiguration
 {
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
-
     protected ArrayList viewTypes = new ArrayList();
     protected ArrayList templates = new ArrayList();
     /**
@@ -378,7 +375,6 @@ public class PolloConfiguration
         catch (Exception e)
         {
             String message = "Could not store user configuration.";
-            logcat.error("PolloConfiguration: " + message);
             throw new PolloConfigurationException(message, e);
         }
         finally

@@ -7,9 +7,6 @@ import org.outerj.pollo.xmleditor.exception.PolloException;
 
 public class TemplateConfItem extends ConfItem
 {
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
-
     protected String description;
 
     public TemplateConfItem()
@@ -27,7 +24,6 @@ public class TemplateConfItem extends ConfItem
         }
         catch (Exception e)
         {
-            logcat.error("Exception creating template", e);
             throw new PolloException("[TemplateConfItem] Error creating template.", e);
         }
         return template;

@@ -3,12 +3,12 @@ package org.outerj.pollo.xmleditor.displayspec;
 import org.outerj.pollo.xmleditor.ElementColorIcon;
 import org.outerj.pollo.xmleditor.exception.PolloException;
 import org.outerj.pollo.xmleditor.util.NestedNodeMap;
+import org.outerj.pollo.util.ColorFormat;
 import org.w3c.dom.Element;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 
 
 /**
@@ -29,6 +29,7 @@ public class GenericDisplaySpecification implements IDisplaySpecification
     protected NestedNodeMap elementSpecs = new NestedNodeMap();
     /** Indicates if this implementation should randomly assign colors. */
     protected boolean useRandomColors = false;
+    protected int treeType;
 
     /** List of colors to use for elements. The list is stolen from somewhere
      * in koffice.
@@ -138,23 +139,33 @@ public class GenericDisplaySpecification implements IDisplaySpecification
             {
                 try
                 {
-                    StringTokenizer tokenizer = new StringTokenizer(fixedColorParam, ",");
-                    String redString = tokenizer.nextToken();
-                    String greenString = tokenizer.nextToken();
-                    String blueString = tokenizer.nextToken();
-
-                    int red = Integer.parseInt(redString);
-                    int green = Integer.parseInt(greenString);
-                    int blue = Integer.parseInt(blueString);
-
-                    defaultColor = new Color(red, green, blue);
+                    defaultColor = ColorFormat.parseHexColor(fixedColorParam);
                 }
                 catch (Exception e)
                 {
-                    throw new PolloException("[GenericDisplaySpecification] fixed-color parameter not in correct format, should be e.g. 255,255,255", e);
+                    throw new PolloException("fixed-color parameter not correct: " + e.getMessage(), e);
                 }
             }
         }
+
+        String backgroundColorParam = (String)initParams.get("background-color");
+        if (backgroundColorParam != null)
+        {
+            try
+            {
+                defaultColor = ColorFormat.parseHexColor(backgroundColorParam);
+            }
+            catch (Exception e)
+            {
+                throw new PolloException("background-color parameter not correct: " + e.getMessage(), e);
+            }
+        }
+
+        String treeType = (String)initParams.get("treetype");
+        if (treeType != null && treeType.equals("classic"))
+            this.treeType = IDisplaySpecification.CLASSIC_TREE;
+        else
+            this.treeType = IDisplaySpecification.POLLO_TREE;
     }
 
     protected void addElementSpec(ElementSpec elementSpec)
@@ -180,8 +191,8 @@ public class GenericDisplaySpecification implements IDisplaySpecification
             {
                 elementSpec.backgroundColor = defaultColor;
             }
-            elementSpec.viewType = elementSpec.BLOCK_VIEW;
-            elementSpec.icon = new ElementColorIcon(defaultColor);
+            elementSpec.textColor = Color.black;
+            elementSpec.icon = new ElementColorIcon(elementSpec.backgroundColor);
             addElementSpec(elementSpec);
         }
         return elementSpec;
@@ -195,5 +206,10 @@ public class GenericDisplaySpecification implements IDisplaySpecification
     public Color getBackgroundColor()
     {
         return backgroundColor;
+    }
+
+    public int getTreeType()
+    {
+        return treeType;
     }
 }

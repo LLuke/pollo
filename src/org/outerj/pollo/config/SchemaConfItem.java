@@ -7,14 +7,6 @@ import org.outerj.pollo.xmleditor.schema.ISchemaFactory;
 
 public class SchemaConfItem extends ConfItem
 {
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
-
-    public SchemaConfItem()
-    {
-        logcat.debug("New SchemaConfItem created");
-    }
-
     public ISchema createSchema()
         throws PolloException
     {
@@ -26,7 +18,6 @@ public class SchemaConfItem extends ConfItem
         }
         catch (Exception e)
         {
-            logcat.error("Exception creating schema", e);
             throw new PolloException("[SchemaConfItem] Error creating schema.", e);
         }
         return schema;

@@ -19,9 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -35,11 +33,13 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
     DragGestureListener, DragSourceListener, DropTargetListener, Autoscroll, DomConnected
 {
     protected View mainView;
+    protected ViewFactory viewFactory;
     protected boolean relayout;
     protected SelectionInfo selectionInfo = new SelectionInfo();
 
     // fields for managing drag-and-drop    c
-    protected Rectangle dragOverEffectRedraw;
+    protected Shape dragOverEffectRedraw;
+    protected Point dragLocation;
     protected Node dropNode;
     protected int dropAction;
     protected Node draggingNode;
@@ -149,6 +149,19 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
         addNodeClickedListener(this);
         setOpaque(true);
 
+        // init view factory
+        switch (displaySpec.getTreeType())
+        {
+            case IDisplaySpecification.POLLO_TREE:
+                this.viewFactory = new V1ViewFactory(this);
+                break;
+            case IDisplaySpecification.CLASSIC_TREE:
+                this.viewFactory = new V2ViewFactory(this);
+                break;
+            default:
+                throw new Exception("Unsupported tree type: " + displaySpec.getTreeType());
+        }
+
         // init drag-and-drop
         dragSource = new DragSource();
         dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
@@ -159,11 +172,11 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
         copyAction                = new CopyAction(this);
         cutAction                 = new CutAction(this);
         removeAction              = new RemoveAction(this);
-        
+
         pasteBeforeAction         = new PasteAction(this, PasteAction.PASTE_BEFORE);
         pasteAfterAction          = new PasteAction(this, PasteAction.PASTE_AFTER);
         pasteInsideAction         = new PasteAction(this, PasteAction.PASTE_ASCHILD);
-        
+
         insertCommentBeforeAction = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_BEFORE,
                 InsertCharacterDataAction.TYPE_COMMENT);
         insertCommentAfterAction  = new InsertCharacterDataAction(this, InsertCharacterDataAction.INSERT_AFTER,
@@ -225,6 +238,9 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
         attributeValueFont = new Font("Default", 0, 12);
         characterDataFont = new Font("Monospaced", 0, 12);
         antialiasing = false;
+
+        // add a focus listener
+        addFocusListener(new XmlEditorFocusListener());
     }
 
     /**
@@ -309,7 +325,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
             ((Graphics2D)g).fill(g.getClipBounds());
 
             // paint the views
-            mainView.paint(g, 0, 0);
+            mainView.paint((Graphics2D)g, 0, 0);
         }
     }
 
@@ -372,54 +388,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
      */
     public View createView(Node node, View parentView)
     {
-        if (node.getNodeType() == Node.ELEMENT_NODE)
-        {
-            ElementBlockView view = new ElementBlockView(parentView, (Element)node, this);
-            createViewsRecursive((Element)node, view);
-            return view;
-        }
-        else if (node.getNodeType() == Node.DOCUMENT_NODE)
-        {
-            DocumentBlockView view = new DocumentBlockView(parentView, (Document)node, this);
-            createViewsRecursive(node, view);
-            return view;
-        }
-        else if (node.getNodeType() == Node.COMMENT_NODE)
-        {
-            return new CommentView(parentView, (Comment)node, this);
-        }
-        else if (node.getNodeType() == Node.TEXT_NODE)
-        {
-            return new TextView(parentView, (Text)node, this);
-        }
-        else if (node.getNodeType() == Node.CDATA_SECTION_NODE)
-        {
-            return new CDataView(parentView, (CDATASection)node, this);
-        }
-        else if (node.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE)
-        {
-            return new PIView(parentView, (ProcessingInstruction)node, this);
-        }
-        else if (node.getNodeType() == Node.ENTITY_REFERENCE_NODE)
-        {
-            return new EntityReferenceView(parentView, (EntityReference)node, this);
-        }
-        return null;
+        return viewFactory.createView(node, parentView);
     }
-
-    private void createViewsRecursive(Node parentNode, View parentView)
-    {
-        NodeList children = parentNode.getChildNodes();
-
-        for (int i = 0; i < children.getLength(); i++)
-        {
-            Node node = (Node)children.item(i);
-            View childView = createView(node, parentView);
-            if (childView != null)
-                parentView.addChildView(childView);
-        }
-    }
-
 
     public void mousePressed(MouseEvent e)
     {
@@ -633,11 +603,19 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
     public void dragExit (DropTargetEvent event)
     {
+        dragLocation = null;
         removeDragOverEffect();
     }
 
     public void dragOver (DropTargetDragEvent event)
     {
+        // on Windows I seem to get continuous drag-events when holding the mouse
+        // on a fixed location, causing flickering of all the redrawing going on.
+        if (dragLocation != null && dragLocation.equals(event.getLocation()))
+            return;
+
+        dragLocation = event.getLocation();
+
         removeDragOverEffect();
 
         if (mainView != null)
@@ -753,6 +731,8 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
         finally
         {
             dropNode = null;
+            dragLocation = null;
+            removeDragOverEffect();
         }
     }
 
@@ -794,14 +774,14 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
     {
         if (dragOverEffectRedraw != null)
         {
-            paintImmediately(dragOverEffectRedraw);
+            paintImmediately(dragOverEffectRedraw.getBounds());
         }
     }
 
 
-    public void setDragOverEffectRedraw(Rectangle rect)
+    public void setDragOverEffectRedraw(Shape shape)
     {
-        this.dragOverEffectRedraw = rect;
+        this.dragOverEffectRedraw = shape;
     }
 
     public void setDraggingNode(Node node, boolean move)
@@ -1267,5 +1247,20 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
     public void setAntialiasing(boolean antialiasing)
     {
         this.antialiasing = antialiasing;
+    }
+
+    private class XmlEditorFocusListener implements FocusListener
+    {
+        public void focusGained(FocusEvent e)
+        {
+            if (selectionInfo.getSelectedViewRect() != null)
+                repaint(selectionInfo.getSelectedViewRect());
+        }
+
+        public void focusLost(FocusEvent e)
+        {
+            if (selectionInfo.getSelectedViewRect() != null)
+                repaint(selectionInfo.getSelectedViewRect());
+        }
     }
 }

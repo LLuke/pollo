@@ -5,6 +5,8 @@ import org.outerj.pollo.gui.FocusHighlightComponent;
 import org.outerj.pollo.gui.SomeLinesBorder;
 import org.outerj.pollo.xmleditor.Disposable;
 import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
+import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.schema.ISchema;
@@ -40,17 +42,19 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
     protected ISchema schema;
     protected IAttributeEditorPlugin attrEditorPlugin;
     protected JComponent parentFocusComponent;
+    protected IDisplaySpecification displaySpecification;
 
     /**
      * @param parentFocusComponent a component to which to move the focus after pressing escape. Can be null.
      */
     public AttributesPanel(XmlModel xmlModel, ISchema schema, IAttributeEditorPlugin attrEditorPlugin,
-                           JComponent parentFocusComponent)
+                           JComponent parentFocusComponent, IDisplaySpecification displaySpecification)
     {
         this.xmlModel = xmlModel;
         this.schema = schema;
         this.attrEditorPlugin = attrEditorPlugin;
         this.parentFocusComponent = parentFocusComponent;
+        this.displaySpecification = displaySpecification;
 
         // construct the interface components
         attributesTableModel = new AttributesTableModel(schema, xmlModel);
@@ -176,13 +180,14 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 
         if (node instanceof Element)
         {
-            attributesTableModel.setElement((Element)node);
+            ElementSpec elementSpec = displaySpecification.getElementSpec((Element)node);
+            attributesTableModel.setElement((Element)node, elementSpec);
             setEnabled(true);
         }
         else
         {
             // if it's not an element node
-            attributesTableModel.setElement(null);
+            attributesTableModel.setElement(null, null);
             setEnabled(false);
         }
 
@@ -195,7 +200,7 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
     public void nodeUnselected(Node node)
     {
         setEnabled(false);
-        attributesTableModel.setElement(null);
+        attributesTableModel.setElement(null, null);
         attributesTable.clearSelection();
     }
 
@@ -222,7 +227,7 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
             //  processKeyBinding instead (see below)
 
             // move focus back to the main editor widget when escape is pressed. Normally this would not
-            // be needed here, but apparently JTable does not propagate event further.
+            // be needed here, but apparently JTable does not propagate events further.
             getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "movefocustomain");
             getActionMap().put("movefocustomain", new AbstractAction() {
                 public void actionPerformed(ActionEvent e)

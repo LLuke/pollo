@@ -14,8 +14,6 @@ import java.util.WeakHashMap;
 public class BasicSchemaFactory implements ISchemaFactory
 {
     protected WeakHashMap schemaInstances = new WeakHashMap();
-    protected org.apache.log4j.Category logcat =
-        org.apache.log4j.Category.getInstance(BasicSchemaFactory.class.getName());
 
     public ISchema getSchema(HashMap initParams)
         throws PolloException
@@ -30,7 +28,6 @@ public class BasicSchemaFactory implements ISchemaFactory
             }
             catch (Exception e)
             {
-                logcat.error("[BasicSchemaFactory] Could not create schema.", e);
                 throw new PolloException("[BasicSchemaFactory] Could not create schema.", e);
             }
         }

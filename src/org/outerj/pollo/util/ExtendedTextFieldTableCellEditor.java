@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.FocusListener;
 
 /**
  * A TableCellEditor that consists of a textfield with (optionally) some
@@ -57,9 +56,10 @@ public class ExtendedTextFieldTableCellEditor extends AbstractCellEditor impleme
         textField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
-                // moving the focus back to the parent manually is necessary for java 1.4
-                panel.getParent().requestFocus();
+                Component parent = panel.getParent();
                 ExtendedTextFieldTableCellEditor.this.stopCellEditing();
+                // moving the focus back to the parent manually is necessary for java 1.4
+                parent.requestFocus();
             }
         });
     }

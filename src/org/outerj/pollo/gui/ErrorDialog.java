@@ -1,6 +1,6 @@
 package org.outerj.pollo.gui;
 
-import org.outerj.pollo.xmleditor.exception.PolloException;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -19,9 +19,15 @@ public class ErrorDialog extends JDialog implements ActionListener
     protected JList messageList;
     protected JTextArea stackTraceView;
 
+    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
+            org.outerj.pollo.xmleditor.AppenderDefinitions.MAIN);
+
     public ErrorDialog(Frame parent, String message, Exception exception)
     {
         super(parent, "Error");
+
+        // log exceptions shown in error dialog
+        logcat.error(exception);
 
         setModal(true);
 
@@ -84,16 +90,16 @@ public class ErrorDialog extends JDialog implements ActionListener
         setLocation((dimension2.width - dimension.width) / 2, (dimension2.height - dimension.height) / 2);
     }
 
-    public void addExceptionsToList(Exception e, List list)
+    public void addExceptionsToList(Throwable e, List list)
     {
-        list.add(e.getMessage());
-        if (e instanceof PolloException)
+        while (e != null)
         {
-            PolloException pe = (PolloException)e;
-            if (pe.getNestedException() != null)
-            {
-                addExceptionsToList(pe.getNestedException(), list);
-            }
+            String message = e.getMessage();
+            if (message != null && message.length() > 0)
+                list.add(e.getMessage());
+            else
+                list.add(e.getClass().getName());
+            e = ExceptionUtils.getCause(e);
         }
     }
 

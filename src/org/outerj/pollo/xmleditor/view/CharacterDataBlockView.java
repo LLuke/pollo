@@ -3,6 +3,7 @@ package org.outerj.pollo.xmleditor.view;
 import org.outerj.pollo.xmleditor.NodeClickedEvent;
 import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.XmlTransferable;
+import org.outerj.pollo.xmleditor.view.View;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Node;
@@ -10,6 +11,7 @@ import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventTarget;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragSource;
@@ -26,17 +28,17 @@ import java.awt.event.MouseEvent;
  */
 public abstract class CharacterDataBlockView extends BlockView
 {
-    protected static int lineHeight = -1;
+    protected int lineHeight = -1;
+    protected int collapseSignTop = -1;
+    protected int minimumHeight = -1;
 
     // text clipping related constants
     protected static final int NOT_CALCULATED    = -1;
     protected static final int NO_CLIPPING       = -2;
 
     // rendering related constants
-    protected static final int LEFT_TEXT_MARGIN  = 13;
+    protected static final int LEFT_TEXT_MARGIN  = BORDER_WIDTH + COLLAPSE_SIGN_SIZE + COLLAPSESIGN_ICON_SPACING + ICON_SIZE + 2;
     protected static final int RIGHT_TEXT_MARGIN = 5;
-    protected static final int COLLAPSE_SIGN_TOP_POSITION  = 2;
-    protected static final int COLLAPSE_SIGN_LEFT_POSITION = 3;
 
     protected Node characterData; //CharacterData characterData;
 
@@ -66,17 +68,22 @@ public abstract class CharacterDataBlockView extends BlockView
 
     public abstract void drawFrame(Graphics2D g, int startH, int startV);
 
-    public void paint(Graphics gr, int startH, int startV)
+    public void paint(Graphics2D gr, int startH, int startV)
     {
-        Graphics2D g = (Graphics2D)gr;
-        g.setFont(xmlEditor.getCharacterDataFont());
+        gr.setFont(xmlEditor.getCharacterDataFont());
 
-        drawFrame(g, startH, startV);
+        drawFrame(gr, startH, startV);
 
-        g.setColor(Color.black);
+        gr.setColor(Color.black);
 
         // draw the collapse sign
-        drawCollapseSign(g, isCollapsed, startH + COLLAPSE_SIGN_LEFT_POSITION, startV + COLLAPSE_SIGN_TOP_POSITION);
+        if (numberOfLines > 1)
+            drawCollapseSign(gr, isCollapsed, startH + BORDER_WIDTH, startV + (lineHeight / 2) - HALF_COLLAPSE_SIGN_SIZE);
+
+        // draw Icon
+        int iconV = startV + 2;
+        int iconH = startH + BORDER_WIDTH + COLLAPSE_SIGN_SIZE + COLLAPSESIGN_ICON_SPACING;
+        getIcon().paintIcon(xmlEditor, gr, iconH, iconV);
 
         // draw the characterdata text
         int verticalOffset = startV + getHeader() + xmlEditor.getCharacterDataFontMetrics().getAscent();
@@ -92,12 +99,12 @@ public abstract class CharacterDataBlockView extends BlockView
 
             if (lineInfo[(i*3)+2] == NO_CLIPPING) // draw all text
             {
-                g.drawChars(data, lineInfo[(i*3)], lineInfo[(i*3)+1], startH + LEFT_TEXT_MARGIN, verticalOffset);
+                gr.drawChars(data, lineInfo[(i*3)], lineInfo[(i*3)+1], startH + LEFT_TEXT_MARGIN, verticalOffset);
             }
             else // draw part of the text and three dots after it
             {
-                g.drawChars(data, lineInfo[(i*3)], lineInfo[(i*3)+2], startH + LEFT_TEXT_MARGIN, verticalOffset);
-                g.drawString("...", startH + LEFT_TEXT_MARGIN
+                gr.drawChars(data, lineInfo[(i*3)], lineInfo[(i*3)+2], startH + LEFT_TEXT_MARGIN, verticalOffset);
+                gr.drawString("...", startH + LEFT_TEXT_MARGIN
                         + xmlEditor.getCharacterDataFontMetrics().charsWidth(data, lineInfo[(i*3)], lineInfo[(i*3)+2]), verticalOffset);
             }
             verticalOffset += lineHeight;
@@ -113,6 +120,8 @@ public abstract class CharacterDataBlockView extends BlockView
     {
         // initialize variables
         lineHeight = xmlEditor.getCharacterDataFontMetrics().getHeight();
+        minimumHeight = max(new int[] {lineHeight, ICON_SIZE + 2});
+        collapseSignTop = (lineHeight / 2) - HALF_COLLAPSE_SIGN_SIZE;
 
         // fill the lineInfo structure
         numberOfLines = countNumberOfLines(data);
@@ -170,8 +179,8 @@ public abstract class CharacterDataBlockView extends BlockView
     public void mousePressed(MouseEvent e, int startH, int startV)
     {
         // if clicked on the collapse/expand button
-        if ((e.getY() > startV + COLLAPSE_SIGN_TOP_POSITION) && (e.getY() < startV + COLLAPSE_SIGN_TOP_POSITION + 10)
-                && (e.getX() > startH + COLLAPSE_SIGN_LEFT_POSITION) && (e.getX() < startH + COLLAPSE_SIGN_LEFT_POSITION + 10))
+        if (isCollapsable() && (e.getY() > startV + collapseSignTop) && (e.getY() < startV + collapseSignTop + 10)
+                && (e.getX() > startH + BORDER_WIDTH) && (e.getX() < startH + BORDER_WIDTH + 10))
         {
             if (isCollapsed())
                 expand();
@@ -192,9 +201,9 @@ public abstract class CharacterDataBlockView extends BlockView
     public int getHeight()
     {
         if (!isCollapsed)
-            return getHeader() + (numberOfLines * lineHeight) + getFooter();
+            return max(new int[] {getHeader() + (numberOfLines * lineHeight) + getFooter(), minimumHeight});
         else
-            return lineHeight;
+            return minimumHeight;
     }
 
 
@@ -323,7 +332,7 @@ public abstract class CharacterDataBlockView extends BlockView
 
     public boolean isCollapsable()
     {
-        return true;
+        return numberOfLines > 1;
     }
 
     /**
@@ -341,4 +350,11 @@ public abstract class CharacterDataBlockView extends BlockView
     {
         return 0;
     }
+
+    public int getFirstLineCenterPos()
+    {
+        return collapseSignTop + HALF_COLLAPSE_SIGN_SIZE;
+    }
+
+    public abstract Icon getIcon();
 }

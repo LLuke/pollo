@@ -8,6 +8,7 @@ import org.outerj.pollo.xmleditor.exception.PolloException;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.AttrEditorPluginChain;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
+import org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.schema.ChainedSchema;
 import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.PolloFrame;
@@ -18,9 +19,6 @@ import java.util.Iterator;
 
 public class ViewTypeConf
 {
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
-
     protected String name;
     protected String description;
     protected String className;
@@ -36,7 +34,6 @@ public class ViewTypeConf
 
     public void setName(String name)
     {
-        logcat.debug("ViewType.setName: " + name);
         this.name = name;
     }
 
@@ -47,7 +44,6 @@ public class ViewTypeConf
 
     public void setDescription(String description)
     {
-        logcat.debug("ViewType.setDescription: " + description);
         this.description = description;
     }
 
@@ -58,7 +54,6 @@ public class ViewTypeConf
 
     public void setClassName(String className)
     {
-        logcat.debug("ViewType.setClassName: " + className);
         this.className = className;
     }
 
@@ -117,11 +112,20 @@ public class ViewTypeConf
     {
         AttrEditorPluginChain attrEditorPluginChain = new AttrEditorPluginChain();
 
-        Iterator it = attrEditorPlugins.iterator();
-        while (it.hasNext())
+        if (attrEditorPlugins.size() > 0)
         {
-            AttrEditorPluginConfItem conf = (AttrEditorPluginConfItem)it.next();
-            attrEditorPluginChain.add(conf.createPlugin(xmlModel, schema, polloFrame));
+            Iterator it = attrEditorPlugins.iterator();
+            while (it.hasNext())
+            {
+                AttrEditorPluginConfItem conf = (AttrEditorPluginConfItem)it.next();
+                attrEditorPluginChain.add(conf.createPlugin(xmlModel, schema, polloFrame));
+            }
+        }
+        else
+        {
+            DefaultAttributeEditorPlugin defaultPlugin = new DefaultAttributeEditorPlugin();
+            defaultPlugin.init(null, xmlModel, schema);
+            attrEditorPluginChain.add(defaultPlugin);
         }
 
         return attrEditorPluginChain;

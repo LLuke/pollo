@@ -4,8 +4,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * A TableCellEditor that consists of a combobox with (optionally) some

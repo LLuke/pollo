@@ -9,9 +9,6 @@ import org.outerj.pollo.EditorPanel;
 
 public class ActionPluginConfItem extends ConfItem
 {
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.CONFIG);
-
     public ActionPluginConfItem()
     {
     }
@@ -27,7 +24,6 @@ public class ActionPluginConfItem extends ConfItem
         }
         catch (Exception e)
         {
-            logcat.error("Exception creating ActionPlugin", e);
             throw new PolloException("[ActionPluginConfItem] Error creating action plugins.", e);
         }
         return actionPlugin;

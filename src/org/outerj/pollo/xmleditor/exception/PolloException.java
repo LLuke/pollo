@@ -1,14 +1,14 @@
 package org.outerj.pollo.xmleditor.exception;
 
+import org.apache.commons.lang.exception.NestableException;
+
 /**
  * Base class for pollo exceptions.
  *
  * @author Bruno Dumon
  */
-public class PolloException extends Exception
+public class PolloException extends NestableException
 {
-    protected Exception nestedException;
-
     public PolloException(String message)
     {
         super(message);
@@ -16,20 +16,6 @@ public class PolloException extends Exception
 
     public PolloException(String message, Exception nestedException)
     {
-        super(message);
-        this.nestedException = nestedException;
-    }
-
-    public Exception getNestedException()
-    {
-        return nestedException;
-    }
-
-    public String toString()
-    {
-        if (nestedException != null)
-            return super.toString() + ", nested exception is: " + nestedException;
-        else
-            return super.toString();
+        super(message, nestedException);
     }
 }

@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor.view;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.view.View;
 import org.w3c.dom.Node;
 
 import java.awt.*;
@@ -22,6 +23,11 @@ public abstract class BlockView implements View
 
     public static final BasicStroke STROKE_LIGHT = new BasicStroke(1f);
     public static final BasicStroke STROKE_HEAVY = new BasicStroke(3f);
+    public static final int COLLAPSE_SIGN_SIZE = 8;
+    public static final int HALF_COLLAPSE_SIGN_SIZE = COLLAPSE_SIGN_SIZE / 2;
+    public static final int ICON_SIZE = 16;
+    public static final int COLLAPSESIGN_ICON_SPACING = 3;
+    public static final int BORDER_WIDTH = 6;
 
     public BlockView(View parentView, XmlEditor xmlEditor)
     {
@@ -31,7 +37,10 @@ public abstract class BlockView implements View
 
     public void drawCollapseSign(Graphics g, boolean isCollapsed, int startH, int startV)
     {
-        g.drawRect(startH, startV, 8, 8);
+        g.setColor(xmlEditor.getBackground());
+        g.fillRect(startH, startV, COLLAPSE_SIGN_SIZE, COLLAPSE_SIGN_SIZE);
+        g.setColor(Color.black);
+        g.drawRect(startH, startV, COLLAPSE_SIGN_SIZE, COLLAPSE_SIGN_SIZE);
         if (isCollapsed)
         {
             // draw '+' sign
@@ -357,6 +366,10 @@ public abstract class BlockView implements View
         return view.getLastChild(visible);
     }
 
+    public View getParent()
+    {
+        return parentView;
+    }
 
     /**
      * Implementation of the View interface.
@@ -392,5 +405,29 @@ public abstract class BlockView implements View
     public int getWidth()
     {
         return width;
+    }
+
+    public boolean hasChildren()
+    {
+        return false;
+    }
+
+    public String getHelp()
+    {
+        return null;
+    }
+
+    public String getLabel()
+    {
+        return null;
+    }
+
+    protected int max(int[] values)
+    {
+        int largestvalue = values[0];
+        for (int i = 1; i < values.length; i++)
+            if (values[i] > largestvalue)
+                largestvalue = values[i];
+        return largestvalue;
     }
 }

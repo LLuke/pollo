@@ -40,6 +40,8 @@ public class ViewTypesDialog extends JPanel implements ActionListener
     protected JRadioButton basicDisplaySpec;
     protected JTextField basicDisplaySpecFileField;
     protected JButton basicDisplaySpecBrowseButton;
+    protected JRadioButton polloTree;
+    protected JRadioButton classicTree;
 
     protected JFileChooser schemaChooser;
     protected JFileChooser displaySpecChooser;
@@ -233,6 +235,18 @@ public class ViewTypesDialog extends JPanel implements ActionListener
         box8.add(basicDisplaySpecBrowseButton);
         displaySpecVertBox.add(box8);
 
+        Box box9 = new Box(BoxLayout.X_AXIS);
+        ButtonGroup treeTypeGroup = new ButtonGroup();
+        polloTree = new JRadioButton("Pollo tree");
+        treeTypeGroup.add(polloTree);
+        box9.add(polloTree);
+        polloTree.setSelected(true);
+        classicTree = new JRadioButton("Classic tree");
+        treeTypeGroup.add(classicTree);
+        box9.add(classicTree);
+        box9.add(Box.createHorizontalGlue());
+        displaySpecVertBox.add(box9);
+
         colorSelectButton.setEnabled(false);
         basicDisplaySpecFileField.setEnabled(false);
         basicDisplaySpecBrowseButton.setEnabled(false);
@@ -387,6 +401,8 @@ public class ViewTypesDialog extends JPanel implements ActionListener
         basicDisplaySpec.setEnabled(enabled);
         basicDisplaySpecFileField.setEnabled(enabled);
         basicDisplaySpecBrowseButton.setEnabled(enabled);
+        polloTree.setEnabled(enabled);
+        classicTree.setEnabled(enabled);
     }
 
     /**
@@ -452,9 +468,15 @@ public class ViewTypesDialog extends JPanel implements ActionListener
 
             // create display spec configuration
             DisplaySpecConfItem displaySpecConf = new DisplaySpecConfItem();
+            // select the tree type
             if (genericRandomColors.isSelected() || genericFixedColor.isSelected())
             {
                 displaySpecConf.setFactoryClass("org.outerj.pollo.xmleditor.displayspec.GenericDisplaySpecFactory");
+
+                if (classicTree.isSelected())
+                    displaySpecConf.addInitParam("treetype", "classic");
+                else
+                    displaySpecConf.addInitParam("treetype", "pollo");
 
                 if (genericRandomColors.isSelected())
                 {

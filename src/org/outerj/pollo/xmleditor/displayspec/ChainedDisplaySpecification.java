@@ -28,8 +28,7 @@ public class ChainedDisplaySpecification implements IDisplaySpecification
     {
         for (int i = 0; i < displaySpecs.size(); i++)
         {
-            Color result = ((IDisplaySpecification)displaySpecs.get(i))
-                .getBackgroundColor();
+            Color result = ((IDisplaySpecification)displaySpecs.get(i)).getBackgroundColor();
             if (result != null)
                 return result;
         }
@@ -58,5 +57,16 @@ public class ChainedDisplaySpecification implements IDisplaySpecification
                 return result;
         }
         return null;
+    }
+
+    public int getTreeType()
+    {
+        for (int i = 0; i < displaySpecs.size(); i++)
+        {
+            int result = ((IDisplaySpecification)displaySpecs.get(i)).getTreeType();
+            if (result != -1)
+                return result;
+        }
+        return IDisplaySpecification.POLLO_TREE;
     }
 }

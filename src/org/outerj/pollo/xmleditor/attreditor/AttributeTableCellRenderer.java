@@ -29,7 +29,7 @@ public class AttributeTableCellRenderer extends DefaultTableCellRenderer
         switch (column)
         {
             case 0:
-                setText(taei.getQName());
+                setText(taei.getLabel());
                 if (taei.value == null)
                     setEnabled(false);
                 else

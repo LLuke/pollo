@@ -101,7 +101,11 @@ public class QuickSort {
     }
 
     public void sortPartial(Object[] a, int start) {
-        qsort(a, start, a.length - start - 1);
+        qsort(a, start, a.length - start);
+    }
+
+    public void sortPartial(Object[] a, int start, int end) {
+        qsort(a, start, end - start + 1);
     }
 
     public void sort(Object[] a, int length) {

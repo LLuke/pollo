@@ -29,9 +29,6 @@ public class Pollo implements XmlModelListener
     protected ArrayList openFiles = new ArrayList();
     protected ArrayList openFrames = new ArrayList();
 
-    public static org.apache.log4j.Category logcat = org.apache.log4j.Category.getInstance(
-            org.outerj.pollo.xmleditor.AppenderDefinitions.MAIN);
-
     public static void main(String [] args)
         throws Exception
     {
@@ -60,7 +57,9 @@ public class Pollo implements XmlModelListener
         }
         catch (Exception e)
         {
-            logcat.error("Could not read configuration file, but will continue to startup anyway", e);
+            ErrorDialog errorDialog = new ErrorDialog(null, "Could not read this file.", e);
+            errorDialog.setVisible(true);
+            System.exit(1);
         }
 
         // initialize actions
