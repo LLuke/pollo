@@ -51,10 +51,6 @@ public class Pollo implements XmlModelListener
 		if (args.length > 0)
 		{
 			autoOpenFile = new File(args[0]);
-			if (!autoOpenFile.exists())
-			{
-				System.out.println("File not found: " + args[0]);
-			}
 		}
 
 		// load configuration
@@ -64,9 +60,7 @@ public class Pollo implements XmlModelListener
 		}
 		catch (Exception e)
 		{
-			ErrorDialog errorDialog = new ErrorDialog(null, "Error while reading the configuration file.", e);
-			errorDialog.setVisible(true);
-			System.exit(1);
+            logcat.error("Could not read configuration file, but will continue to startup anyway", e);
 		}
 
 		// initialize actions
