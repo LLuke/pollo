@@ -9,6 +9,34 @@ version 0.3.4
    the java bugparade nr. 4265778), the element shapes were drawed
    incorrectly in (very) large files. This is fixed now by letting Pollo
    clip the largest part of the shape itself.
+ - Some new keyboard navigations contributed by Curt Thompson.
+ - Accelerator and mnemonic keys for the menus, contributed by Scott Willy.
+   This is part of his ongoing effort to i18n-ize pollo.
+ - updated Cocoon sitemap schema, it now corresponds to cocoon 2.02
+ - added a new feature to the pollo schema format and the
+   displayspecification: it is now possible to describe the element
+   based on its parent element. E.g. in the cocoon sitemap, a map:act
+   element has other attributes depending on its context.
+ - The menu for recently used files wasn't accessible using arrow keys
+ - Enhanced the attribute editor: when selecting a value from a dropdown,
+   and there are additional buttons (like for cocoon), then the additional
+   buttons are now to the left of the dropdown button.
+   The keyboard in the attribute editor should now work
+   as one would expect (F2 to start editing cell, ...).
+   Only cells in the second column are selectable.
+ - Elements can now be selected by clicking on their left bar.
+ - A file passed as a command line argument will be opened automatically.
+ - Use system line separator when saving files.
+ - Use Aqua Look And Feel on OS X, due to Richard Bounds
+ - DTD's referenced in DOCTYPE's are no never loaded. Moved to Xerces 2
+   to make this possible.
+ - Render entity-reference nodes (no possibility to create them yet -- if
+   anyone needs this, let me know).
+ - Pressing escape moves focus back to the main editor widget.
+ - Default encoding when saving in text view is now UTF-8, as it should be
+ - Included a schema for Ant 1.5
+ - Removed the JavaHelp system, the content will now be on Pollo's website.
+   This will make it easier to update, and easier to read.
 
 version 0.3.3
 =============
