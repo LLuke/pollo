@@ -1,11 +1,10 @@
 package org.outerj.pollo.xmleditor.attreditor;
 
 import org.outerj.pollo.DomConnected;
-import org.outerj.pollo.gui.SomeLinesBorder;
 import org.outerj.pollo.gui.FocusHighlightComponent;
-import org.outerj.pollo.plaf.PolloTheme;
-import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.gui.SomeLinesBorder;
 import org.outerj.pollo.xmleditor.Disposable;
+import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.schema.ISchema;
@@ -19,6 +18,7 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * A Panel containing a JTable to edit attribute values, together with
@@ -211,7 +211,9 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 			// another issue I encountered: when tapping space (while in the
 			// cell editor), the 'toggle expand' action was also triggered
 			// (because it is bound to Space via the menu)
-			setSurrendersFocusOnKeystroke(true);
+			//setSurrendersFocusOnKeystroke(true);
+			// Ooops.. this method is not available in java 1.3, therefore overided
+			//  processKeyBinding instead (see below)
 		}
 
 		
@@ -238,6 +240,20 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 			// Only cells in the second column should be selectable
 			super.changeSelection(rowIndex, 1, toggle, extend);
 		}
+
+		protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
+						int condition, boolean pressed)
+		{
+			boolean retValue = super.processKeyBinding(ks, e, condition, pressed);
+			if (retValue == true)
+			{
+				Component editorComponent = getEditorComponent();
+				if (editorComponent != null)
+						editorComponent.requestFocus();
+			}
+			return retValue;
+		}
+
 	}
 
 
