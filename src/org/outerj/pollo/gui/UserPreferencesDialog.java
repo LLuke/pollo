@@ -4,6 +4,10 @@ import org.outerj.pollo.config.PolloConfiguration;
 import org.outerj.pollo.util.ResourceManager;
 
 import javax.swing.*;
+import javax.swing.text.Document;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
@@ -41,6 +45,10 @@ public class UserPreferencesDialog extends JPanel implements ActionListener
         ViewSettingsPanel viewSettingsPanel = new ViewSettingsPanel();
         configurationPanels.add(viewSettingsPanel);
         tabbedPane.add(resourceManager.getString("fonts-and-colors-tab"), viewSettingsPanel);
+
+        VariousSettingsPanel variousSettingsPanel = new VariousSettingsPanel();
+        configurationPanels.add(variousSettingsPanel);
+        tabbedPane.add(resourceManager.getString("various-tab"), variousSettingsPanel);
 
         JButton okButton = new JButton(resourceManager.getString("ok"));
         okButton.setActionCommand("ok");
@@ -180,6 +188,43 @@ public class UserPreferencesDialog extends JPanel implements ActionListener
         }
     }
 
+    public class VariousSettingsPanel extends ConfigurationPanel
+    {
+        public JTextField undoLevels;
+
+        public VariousSettingsPanel()
+        {
+            setLayout(new GridBagLayout());
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(0, 6, 0, 6);
+            gbc.anchor = gbc.WEST;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            add(new JLabel(resourceManager.getString("undolevels")), gbc);
+
+            undoLevels = new NumericTextField();
+            undoLevels.setColumns(5);
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            add(undoLevels, gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            add(new JLabel("(will only impact newly opened files)"), gbc);
+        }
+
+        public void readConfiguration(PolloConfiguration configuration)
+        {
+            undoLevels.setText(String.valueOf(configuration.getUndoLevels()));
+        }
+
+        public void storeConfiguration(PolloConfiguration configuration)
+        {
+            configuration.setUndoLevels(Integer.parseInt(undoLevels.getText()));
+        }
+    }
+
     public void actionPerformed(ActionEvent event)
     {
         if (event.getActionCommand().equals("ok"))
@@ -296,6 +341,38 @@ class FontStyleComboBox extends JComboBox
                 break;
             default:
                 setSelectedIndex(NORMAL_INDEX);
+        }
+    }
+}
+
+class NumericTextField extends JTextField
+{
+    protected Document createDefaultModel()
+    {
+        return new WholeNumberDocument();
+    }
+
+    protected class WholeNumberDocument extends PlainDocument
+    {
+
+        public void insertString(int offs, String str, AttributeSet a)
+                        throws BadLocationException
+        {
+
+            char[] source = str.toCharArray();
+            char[] result = new char[source.length];
+            int j = 0;
+
+            for (int i = 0; i < result.length; i++)
+            {
+                if (Character.isDigit(source[i]))
+                    result[j++] = source[i];
+                else
+                {
+                    Toolkit.getDefaultToolkit().beep();
+                }
+            }
+            super.insertString(offs, new String(result, 0, j), a);
         }
     }
 }
