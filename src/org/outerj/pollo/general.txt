@@ -1,0 +1,17 @@
+Pollo is a program to edit XML files. Currently it's best
+suited for files which can be represented solely using
+a tree structure. But this applies to many XML files.
+
+Some usage hints:
+ - many functionality is hidden in the right mouse
+   button context menu.
+ - nodes can be dragged and dropped.
+
+At some time in the future I'll add some information
+here about how to add support for new filetypes.
+
+Many features are still missing, most notable keyboard
+support.
+
+This project is hosted at sourceforge:
+http://www.sf.net/projects/pollo

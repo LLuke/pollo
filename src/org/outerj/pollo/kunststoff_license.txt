@@ -1,0 +1,7 @@
+This program uses the Kunstoff Look and Feel to provide
+a nicer user interface.
+
+Kunstoff is available from:
+http://www.incors.org/
+
+Kunstoff is published under the GNU LGPL license.

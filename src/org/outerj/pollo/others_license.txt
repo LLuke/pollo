@@ -1,0 +1,7 @@
+ - Thanks to Steven Noels and Marc Portier of Outerthought
+   (http://www.outerthought.org) for letting me use the
+   org.outerj package name, and for the web site hosting.
+
+ - the tree view was originally inspired by conglomerate:
+   http://www.conglomerate.org
+
