@@ -1,0 +1,4 @@
+version 0.1
+===========
+ - save document in the same encodig as it's loaded (previsously this was always ISO-8859-1)
+ - attributespanel is now disabled when no element is selected or after the selected element was removed
