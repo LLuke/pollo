@@ -10,7 +10,6 @@ import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.MutationEvent;
 
 import java.awt.*;
-import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.event.MouseEvent;
@@ -49,7 +48,6 @@ public abstract class ChildrenBlockView extends BlockView
             // now draw the children, but only those that need updating
             Iterator childrenIt = childViewList.iterator();
 
-            int totalHeight = getHeaderHeight();
             int clipStartVertical = (int)g.getClipBounds().getY();
             int clipEndVertical = clipStartVertical + (int)g.getClipBounds().getHeight();
             if (!isCollapsed())
@@ -80,7 +78,7 @@ public abstract class ChildrenBlockView extends BlockView
             }
         }
 
-        contentHeight = NOT_CALCULATED;
+        invalidateHeight();
     }
 
 
@@ -98,9 +96,7 @@ public abstract class ChildrenBlockView extends BlockView
             if (parentView != null)
                 parentView.heightChanged(amount);
             else
-            {
                 resetSize();
-            }
         }
     }
 
@@ -143,7 +139,7 @@ public abstract class ChildrenBlockView extends BlockView
     public int getHeight()
     {
         if (!isCollapsed() && childViewList.size() > 0)
-            return getHeaderHeight() + getContentHeight() + getFooterHeight(); 
+            return getHeaderHeight() + getContentHeight() + getFooterHeight();
         else if (isCollapsed())
             return getHeaderHeight() + getFooterHeight(); 
         else
@@ -237,7 +233,6 @@ public abstract class ChildrenBlockView extends BlockView
     {
         NodeList children = node.getChildNodes();
         int nodeChildNodeCounter = 0;
-        boolean hasChildren = childViewList.size() > 0;
         boolean heightChanged = false;
         int oldHeight = getHeight();
 
@@ -277,7 +272,6 @@ public abstract class ChildrenBlockView extends BlockView
     {
         NodeList children = node.getChildNodes();
         int relevantChildNodeCounter = 0; // only nodes that are displayed count (currently e.g. not PI's)
-        boolean hasChildren = childViewList.size() > 0;
         boolean heightChanged = false;
         int oldHeight = getHeight();
 

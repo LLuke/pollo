@@ -112,8 +112,7 @@ public abstract class CharacterDataBlockView extends BlockView
     public void layout(int width)
     {
         // initialize variables
-        if (lineHeight == -1)
-            lineHeight = xmlEditor.getCharacterDataFontMetrics().getHeight();
+        lineHeight = xmlEditor.getCharacterDataFontMetrics().getHeight();
 
         // fill the lineInfo structure
         numberOfLines = countNumberOfLines(data);
@@ -195,7 +194,7 @@ public abstract class CharacterDataBlockView extends BlockView
         if (!isCollapsed)
             return getHeader() + (numberOfLines * lineHeight) + getFooter();
         else
-            return xmlEditor.getCharacterDataFontMetrics().getHeight();
+            return lineHeight;
     }
 
 
