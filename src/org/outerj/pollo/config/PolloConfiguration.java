@@ -19,7 +19,7 @@ public class PolloConfiguration
 
 	protected ArrayList viewTypes = new ArrayList();
 	protected ArrayList templates = new ArrayList();
-	protected ArrayList xpathQueries = new ArrayList()
+	protected ArrayList xpathQueries = new ArrayList();
 
 	protected String fileOpenDialogPath = null;
 	protected String schemaOpenDialogPath = null;
