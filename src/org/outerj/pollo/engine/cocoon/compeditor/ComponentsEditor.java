@@ -107,8 +107,8 @@ public class ComponentsEditor extends JPanel implements ActionListener, Disposab
 				System.out.println("No row selected.");
 				return;
 			}
-			String name = componentsTableModel.getElementOnRow(row).getAttribute("name");
-			componentsEl.setAttribute("default", name);
+			String name = componentsTableModel.getElementOnRow(row).getAttributeNS(null, "name");
+			componentsEl.setAttributeNS(null, "default", name);
 		}
 		else if (event.getActionCommand().equals("addnew"))
 		{
@@ -118,7 +118,7 @@ public class ComponentsEditor extends JPanel implements ActionListener, Disposab
 				String prefix = xmlModel.findPrefixForNamespace(componentsEl, componentsURI);
 				Element newCompEl = xmlModel.getDocument().createElementNS(componentsURI,
 						DomUtils.getQName(prefix, componentsName));
-				newCompEl.setAttribute("name", name);
+				newCompEl.setAttributeNS(null, "name", name);
 				componentsEl.appendChild(newCompEl);
 			}
 		}

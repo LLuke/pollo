@@ -67,21 +67,21 @@ public class ComponentsTableModel extends AbstractTableModel implements EventLis
 		{
 			case 0:
 				{
-					String defaultOne = componentsEl.getAttribute("default");
-					if (defaultOne != null && element.getAttribute("name").equals(defaultOne))
+					String defaultOne = componentsEl.getAttributeNS(null, "default");
+					if (defaultOne != null && element.getAttributeNS(null, "name").equals(defaultOne))
 					{
 						return new ImageIcon(getClass().getResource("/org/outerj/pollo/engine/cocoon/compeditor/default.png"));
 					}
 				}
 			case 1:
-				return element.getAttribute("name");
+				return element.getAttributeNS(null, "name");
 			case 2:
 				if (labels)
-					return element.getAttribute("label");
+					return element.getAttributeNS(null, "label");
 				else
-					return element.getAttribute(classColumn);
+					return element.getAttributeNS(null, classColumn);
 			case 3:
-				return element.getAttribute(classColumn);
+				return element.getAttributeNS(null, classColumn);
 		}
 		return "unknown";
 	}
@@ -91,15 +91,15 @@ public class ComponentsTableModel extends AbstractTableModel implements EventLis
 		Element currentEl = getElementOnRow(row);
 		if (column == 2 && labels)
 		{
-			currentEl.setAttribute("label", value.toString());
+			currentEl.setAttributeNS(null, "label", value.toString());
 		}
 		else if (column == 2 && !labels)
 		{
-			currentEl.setAttribute(classColumn, value.toString());
+			currentEl.setAttributeNS(null, classColumn, value.toString());
 		}
 		else if (column == 3 && labels)
 		{
-			currentEl.setAttribute(classColumn, value.toString());
+			currentEl.setAttributeNS(null, classColumn, value.toString());
 		}
 	}
 
