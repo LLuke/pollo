@@ -1,6 +1,5 @@
 package org.outerj.pollo.engine.cocoon;
 
-import org.outerj.pollo.util.CustomTableCellEditor;
 import org.outerj.pollo.util.Valuable;
 import org.outerj.pollo.xmleditor.IconManager;
 import org.outerj.pollo.xmleditor.model.XmlModel;

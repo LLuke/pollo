@@ -1,6 +1,5 @@
 package org.outerj.pollo.engine.ant;
 
-import org.outerj.pollo.util.CustomTableCellEditor;
 import org.outerj.pollo.util.Valuable;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.AttributeEditorSupport;
