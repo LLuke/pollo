@@ -72,6 +72,7 @@ public class PolloConfigurationFactory
 
         polloConfiguration.setSplitPane1Pos(config.getChild("splitpane1-pos").getValueAsInteger(620));
         polloConfiguration.setSplitPane2Pos(config.getChild("splitpane2-pos").getValueAsInteger(370));
+        polloConfiguration.setSplitPane3Pos(config.getChild("splitpane3-pos").getValueAsInteger(polloConfiguration.getSplitPane1Pos()));
         polloConfiguration.setWindowHeight(config.getChild("window-height").getValueAsInteger(600));
         polloConfiguration.setWindowWidth(config.getChild("window-width").getValueAsInteger(800));
 

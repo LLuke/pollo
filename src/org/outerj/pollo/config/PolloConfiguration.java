@@ -40,6 +40,7 @@ public class PolloConfiguration
 
     protected int splitPane1Pos;
     protected int splitPane2Pos;
+    protected int splitPane3Pos;
     protected int windowWidth;
     protected int windowHeight;
 
@@ -66,6 +67,7 @@ public class PolloConfiguration
     private static final String EL_RECENT_SCHEMA = "recent-schema";
     private static final String EL_SPLIT1_POS = "splitpane1-pos";
     private static final String EL_SPLIT2_POS = "splitpane2-pos";
+    private static final String EL_SPLIT3_POS = "splitpane3-pos";
     private static final String EL_WINDOW_WIDTH = "window-width";
     private static final String EL_WINDOW_HEIGHT = "window-height";
     private static final String ELEMENT_NAME_FONT = "element-name-font";
@@ -237,6 +239,21 @@ public class PolloConfiguration
     public void setSplitPane2Pos(String pos)
     {
         splitPane2Pos = Integer.parseInt(pos);
+    }
+
+    public int getSplitPane3Pos()
+    {
+        return splitPane3Pos;
+    }
+
+    public void setSplitPane3Pos(String pos)
+    {
+        splitPane3Pos = Integer.parseInt(pos);
+    }
+
+    public void setSplitPane3Pos(int splitPane3Pos)
+    {
+        this.splitPane3Pos = splitPane3Pos;
     }
 
     public int getWindowHeight()
@@ -416,6 +433,11 @@ public class PolloConfiguration
         String splitPane2PosString = String.valueOf(splitPane2Pos);
         handler.characters(splitPane2PosString.toCharArray(), 0, splitPane2PosString.length());
         handler.endElement("", EL_SPLIT2_POS, EL_SPLIT2_POS);
+
+        handler.startElement("", EL_SPLIT3_POS, EL_SPLIT3_POS, new AttributesImpl());
+        String splitPane3PosString = String.valueOf(splitPane3Pos);
+        handler.characters(splitPane3PosString.toCharArray(), 0, splitPane3PosString.length());
+        handler.endElement("", EL_SPLIT3_POS, EL_SPLIT3_POS);
 
         handler.startElement("", EL_WINDOW_HEIGHT, EL_WINDOW_HEIGHT, new AttributesImpl());
         String windowHeightString = String.valueOf(windowHeight);
