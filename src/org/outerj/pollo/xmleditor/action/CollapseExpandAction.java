@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
  *
  * The action enables/disables itself.
  *
- * @author Bruno Dumon
+ * @author Bruno Dumon, Curt Thompson (Toggle idea & code)
  */
 public class CollapseExpandAction extends AbstractAction implements SelectionListener
 {
@@ -23,6 +23,7 @@ public class CollapseExpandAction extends AbstractAction implements SelectionLis
 	public static final int COLLAPSE_ALL = 2;
 	public static final int EXPAND       = 3;
 	public static final int EXPAND_ALL   = 4;
+	public static final int TOGGLE       = 5;
 
 	protected int behaviour;
 	protected XmlEditor xmlEditor;
@@ -52,6 +53,8 @@ public class CollapseExpandAction extends AbstractAction implements SelectionLis
 				return "Expand";
 			case EXPAND_ALL:
 				return "Expand All";
+			case TOGGLE:
+				return "Toggle collapse/expand";
 			default:
 				throw new RuntimeException("[CollapseExpandAction] behaviour not supported: " + behaviour);
 		}
@@ -75,6 +78,12 @@ public class CollapseExpandAction extends AbstractAction implements SelectionLis
 					break;
 				case EXPAND_ALL:
 					view.expandAll();
+					break;
+				case TOGGLE:
+					if (view.isCollapsed())
+						view.expand();
+					else
+						view.collapse();
 					break;
 			}
 		}
