@@ -1,5 +1,7 @@
 package org.outerj.pollo.xmleditor.util;
 
+import org.w3c.dom.Element;
+
 public class DomUtils
 {
 	/**
@@ -13,5 +15,16 @@ public class DomUtils
 			localName = prefix + ":" + localName;
 		}
 		return localName;
+	}
+
+	public static String getQName(Element element)
+	{
+		String prefix = element.getPrefix();
+		String localName = element.getLocalName();
+
+		if (prefix != null)
+			return prefix + ":" + localName;
+		else
+			return localName;
 	}
 }

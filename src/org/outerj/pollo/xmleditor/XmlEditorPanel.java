@@ -8,12 +8,14 @@ import org.outerj.pollo.xmleditor.chardataeditor.CharDataPanel;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.util.FocusBorder;
+import org.outerj.pollo.DomConnected;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JScrollPane;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
+import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -31,7 +33,7 @@ import org.w3c.dom.Node;
  *
  * @author Bruno Dumon
  */
-public class XmlEditorPanel extends JPanel
+public class XmlEditorPanel extends JPanel implements DomConnected
 {
 	protected XmlEditor xmlEditor;
 	protected XmlModel xmlModel;
@@ -121,15 +123,21 @@ public class XmlEditorPanel extends JPanel
 		container.add(scrollPane, BorderLayout.CENTER);
 
 		// create first split pane (xmlEditor - nodeInsertionPanel)
+		nodeInsertionPanel.setPreferredSize(new Dimension(180, 100 /* height doesn't matter */));
 		JSplitPane splitPane1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, container, nodeInsertionPanel);
 		splitPane1.setResizeWeight(1); // xml content editor gets extra space
-		splitPane1.setDividerLocation(-1);
+		//splitPane1.setDividerLocation(-1);
 
 		// create second splitpane (first split pane - attributesPanel)
+		nodeDetailsPanel.setPreferredSize(new Dimension(200 /* width doesn't matter */, 100));
+		splitPane1.setPreferredSize(new Dimension(200 /* width doesn't matter */, 400));
 		JSplitPane splitPane2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPane1, nodeDetailsPanel);
 		splitPane2.setResizeWeight(1); // xml content editor gets extra space
-		splitPane2.setDividerLocation(-1);
+		//splitPane2.setDividerLocation(-1);
 		add(splitPane2, BorderLayout.CENTER);
+
+		NodePathBar nodePathBar = new NodePathBar(xmlEditor, attrPanel);
+		add(nodePathBar, BorderLayout.SOUTH);
 
 		setXmlModel(model);
 	}
@@ -158,10 +166,17 @@ public class XmlEditorPanel extends JPanel
 	/**
 	 * Removes event listeners.
 	 */
-	public void dispose()
+	public void disconnectFromDom()
 	{
-		xmlEditor.dispose();
-		nodeInsertionPanel.dispose();
-		nodeDetailsPanel.dispose();
+		xmlEditor.disconnectFromDom();
+		nodeInsertionPanel.disconnectFromDom();
+		nodeDetailsPanel.disconnectFromDom();
+	}
+
+	public void reconnectToDom()
+	{
+		xmlEditor.reconnectToDom();
+		nodeInsertionPanel.reconnectToDom();
+		nodeDetailsPanel.reconnectToDom();
 	}
 }

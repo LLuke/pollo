@@ -84,18 +84,21 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 		JButton executeButton = new JButton("Execute");
 		executeButton.setActionCommand("execute");
 		executeButton.addActionListener(this);
+		executeButton.setRequestFocusEnabled(false);
 		box.add(executeButton);
 
 		JButton insertExampleButton = new JButton("?");
 		insertExampleButton.setToolTipText("Insert example query");
 		insertExampleButton.setActionCommand("insert-example");
 		insertExampleButton.addActionListener(this);
+		insertExampleButton.setRequestFocusEnabled(false);
 		box.add(insertExampleButton);
 
 		prevButton = new JButton("<");
 		prevButton.setActionCommand("prevResult");
 		prevButton.addActionListener(this);
 		prevButton.setEnabled(false);
+		prevButton.setRequestFocusEnabled(false);
 		box.add(prevButton);
 
 		progress = new JLabel("");
@@ -105,6 +108,7 @@ public class QueryByXPathPanel extends JPanel implements ActionListener
 		nextButton.setActionCommand("nextResult");
 		nextButton.addActionListener(this);
 		nextButton.setEnabled(false);
+		nextButton.setRequestFocusEnabled(false);
 		box.add(nextButton);
 
 		this.add(box, BorderLayout.CENTER);

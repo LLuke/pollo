@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.StringTokenizer;
+import java.io.InputStream;
 
 import javax.xml.parsers.*;
 
@@ -114,8 +115,15 @@ public class BasicSchema implements ISchema
 		SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 		parserFactory.setNamespaceAware(true);
 		SAXParser parser = parserFactory.newSAXParser();
-		parser.parse(new InputSource(this.getClass().getClassLoader().getResourceAsStream(source)),
-				schemaHandler);
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream(source);
+		try
+		{
+			parser.parse(new InputSource(is), schemaHandler);
+		}
+		finally
+		{
+			try { is.close(); } catch (Exception e) {}
+		}
 	}
 
 	protected void addElementSchema(ElementSchema elementSchema)

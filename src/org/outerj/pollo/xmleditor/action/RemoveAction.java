@@ -19,6 +19,7 @@ public class RemoveAction extends AbstractAction implements SelectionListener
 		super("Delete");
 		this.xmlEditor = xmlEditor;
 		xmlEditor.getSelectionInfo().addListener(this);
+		setEnabled(false);
 	}
 
 	public void actionPerformed(ActionEvent e)

@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor;
 
 import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.DomConnected;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -78,17 +79,37 @@ public class NodeDetailsPanel extends JPanel implements SelectionListener
 		currentPanel.requestFocus();
 	}
 
-	public void dispose()
+	public void disconnectFromDom()
 	{
 		Iterator cleanIt = panels.values().iterator();
 
 		while (cleanIt.hasNext())
 		{
 			Object object = (Object)cleanIt.next();
-			if (object instanceof Disposable)
+			if (object instanceof DomConnected)
 			{
-				((Disposable)object).dispose();
+				((DomConnected)object).disconnectFromDom();
 			}
 		}
+
+		currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
+		cardLayout.show(this, UNKOWN_NODE_TYPE);
+	}
+
+	public void reconnectToDom()
+	{
+		Iterator cleanIt = panels.values().iterator();
+
+		while (cleanIt.hasNext())
+		{
+			Object object = (Object)cleanIt.next();
+			if (object instanceof DomConnected)
+			{
+				((DomConnected)object).reconnectToDom();
+			}
+		}
+
+		currentPanel = (JPanel)panels.get(UNKOWN_NODE_TYPE);
+		cardLayout.show(this, UNKOWN_NODE_TYPE);
 	}
 }

@@ -32,4 +32,14 @@ public interface XmlModelListener
 	 * Called when the file is saved.
 	 */
 	public void fileSaved(XmlModel sourceXmlModel);
+
+	/**
+	 * Called when the XmlModel switches to text mode.
+	 */
+	public void switchToTextMode(XmlModel sourceXmlModel);
+
+	/**
+	 * Called when the XmlModel switches to parsed mode.
+	 */
+	public void switchToParsedMode(XmlModel sourceXmlModel);
 }

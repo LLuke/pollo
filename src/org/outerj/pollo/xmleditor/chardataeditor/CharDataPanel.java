@@ -3,7 +3,7 @@ package org.outerj.pollo.xmleditor.chardataeditor;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.util.FocusBorder;
-import org.outerj.pollo.xmleditor.Disposable;
+import org.outerj.pollo.DomConnected;
 
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -24,7 +24,7 @@ import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.MutationEvent;
 
-public class CharDataPanel extends JPanel implements SelectionListener, EventListener, Disposable
+public class CharDataPanel extends JPanel implements SelectionListener, EventListener, DomConnected
 {
 	protected XmlModel xmlModel;
 	protected JTextArea charDataTextArea;
@@ -173,12 +173,17 @@ public class CharDataPanel extends JPanel implements SelectionListener, EventLis
 		charDataTextArea.requestFocus();
 	}
 
-	public void dispose()
+	public void disconnectFromDom()
 	{
 		if (currentNode != null)
 		{
 			((EventTarget)currentNode).removeEventListener("DOMCharacterDataModified", this, false);
 			currentNode = null;
 		}
+	}
+
+	public void reconnectToDom()
+	{
+		disconnectFromDom();
 	}
 }

@@ -3,10 +3,12 @@ package org.outerj.pollo.xmleditor.attreditor;
 import org.outerj.pollo.xmleditor.attreditor.AttributesTableModel.TempAttrEditInfo;
 
 import java.awt.Component;
+import java.awt.Graphics;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 
 /**
  * TableCellRenderer used by the attributes panel. If an attribute has no
@@ -17,13 +19,17 @@ import javax.swing.JTable;
  */
 public class AttributeTableCellRenderer extends DefaultTableCellRenderer
 {
+	protected TempAttrEditInfo taei = null;
+	protected int column = 0;
+
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column)
 	{
 		super.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
 
 		AttributesTableModel tableModel = (AttributesTableModel)table.getModel();
-		TempAttrEditInfo taei = tableModel.getTempAttrEditInfo(row);
+		taei = tableModel.getTempAttrEditInfo(row);
+		this.column = column;
 
 		switch (column)
 		{
@@ -54,4 +60,29 @@ public class AttributeTableCellRenderer extends DefaultTableCellRenderer
 	{
 		// empty on purpose
 	}
+
+	public void paint(Graphics g)
+	{
+		super.paint(g);
+		if (column == 1 && taei.attrSchema != null && taei.attrSchema.hasPickList())
+		{
+			g.setColor(UIManager.getColor("Label.disabledForeground"));
+
+			int arrowWidth = 10;
+			int arrowHeight = 5;
+			int x = getWidth() - arrowWidth - 2;
+			int y = (getHeight() / 2) - 2;
+
+			g.translate(x, y);
+
+			g.drawLine( 0, 0, arrowWidth - 1, 0 );
+			g.drawLine( 1, 1, 1 + (arrowWidth - 3), 1 );
+			g.drawLine( 2, 2, 2 + (arrowWidth - 5), 2 );
+			g.drawLine( 3, 3, 3 + (arrowWidth - 7), 3 );
+			g.drawLine( 4, 4, 4 + (arrowWidth - 9), 4 );
+
+			g.translate(-x, -y);
+		}
+	}
+
 }

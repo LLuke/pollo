@@ -1,5 +1,9 @@
 package org.outerj.pollo.xmleditor.model;
 
+import org.outerj.pollo.texteditor.XmlTextDocument;
+import org.outerj.pollo.texteditor.XMLTokenMarker;
+import org.outerj.pollo.dialog.ErrorDialog;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -10,22 +14,25 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-//import javax.xml.transform.TransformerFactory;
-//import javax.xml.transform.Transformer;
-//import javax.xml.transform.TransformerConfigurationException;
-//import javax.xml.transform.TransformerException;
-//import javax.xml.transform.dom.DOMSource;
-//import javax.xml.transform.stream.StreamResult;
-
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Segment;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.CharArrayReader;
+import java.io.InputStreamReader;
+import java.io.Writer;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashMap;
@@ -37,24 +44,36 @@ import org.apache.xml.serialize.XMLSerializer;
 
 
 /**
- * DOM-based model for an xml file. This class adds:
- * <ul>
- * <li>loading/saving of the XML file</li>
- * <li>functions for: prefix to namespace, namespace to prefix, finding default namespace.</li>
- * <li>function for getting an element based on an xpath expression</li>
- * </ul>
+ * In-memory representation of an XML file. The XML file can be in two
+ * formats: as a DOM-tree ('parsed mode'), or as XmlTextDocument ('text mode').
+ * All views on the XmlModel should reflect this, they should be all in
+ * parsed mode or text mode.
+ *
+ * This class also has methods for loading and storing the file.
+ *
+ * There are some utility functions for searching namespace declarations and
+ * getting nodes using xpath expressions.
  *
  * @author Bruno Dumon
  */
 public class XmlModel
 {
-	protected Document document;
-	protected Element pipelines;
+	public static final int PARSED_MODE = 1;
+	public static final int TEXT_MODE   = 2;
+
+	protected Document domDocument;
+	protected XmlTextDocument textDocument;
+	protected int mode;
+
 	protected File file;
 	protected Undo undo;
 	protected ArrayList registeredViewsList = new ArrayList();
 	protected ArrayList xmlModelListeners = new ArrayList();
+
 	protected boolean modified;
+	protected boolean modifiedWhileInTextMode;
+	protected TextDocumentModifiedListener textModifiedListener;
+
 	protected Action saveAction = new SaveAction();
 	protected Action saveAsAction = new SaveAsAction();
 	protected Action closeAction = new CloseAction();
@@ -63,57 +82,105 @@ public class XmlModel
 	public static final int LAST_VIEW_CLOSED = 2;
 	public static final int FILE_CHANGED     = 3;
 	public static final int FILE_SAVED       = 4;
+	public static final int SWITCH_TO_TEXT_MODE   = 5;
+	public static final int SWITCH_TO_PARSED_MODE = 6;
 
-	public XmlModel(File file)
-		throws InvalidXmlException
+	/**
+	 * Constructor. By default, this will create an empty file in text mode.
+	 */
+	public XmlModel()
 	{
-		this.file = file;
-		try
-		{
-			/*
-			This would be the JAXP way -- but this isn't used because we want to remove textnodes
-			consisting only of whitespace, therefore a custom subclass of the xerces DOMParser is used (see below)
-			
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			documentBuilderFactory.setAttribute("http://apache.org/xml/features/dom/defer-node-expansion", new Boolean(false));
-			documentBuilderFactory.setNamespaceAware(true);
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			document = documentBuilder.parse(new InputSource(file.getAbsolutePath()));
-			*/
-			PolloDOMParser parser = new PolloDOMParser();
-			setFeatures(parser);
-			parser.parse(new InputSource(file.getAbsolutePath()));
-			document = parser.getDocument();
-		}
-		catch (Exception e)
-		{
-			throw new InvalidXmlException("Error occured during parsing xml: " + e.getMessage());
-		}
+		textDocument = new XmlTextDocument();
+		textDocument.setTokenMarker(new XMLTokenMarker());
+		textModifiedListener = new TextDocumentModifiedListener();
+		textDocument.addDocumentListener(textModifiedListener);
+		mode = TEXT_MODE;
 		undo = new Undo(this);
-
-		modified = false;
-		saveAction.setEnabled(false);
 	}
 
-	public XmlModel(InputSource inputSource)
-		throws InvalidXmlException
+	/**
+	 * Reades the xml document given by the inputSource. File is an
+	 * optional parameter that is used for saving the document and
+	 * displaying the file name to the user. It may be null, in wich case
+	 * the document will be shown as 'Untitled'.
+	 *
+	 * By default, the document will be parsed and hence the XmlModel
+	 * will be in parsed mode. If parsing fails, the XmlModel will be
+	 * in text mode.
+	 *
+	 * The inputstream provided by the InputSource must be closed by
+	 * the caller.
+	 *
+	 */
+	public void readFromResource(InputSource inputSource, File file)
+		throws Exception
 	{
-		this.file = null;
+		this.file = file;
 		try
 		{
 			PolloDOMParser parser = new PolloDOMParser();
 			setFeatures(parser);
 			parser.parse(inputSource);
-			document = parser.getDocument();
+			domDocument = parser.getDocument();
+			undo.reconnectToDom();
+			mode = PARSED_MODE;
 		}
 		catch (Exception e)
 		{
-			throw new InvalidXmlException("Error occured during parsing xml: " + e.getMessage());
-		}
-		undo = new Undo(this);
+			// parsing failed, read the document as text
+			try
+			{
+				// fallback only supported if it is a file because we need to open
+				// a new inputstream
+				if (file != null)
+				{
+					// FIXME encoding!!
+					InputStream is = new FileInputStream(file);
+					try
+					{
+						InputStreamReader reader = new InputStreamReader(is);
+						StringBuffer text = new StringBuffer();
+						final int BUFFER_SIZE = 5000;
+						char[] buffer = new char[BUFFER_SIZE];
 
-		modified = true;
-		saveAction.setEnabled(true);
+						int l;
+						do
+						{
+							l = reader.read(buffer, 0, BUFFER_SIZE);
+							if (l != -1)
+								text.append(buffer, 0, l);
+						}
+						while (l != -1);
+						setTextDocumentText(text.toString());
+						mode = TEXT_MODE;
+					}
+					finally
+					{
+						try { is.close(); } catch (Exception e3) {}
+					}
+				}
+			}
+			catch (Exception e2)
+			{
+				throw new Exception("Could not read from the file: " + e2.toString());
+			}
+		}
+		modified = false;
+		saveAction.setEnabled(false);
+	}
+
+	public void readFromResource(File file)
+		throws Exception
+	{
+		FileInputStream fis = new FileInputStream(file);
+		try
+		{
+			readFromResource(new InputSource(fis), file);
+		}
+		finally
+		{
+			try { fis.close(); } catch (Exception e) {}
+		}
 	}
 
 	public void setFeatures(PolloDOMParser parser)
@@ -125,31 +192,87 @@ public class XmlModel
 
 	public Document getDocument()
 	{
-		return document;
+		return domDocument;
+	}
+
+	public XmlTextDocument getTextDocument()
+	{
+		return textDocument;
+	}
+
+	protected void setTextDocumentText(String text)
+	{
+		try
+		{
+			textDocument.stopUndo();
+			textModifiedListener.stop();
+			textDocument.beginCompoundEdit();
+			textDocument.remove(0, textDocument.getLength());
+			textDocument.insertString(0, text, null);
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+		}
+		finally
+		{
+			textDocument.endCompoundEdit();
+			textDocument.startUndo();
+			textModifiedListener.start();
+		}
+	}
+
+	/**
+	 * Returns the contents of the text document as a String.
+	 */
+	public String getTextDocumentText()
+	{
+		try
+		{
+			return textDocument.getText(0, textDocument.getLength());
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+			return null;
+		}
 	}
 
 	public void store(String filename)
 		throws Exception
-		//throws TransformerConfigurationException, TransformerException
 	{
-
-		/*
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer serializer = transformerFactory.newTransformer();
-		serializer.setOutputProperty("method", "xml");
-		serializer.setOutputProperty("indent", "yes");
-		String encoding = document.getEncoding();
-		if (encoding != null)
-			serializer.setOutputProperty("encoding", encoding);
-		serializer.transform(new DOMSource(getDocument()), new StreamResult(filename));
-		*/
-
 		FileOutputStream output = null;
 		try
 		{
 			output = new FileOutputStream(filename);
-			XMLSerializer serializer = new XMLSerializer(output, createOutputFormat());
-			serializer.serialize(document);
+			if (mode == PARSED_MODE)
+			{
+				XMLSerializer serializer = new XMLSerializer(output, createOutputFormat());
+				serializer.serialize(domDocument);
+			}
+			else if (mode == TEXT_MODE)
+			{
+				String encoding = textDocument.getEncoding();
+				Writer writer = null;
+				if (encoding != null)
+					writer = new OutputStreamWriter(output, encoding);
+				else
+					writer = new OutputStreamWriter(output);
+				Segment seg = new Segment();
+				textDocument.getText(0, textDocument.getLength(), seg);
+				try
+				{
+					writer.write(seg.array, seg.offset, seg.count);
+				}
+				finally
+				{
+					writer.close();
+				}
+			}
+			else
+			{
+				throw new RuntimeException("XmlModel is in an invalid mode.");
+			}
 		}
 		finally
 		{
@@ -163,15 +286,14 @@ public class XmlModel
 
 	public void store()
 		throws Exception
-		//throws TransformerConfigurationException, TransformerException
 	{
 		store(file.getAbsolutePath());
 	}
 
 	public OutputFormat createOutputFormat()
 	{
-		String encoding = document.getEncoding();
-		OutputFormat outputFormat = new OutputFormat(document, encoding != null ? encoding : "ISO-8859-1", true);
+		String encoding = domDocument.getEncoding();
+		OutputFormat outputFormat = new OutputFormat(domDocument, encoding != null ? encoding : "ISO-8859-1", true);
 		outputFormat.setIndent(2);
 
 		return outputFormat;
@@ -183,14 +305,16 @@ public class XmlModel
 		StringWriter writer = new StringWriter();
 
 		XMLSerializer serializer = new XMLSerializer(writer, createOutputFormat());
-		serializer.serialize(document);
+		serializer.serialize(domDocument);
 
 		return writer.toString();
 	}
 
 	public Element getNextElementSibling(Element element)
 	{
-		// search the next element sibling (null is also allowed)
+		if (mode != PARSED_MODE)
+			throw new RuntimeException("getNextElementSibling may not be called when the document is not in parsed mode.");
+		// search the next sibling of type element (null is also allowed)
 		Element nextElement = null;
 		Node nextNode = element;
 		while ((nextNode = nextNode.getNextSibling()) != null)
@@ -206,13 +330,15 @@ public class XmlModel
 
 
 	/**
-	  Finds the namespace with which the prefix is associated, or null
-	  if not found.
-
-	  @param element Element from which to start searching
+	 * Finds the namespace with which the prefix is associated, or null
+	 * if not found.
+	 *
+	 * @param element Element from which to start searching
 	 */
 	public String findNamespaceForPrefix(Element element, String prefix)
 	{
+		if (mode != PARSED_MODE)
+			throw new RuntimeException("findNamespaceForPrefix may not be called when the document is not in parsed mode.");
 		if (element == null || prefix == null)
 			return null;
 
@@ -220,7 +346,7 @@ public class XmlModel
 			return "http://www.w3.org/XML/1998/namespace";
 
 		if (prefix.equals("xmlns"))
-			return null; // xmlns is itself not bound to a namespace
+			return "http://www.w3.org/2000/xmlns/";
 
 		Element currentEl = element;
 		String searchForAttr = "xmlns:" + prefix;
@@ -245,16 +371,18 @@ public class XmlModel
 
 
 	/**
-	  Finds a prefix declaration for the given namespace, or null if
-	  not found.
-
-	  @param element Element from which to start searching
-
-	  @return null if no prefix is found, an empty string if it is the
-	  default namespace, and otherwise the found prefix
+	 * Finds a prefix declaration for the given namespace, or null if
+	 * not found.
+	 *
+	 * @param element Element from which to start searching
+	 *
+	 * @return null if no prefix is found, an empty string if it is the
+	 * default namespace, and otherwise the found prefix
 	 */
 	public String findPrefixForNamespace(Element element, String ns)
 	{
+		if (mode != PARSED_MODE)
+			throw new RuntimeException("findPrefixForNamespace may not be called when the document is not in parsed mode.");
 		if (element == null || ns == null)
 			return null;
 
@@ -299,6 +427,9 @@ public class XmlModel
 	 */
 	public HashMap findNamespaceDeclarations(Element element)
 	{
+		if (mode != PARSED_MODE)
+			throw new RuntimeException("findNamespaceDeclarations may not be called when the document is not in parsed mode.");
+
 		HashMap namespaces = new HashMap();
 		Element currentEl = element;
 
@@ -332,10 +463,12 @@ public class XmlModel
 	 */
 	public String findDefaultNamespace(Element element)
 	{
+		if (mode != PARSED_MODE)
+			throw new RuntimeException("findDefaultNamespace may not be called when the document is not in parsed mode.");
+
 		if (element == null)
 			return null;
 
-		// Note: the prefix xmlns is not bound to any namespace URI
 		Element currentEl = element;
 		do
 		{
@@ -355,13 +488,16 @@ public class XmlModel
 
 	public Element getNode(String xpathExpr)
 	{
+		if (mode != PARSED_MODE)
+			throw new RuntimeException("getNode may not be called when the document is not in parsed mode.");
+
 		try
 		{
 			XPath xpath = new XPath(xpathExpr);
 			SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
-			namespaceContext.addElementNamespaces(xpath.getNavigator(), document.getDocumentElement());
+			namespaceContext.addElementNamespaces(xpath.getNavigator(), domDocument.getDocumentElement());
 			xpath.setNamespaceContext(namespaceContext);
-			Element el =  (Element)xpath.selectSingleNode(document.getDocumentElement());
+			Element el =  (Element)xpath.selectSingleNode(domDocument.getDocumentElement());
 			if (el == null)
 				System.out.println("xpath returned null: " + xpathExpr);
 			return el;
@@ -381,6 +517,53 @@ public class XmlModel
 	public File getFile()
 	{
 		return file;
+	}
+
+	public void switchToParsedMode()
+		throws Exception
+	{
+		if (mode == PARSED_MODE)
+			return;
+
+		if (modifiedWhileInTextMode || domDocument == null)
+		{
+			PolloDOMParser parser = new PolloDOMParser();
+			setFeatures(parser);
+			Segment seg = new Segment();
+			textDocument.getText(0, textDocument.getLength(), seg);
+			parser.parse(new InputSource(new CharArrayReader(seg.array, seg.offset, seg.count)));
+			domDocument = parser.getDocument();
+			undo.reconnectToDom();
+		}
+		mode = PARSED_MODE;
+		notify(SWITCH_TO_PARSED_MODE);
+	}
+
+	public void switchToTextMode()
+		throws Exception
+	{
+		if (mode == TEXT_MODE)
+			return;
+		String xml = toXMLString();
+		setTextDocumentText(xml);
+		mode = TEXT_MODE;
+		modifiedWhileInTextMode = false;
+		notify(SWITCH_TO_TEXT_MODE);
+	}
+
+	public int getCurrentMode()
+	{
+		return mode;
+	}
+
+	public boolean isInParsedMode()
+	{
+		return (mode == PARSED_MODE);
+	}
+
+	public boolean isInTextMode()
+	{
+		return (mode == TEXT_MODE);
 	}
 
 	public void markModified()
@@ -443,6 +626,12 @@ public class XmlModel
 					break;
 				case FILE_SAVED:
 					listener.fileSaved(this);
+					break;
+				case SWITCH_TO_TEXT_MODE:
+					listener.switchToTextMode(this);
+					break;
+				case SWITCH_TO_PARSED_MODE:
+					listener.switchToParsedMode(this);
 					break;
 			}
 		}
@@ -543,6 +732,11 @@ public class XmlModel
 		return closeAction;
 	}
 
+	public boolean isModified()
+	{
+		return modified;
+	}
+
 	public class SaveAction extends AbstractAction
 	{
 		public SaveAction()
@@ -558,7 +752,8 @@ public class XmlModel
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				ErrorDialog errorDialog = new ErrorDialog(null, "Error saving document.", e);
+				errorDialog.show();
 			}
 		}
 	}
@@ -578,7 +773,8 @@ public class XmlModel
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				ErrorDialog errorDialog = new ErrorDialog(null, "Error saving document.", e);
+				errorDialog.show();
 			}
 		}
 	}
@@ -600,6 +796,48 @@ public class XmlModel
 			{
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public class TextDocumentModifiedListener implements DocumentListener
+	{
+		protected boolean enabled = false;
+
+		public void changedUpdate(DocumentEvent e)
+		{
+			if (enabled)
+			{
+				markModified();
+				modifiedWhileInTextMode = true;
+			}
+		}
+
+		public void insertUpdate(DocumentEvent e)
+		{
+			if (enabled)
+			{
+				markModified();
+				modifiedWhileInTextMode = true;
+			}
+		}
+
+		public void removeUpdate(DocumentEvent e)
+		{
+			if (enabled)
+			{
+				markModified();
+				modifiedWhileInTextMode = true;
+			}
+		}
+
+		public void start()
+		{
+			enabled = true;
+		}
+
+		public void stop()
+		{
+			enabled = false;
 		}
 	}
 }

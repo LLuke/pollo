@@ -89,12 +89,13 @@ public class Pollo implements XmlModelListener
 
 		try
 		{
-			xmlModel = new XmlModel(file);
+			xmlModel = new XmlModel();
+			xmlModel.readFromResource(file);
 		}
 		catch (Exception e)
 		{
 			//parsingMessage.hide();
-			ErrorDialog errorDialog = new ErrorDialog(null, "Could not read or parse this file.", e);
+			ErrorDialog errorDialog = new ErrorDialog(null, "Could not read this file.", e);
 			errorDialog.show();
 			return;
 		}
@@ -120,7 +121,7 @@ public class Pollo implements XmlModelListener
 			ViewFrame viewFrame;
 			try
 			{
-				viewFrame = ViewFactory.createViewFrame(xmlModel, viewTypeConf);
+				viewFrame = new ViewFrame(xmlModel, viewTypeConf);
 			}
 			catch (Exception e2)
 			{
@@ -277,4 +278,10 @@ public class Pollo implements XmlModelListener
 
 	/** Implementation of the XmlModelListener interface. */
 	public void fileSaved(XmlModel sourceXmlModel) {}
+
+	/** Implementation of the XmlModelListener interface. */
+	public void switchToTextMode(XmlModel sourceXmlModel) {}
+
+	/** Implementation of the XmlModelListener interface. */
+	public void switchToParsedMode(XmlModel sourceXmlModel) {}
 }

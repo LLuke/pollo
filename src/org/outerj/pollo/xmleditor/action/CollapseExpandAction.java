@@ -34,6 +34,9 @@ public class CollapseExpandAction extends AbstractAction implements SelectionLis
 		super(getDescription(behaviour));
 		this.behaviour = behaviour;
 		this.xmlEditor = xmlEditor;
+
+		xmlEditor.getSelectionInfo().addListener(this);
+		setEnabled(false);
 	}
 
 	private static String getDescription(int behaviour)
@@ -56,20 +59,23 @@ public class CollapseExpandAction extends AbstractAction implements SelectionLis
 	public void actionPerformed(ActionEvent e)
 	{
 		View view = xmlEditor.getSelectionInfo().getSelectedNodeView();
-		switch (behaviour)
+		if (view.getNode().getNodeType() != Node.DOCUMENT_NODE)
 		{
-			case COLLAPSE:
-				view.collapse();
-				break;
-			case COLLAPSE_ALL:
-				view.collapseAll();
-				break;
-			case EXPAND:
-				view.expand();
-				break;
-			case EXPAND_ALL:
-				view.expandAll();
-				break;
+			switch (behaviour)
+			{
+				case COLLAPSE:
+					view.collapse();
+					break;
+				case COLLAPSE_ALL:
+					view.collapseAll();
+					break;
+				case EXPAND:
+					view.expand();
+					break;
+				case EXPAND_ALL:
+					view.expandAll();
+					break;
+			}
 		}
 	}
 

@@ -8,10 +8,11 @@ import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.util.QuickSort;
 import org.outerj.pollo.xmleditor.util.DomUtils;
+import org.outerj.pollo.DomConnected;
 
 import java.util.Iterator;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Attr;
@@ -41,7 +42,7 @@ import org.w3c.dom.events.MutationEvent;
 
   @author Bruno Dumon.
  */
-public class AttributesTableModel extends AbstractTableModel implements EventListener
+public class AttributesTableModel extends AbstractTableModel implements EventListener, DomConnected
 {
 	/** The element of which the attributes are currently shown. */
 	protected Element element;
@@ -172,7 +173,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 
 		// create TempAttrEditInfo's for this element's attributes
 		NamedNodeMap attrs = element.getAttributes();
-		HashSet attrNames = new HashSet(attrs.getLength());
+		HashMap attrsIndex = new HashMap(attrs.getLength());
 		for (int i = 0; i < attrs.getLength(); i++)
 		{
 			Attr attr = (Attr)attrs.item(i);
@@ -185,18 +186,21 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 
 			attributes.add(taei);
 
-			attrNames.add(taei.uri + taei.name);
+			attrsIndex.put(taei.uri + taei.name, taei);
 		}
 
 		// get all possible attributes from the Schema, and merge them
-		// with the attributes we already have.
+		// with the attributes we already have. Meanwhile, store references
+		// to the AttributeSchema's in the taei
 		Iterator attrSchemaIt = schema.getAttributesFor(element).iterator();
 		AttributeSchema attrSchema = null;
 		while (attrSchemaIt.hasNext())
 		{
 			attrSchema = (AttributeSchema)attrSchemaIt.next();
 
-			if (!attrNames.contains(attrSchema.namespaceURI + attrSchema.localName))
+			TempAttrEditInfo taeiExisting = (TempAttrEditInfo)attrsIndex.get
+				(attrSchema.namespaceURI + attrSchema.localName);
+			if (taeiExisting == null)
 			{
 				TempAttrEditInfo taei = new TempAttrEditInfo();
 				taei.uri = attrSchema.namespaceURI;
@@ -205,8 +209,13 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 				taei.name = attrSchema.localName;
 				taei.value = null;
 				taei.isNew = true;
+				taei.attrSchema = attrSchema;
 
 				attributes.add(taei);
+			}
+			else
+			{
+				taeiExisting.attrSchema = attrSchema;
 			}
 		}
 
@@ -286,6 +295,7 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 		public String name;
 		public String value;
 		public boolean isNew;
+		public AttributeSchema attrSchema;
 
 		public String getQName()
 		{
@@ -336,11 +346,13 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
 		}
 	}
 
-	public void dispose()
+	public void disconnectFromDom()
 	{
-		if (this.element != null)
-		{
-			((EventTarget)this.element).removeEventListener("DOMAttrModified", this, false);
-		}
+		setElement(null);
+	}
+
+	public void reconnectToDom()
+	{
+		disconnectFromDom();
 	}
 }

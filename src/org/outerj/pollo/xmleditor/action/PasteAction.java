@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.SelectionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -8,7 +9,7 @@ import java.awt.event.ActionEvent;
 
 import org.w3c.dom.*;
 
-public class PasteAction extends AbstractAction
+public class PasteAction extends AbstractAction implements SelectionListener
 {
 	public static final int PASTE_BEFORE  = 1;
 	public static final int PASTE_AFTER   = 2;
@@ -23,6 +24,8 @@ public class PasteAction extends AbstractAction
 
 		this.xmlEditor = xmlEditor;
 		this.behaviour = behaviour;
+		setEnabled(false);
+		xmlEditor.getSelectionInfo().addListener(this);
 	}
 
 	protected static String getDisplayName(int behaviour)
@@ -88,5 +91,18 @@ public class PasteAction extends AbstractAction
 		{
 			selectedNode.appendChild(newNode);
 		}
+	}
+
+	public void nodeUnselected(Node node)
+	{
+		setEnabled(false);
+	}
+
+	public void nodeSelected(Node node)
+	{
+		if (behaviour == PASTE_ASCHILD && !(node.getNodeType() == Node.ELEMENT_NODE || node.getNodeType() == Node.DOCUMENT_NODE))
+			setEnabled(false);
+		else
+			setEnabled(true);
 	}
 }

@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.Icon;
+import java.io.InputStream;
 
 import javax.xml.parsers.*;
 
@@ -63,8 +64,15 @@ public class BasicDisplaySpecification implements IDisplaySpecification
 		SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 		parserFactory.setNamespaceAware(true);
 		SAXParser parser = parserFactory.newSAXParser();
-		parser.parse(new InputSource(this.getClass().getClassLoader().getResourceAsStream(source)),
-				displaySpecHandler);
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream(source);
+		try
+		{
+			parser.parse(new InputSource(is), displaySpecHandler);
+		}
+		finally
+		{
+			try { is.close(); } catch (Exception e) {}
+		}
 	}
 
 	public Color getBackgroundColor()

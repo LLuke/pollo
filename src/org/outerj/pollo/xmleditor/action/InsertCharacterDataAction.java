@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.SelectionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -14,7 +15,7 @@ import org.w3c.dom.DocumentFragment;
   An action to insert comment, text or cdata nodes before, after
   or as child of the currently selected node.
  */
-public class InsertCharacterDataAction extends AbstractAction
+public class InsertCharacterDataAction extends AbstractAction implements SelectionListener
 {
 	public static final int INSERT_BEFORE  = 1;
 	public static final int INSERT_AFTER   = 2;
@@ -36,6 +37,8 @@ public class InsertCharacterDataAction extends AbstractAction
 		this.xmlEditor = xmlEditor;
 		this.behaviour = behaviour;
 		this.type      = type;
+		setEnabled(false);
+		xmlEditor.getSelectionInfo().addListener(this);
 	}
 
 	protected static String getDisplayName(int behaviour)
@@ -124,6 +127,44 @@ public class InsertCharacterDataAction extends AbstractAction
 		else if (behaviour == INSERT_INSIDE)
 		{
 			selectedNode.appendChild(newNode);
+		}
+	}
+
+	public void nodeUnselected(Node node)
+	{
+		setEnabled(false);
+	}
+
+	public void nodeSelected(Node node)
+	{
+		if (behaviour == INSERT_INSIDE)
+		{
+			if (node.getNodeType() == Node.DOCUMENT_NODE)
+			{
+				if (!(type == TYPE_COMMENT || type == TYPE_PI))
+					setEnabled(false);
+				else
+					setEnabled(true);
+			}
+			else if (node.getNodeType() != Node.ELEMENT_NODE)
+			{
+				setEnabled(false);
+			}
+			else
+			{
+				setEnabled(true);
+			}
+		}
+		else if (node.getNodeType() == Node.DOCUMENT_NODE)
+		{
+			if (!(type == TYPE_COMMENT || type == TYPE_PI))
+				setEnabled(false);
+			else
+				setEnabled(true);
+		}
+		else
+		{
+			setEnabled(true);
 		}
 	}
 }

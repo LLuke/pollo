@@ -69,4 +69,12 @@ public class AttributeSchema
 			return values;
 		}
 	}
+
+	public boolean hasPickList()
+	{
+		if (xpathExpr != null || values != null)
+			return true;
+		else
+			return false;
+	}
 }

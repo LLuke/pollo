@@ -2,6 +2,7 @@ package org.outerj.pollo.xmleditor.model;
 
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.util.DomUtils;
+import org.outerj.pollo.DomConnected;
 
 import java.util.Stack;
 import java.util.EmptyStackException;
@@ -39,9 +40,9 @@ import org.w3c.dom.events.Event;
  * @author Bruno Dumon
  *
  */
-public class Undo implements EventListener
+public class Undo implements EventListener, DomConnected
 {
-	protected Stack undos = new Stack();
+	protected Stack undos;
 	protected boolean undoing = false;
 	protected UndoAction undoAction;
 	protected XmlModel xmlModel;
@@ -51,14 +52,24 @@ public class Undo implements EventListener
 	{
 		this.xmlModel = xmlModel;
 
+		undoAction = new UndoAction();
+		undoAction.setEnabled(false);
+	}
+
+	protected void init()
+	{
 		Node node = xmlModel.getDocument();
+		// note to myself: if event listener are added here, remove them again
+		// in disconnectFromDom() !
 		((EventTarget)node).addEventListener("DOMAttrModified", this, true);
 		((EventTarget)node).addEventListener("DOMNodeInserted", this, true);
 		((EventTarget)node).addEventListener("DOMNodeRemoved", this, true);
 		((EventTarget)node).addEventListener("DOMCharacterDataModified", this, true);
 
-		undoAction = new UndoAction();
+		undoAction.putValue(UndoAction.NAME, "Undo");
 		undoAction.setEnabled(false);
+
+		undos = new Stack();
 	}
 
 	public void handleEvent(Event event)
@@ -190,6 +201,10 @@ public class Undo implements EventListener
 			{
 				return "insert cdata section";
 			}
+			else if (insertedNode.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE)
+			{
+				return "insert processing instruction";
+			}
 			else if (insertedNode.getNodeType() == Node.ELEMENT_NODE)
 			{
 				Element insertedEl = (Element)insertedNode;
@@ -235,7 +250,7 @@ public class Undo implements EventListener
 				case Node.CDATA_SECTION_NODE:
 					return "remove cdata section";
 				case Node.PROCESSING_INSTRUCTION_NODE:
-					return "remove cdata section";
+					return "remove processing instruction";
 				case Node.ELEMENT_NODE:
 					Element removedEl = (Element)removedNode;
 					String prefix = removedEl.getPrefix();
@@ -429,5 +444,20 @@ public class Undo implements EventListener
 		{
 			undo();
 		}
+	}
+
+	public void disconnectFromDom()
+	{
+		Node node = xmlModel.getDocument();
+		((EventTarget)node).removeEventListener("DOMAttrModified", this, true);
+		((EventTarget)node).removeEventListener("DOMNodeInserted", this, true);
+		((EventTarget)node).removeEventListener("DOMNodeRemoved", this, true);
+		((EventTarget)node).removeEventListener("DOMCharacterDataModified", this, true);
+	}
+
+	public void reconnectToDom()
+	{
+		disconnectFromDom();
+		init();
 	}
 }

@@ -5,7 +5,7 @@ import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.xmleditor.util.FocusBorder;
-import org.outerj.pollo.xmleditor.Disposable;
+import org.outerj.pollo.DomConnected;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,7 +45,7 @@ import org.w3c.dom.Element;
  *
  * @author Bruno Dumon
  */
-public class AttributesPanel extends JPanel implements ActionListener, SelectionListener, Disposable 
+public class AttributesPanel extends JPanel implements ActionListener, SelectionListener, DomConnected
 {
 	protected JTable attributesTable;
 	protected AttributesTableModel attributesTableModel;
@@ -281,8 +281,23 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 		return false;
 	}
 
-	public void dispose()
+	public JTable getAttributesTable()
 	{
-		attributesTableModel.dispose();
+		return attributesTable;
+	}
+
+	public AttributesTableModel getAttributesTableModel()
+	{
+		return attributesTableModel;
+	}
+
+	public void disconnectFromDom()
+	{
+		attributesTableModel.disconnectFromDom();
+	}
+
+	public void reconnectToDom()
+	{
+		attributesTableModel.reconnectToDom();
 	}
 }

@@ -8,6 +8,7 @@ import org.outerj.pollo.xmleditor.schema.ElementSchema;
 import org.outerj.pollo.xmleditor.util.QuickSort;
 import org.outerj.pollo.xmleditor.util.DomUtils;
 import org.outerj.pollo.xmleditor.util.FocusBorder;
+import org.outerj.pollo.DomConnected;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -38,7 +39,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public class NodeInsertionPanel extends JPanel
+public class NodeInsertionPanel extends JPanel implements DomConnected
 {
 	protected XmlEditorPanel xmlEditorPanel;
 	protected ISchema schema;
@@ -453,7 +454,14 @@ public class NodeInsertionPanel extends JPanel
 		}
 	}
 
-	public void dispose()
+	public void disconnectFromDom()
 	{
+	}
+
+	public void reconnectToDom()
+	{
+		insertBeforeList.setEnabled(false);
+		insertAfterList.setEnabled(false);
+		insertInsideList.setEnabled(false);
 	}
 }

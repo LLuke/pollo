@@ -3,6 +3,7 @@ package org.outerj.pollo.xmleditor.action;
 import org.outerj.pollo.dialog.ErrorDialog;
 import org.outerj.pollo.xmleditor.model.Undo;
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.SelectionListener;
 
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Document;
+import org.w3c.dom.Comment;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
@@ -25,7 +27,7 @@ import org.apache.xml.serialize.XMLSerializer;
  *
  * @author Bruno Dumon
  */
-public class CommentOutAction extends AbstractAction
+public class CommentOutAction extends AbstractAction implements SelectionListener
 {
 	protected XmlEditor xmlEditor;
 
@@ -34,6 +36,9 @@ public class CommentOutAction extends AbstractAction
 		super("Comment out");
 
 		this.xmlEditor = xmlEditor;
+
+		xmlEditor.getSelectionInfo().addListener(this);
+		setEnabled(false);
 	}
 
 	public void actionPerformed(ActionEvent event)
@@ -83,5 +88,16 @@ public class CommentOutAction extends AbstractAction
 		parent.removeChild(selectedNode);
 		undo.endUndoTransaction();
 
+	}
+
+	public void nodeUnselected(Node node)
+	{
+		setEnabled(false);
+	}
+
+	public void nodeSelected(Node node)
+	{
+		if (!(node instanceof Comment))
+			setEnabled(true);
 	}
 }

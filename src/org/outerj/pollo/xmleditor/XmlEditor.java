@@ -8,6 +8,7 @@ import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.view.*;
 import org.outerj.pollo.xmleditor.action.*;
 import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
+import org.outerj.pollo.DomConnected;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,7 +38,7 @@ import org.jaxen.SimpleNamespaceContext;
  * @author Bruno Dumon
  * */
 public class XmlEditor extends JComponent implements MouseListener, NodeClickedListener,
-	DragGestureListener, DragSourceListener, DropTargetListener, Autoscroll
+	DragGestureListener, DragSourceListener, DropTargetListener, Autoscroll, DomConnected
 {
 	protected View mainView;
 	protected SelectionInfo selectionInfo = new SelectionInfo();
@@ -287,17 +288,17 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 
 	public Dimension getPreferredSize()
 	{
-		return new Dimension(200, height);
+		return new Dimension(300, height);
 	}
 
 	public Dimension getMinimumSize()
 	{
-		return getPreferredSize();
+		return new Dimension(300, height);
 	}
 
 	public Dimension getMaximumSize()
 	{
-		return getPreferredSize();
+		return new Dimension(300, height);
 	}
 
 	public void setSize(Dimension d)
@@ -841,7 +842,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 	/**
 	 * Holds information about the currently selected node.
 	 */
-	public class SelectionInfo implements EventListener
+	public class SelectionInfo implements EventListener, DomConnected
 	{
 		Node selectedNode;
 		View selectedNodeView;
@@ -923,12 +924,20 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 			selectionListeners.add(listener);
 		}
 
-		public void dispose()
+		public void disconnectFromDom()
 		{
 			if (selectedNode != null)
 			{
 				((EventTarget)selectedNode).removeEventListener("DOMNodeRemoved", this, false);
 			}
+		}
+
+		public void reconnectToDom()
+		{
+			disconnectFromDom();
+			selectedNode = null;
+			selectedNodeView = null;
+			selectedViewRect = null;
 		}
 	}
 
@@ -1032,9 +1041,19 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		return uncommentAction;
 	}
 
+	public CollapseExpandAction getCollapseAction()
+	{
+		return collapseAction;
+	}
+
 	public CollapseExpandAction getCollapseAllAction()
 	{
 		return collapseAllAction;
+	}
+
+	public CollapseExpandAction getExpandAction()
+	{
+		return expandAction;
 	}
 
 	public CollapseExpandAction getExpandAllAction()
@@ -1132,11 +1151,22 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		return mainView;
 	}
 
-	public void dispose()
+	public void disconnectFromDom()
 	{
 		if (mainView != null)
 			mainView.removeEventListeners();
 
-		selectionInfo.dispose();
+		selectionInfo.disconnectFromDom();
+	}
+
+	public void reconnectToDom()
+	{
+		if (mainView != null)
+		{
+			mainView.removeEventListeners();
+			mainView = null;
+		}
+		rootNodeDisplayed = null;
+		selectionInfo.reconnectToDom();
 	}
 }
