@@ -1,16 +1,13 @@
-Pollo is a program to edit XML files. It's best suited for
-files which can be represented solely using a tree structure.
-Fortunately this applies to many XML files.
+Pollo is an XML editor.
 
-It is currently still in development. It is neither considered
-complete or stable.
+For more information see the online documentation at
+http://pollo.sourceforge.net
 
-Do not hesitate to send bug reports, comments, suggestions, patches,
-contributions, etc to the author.
+Bug-reports, patches, suggestions and other comments are welcome and
+can be mailed to:
 
-This project is hosted at sourceforge:
-http://www.sf.net/projects/pollo
+ - Pollo's mailing list: pollo-development@lists.sourceforge.net
+    subscription not required, to subscribe see
+    http://lists.sourceforge.net/lists/listinfo/pollo-development
 
---
-Bruno Dumon
-bdumon@users.sourceforge.net
+ - The author: Bruno Dumon: bdumon@users.sourceforge.net

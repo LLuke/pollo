@@ -1,28 +1,25 @@
- - Pollo contains many third-party libraries:
-    - Apache's Xerces for XML Parsing and it's DOM implementation. (the
-      support of Xerces for mutation events is essential to Pollo).
+ - The following people contributed code to Pollo:
+    * Scott Willy
+    * Al Byers
+    * Roger I Martin
+    * Curt Thompson
+    * Richard Bounds
+
+ - Pollo uses the following third-party libraries:
+    - Apache's Xerces for XML Parsing and it's DOM implementation.
+      (Xerces' support for mutation events is essential to Pollo).
     - Log4j for logging (not used much yet).
     - Apache Jakarta's Commons Digester for building the configuration
       objects from XML files.
     - Sun's excellent Multi Schema Validator (MSV) for support of
       XML Schema, RELAX-NG, DTD, etc.
     - Jaxen to evaluate XPath expressions.
-    - Javahelp for online help.
 
    See the online help for the licenses of these libraries.
-
- - Thanks to Al Byers for getting me started on MSV support.
 
  - The look with the panels is inspired by Eclipse. It was
    the demo by Karsten Lentzsch (http://www.jgoodies.com/metamorphosis)
    that brought me to that idea, and other GUI improvements.
 
- - Some of the icons used in Pollo come from:
-   http://primates.ximian.com/~tigert/new_stock_project/
-
  - the tree view was originally inspired by conglomerate:
    http://www.conglomerate.org
-
- - Thanks to Steven Noels and Marc Portier of Outerthought
-   (http://www.outerthought.org) for letting me use the
-   org.outerj package name, and for hosting the original web site.
