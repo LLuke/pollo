@@ -205,6 +205,7 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 		{
 			super(model);
 			this.schema = schema;
+			setSurrendersFocusOnKeystroke(true);
 		}
 
 		
@@ -219,16 +220,6 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 				return editor;
 			else
 				return super.getCellEditor(row, column);
-
-			/*
-			String [] values = schema.getPossibleAttributeValues(model.getElement(), taei.uri, taei.name);
-			if (values != null)
-			{
-				JComboBox combo = new JComboBox(values);
-				combo.setEditable(true);
-				return new DefaultCellEditor(combo);
-			}
-			*/
 		}
 
 		public TableCellRenderer getCellRenderer(int row, int column)
@@ -236,6 +227,10 @@ public class AttributesPanel extends JPanel implements ActionListener, Selection
 			return attributeTableCellRenderer;
 		}
 
+		public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend)
+		{
+			super.changeSelection(rowIndex, 1, toggle, extend);
+		}
 	}
 
 
