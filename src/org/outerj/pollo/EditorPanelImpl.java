@@ -590,6 +590,9 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 
     public class ModeSwitchDropDown extends JComboBox
     {
+        static final int TREE_VIEW_INDEX = 0;
+        static final int TEXT_VIEW_INDEX = 1;
+
         public ModeSwitchDropDown()
         {
             addItem("Tree view");
@@ -606,7 +609,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
             {
                 public void actionPerformed(ActionEvent e)
                 {
-                    if (getSelectedItem().equals("Tree view"))
+                    if (getSelectedIndex() == TREE_VIEW_INDEX)
                     {
                         if (currentModePanel != xmlEditorPanel)
                         {
@@ -616,17 +619,19 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
                             }
                             catch (SAXParseException saxparseexception)
                             {
+                                setSelectedIndex(TEXT_VIEW_INDEX); // make text view selected again since we're staying in there
                                 xmlTextEditorPanel.showParseException(saxparseexception);
                                 JOptionPane.showMessageDialog(polloFrame, "The document contains well formedness errors.");
                             }
                             catch (Exception exception1)
                             {
+                                setSelectedIndex(TEXT_VIEW_INDEX);
                                 ErrorDialog errordialog1 = new ErrorDialog(polloFrame, "Could not parse the text to a DOM tree.", exception1);
                                 errordialog1.show();
                             }
                         }
                     }
-                    else if (getSelectedItem().equals("Text view"))
+                    else if (getSelectedIndex() == TEXT_VIEW_INDEX)
                     {
                         if (currentModePanel != xmlTextEditorPanel)
                         {
@@ -636,6 +641,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
                             }
                             catch (Exception exception)
                             {
+                                setSelectedIndex(TREE_VIEW_INDEX);
                                 ErrorDialog errordialog = new ErrorDialog(polloFrame, "Could not serialize the DOM tree to text.", exception);
                                 errordialog.show();
                             }
