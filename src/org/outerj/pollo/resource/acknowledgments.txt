@@ -4,6 +4,9 @@
     * Roger I Martin
     * Curt Thompson
     * Richard Bounds
+ 
+ - Infobjects (http://www.infobjects.com) kindly sponsered the
+   development of the 0.4 version.
 
  - Pollo uses the following third-party libraries:
     - Apache's Xerces for XML Parsing and it's DOM implementation.
