@@ -1,29 +1,20 @@
 package org.outerj.pollo.xmleditor;
 
-import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.model.InvalidXmlException;
-import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.DomConnected;
+import org.outerj.pollo.xmleditor.action.ValidateAction;
 import org.outerj.pollo.xmleditor.attreditor.AttributesPanel;
 import org.outerj.pollo.xmleditor.chardataeditor.CharDataPanel;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
+import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
+import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.util.FocusBorder;
-import org.outerj.pollo.DomConnected;
-
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JScrollPane;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import java.awt.Dimension;
-import java.awt.BorderLayout;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.Container;
-import java.util.Iterator;
-
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Collection;
 
 
 /**
@@ -41,6 +32,12 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 	protected ISchema schema;
 	protected NodeInsertionPanel nodeInsertionPanel;
 	protected NodeDetailsPanel nodeDetailsPanel;
+	protected JSplitPane xmlEditorAndNodeInsertPanelSplit;
+	protected JSplitPane xmlEditorAndValidationErrorsSplit;
+	protected Container xpathAndXmlEditorContainer;
+	protected ValidationErrorsPanel validationErrorsPanel;
+	protected AttributesPanel attrPanel;
+	protected ValidateAction validateAction = new ValidateAction(this);
 
 	public XmlEditorPanel(XmlModel model, String xpathForRoot, IDisplaySpecification displaySpec,
 			ISchema schema, IAttributeEditorPlugin attrEditorPlugin)
@@ -62,7 +59,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 		nodeDetailsPanel = new NodeDetailsPanel();
 		xmlEditor.getSelectionInfo().addListener(nodeDetailsPanel);
 
-		AttributesPanel attrPanel = new AttributesPanel(model, schema, attrEditorPlugin);
+		attrPanel = new AttributesPanel(model, schema, attrEditorPlugin);
 		xmlEditor.getSelectionInfo().addListener(attrPanel);
 		nodeDetailsPanel.add(Node.ELEMENT_NODE, attrPanel);
 
@@ -117,21 +114,21 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 				});
 
 		// Create the container containing the QueryByXPath panel and the XmlEditor component
-		Container container = new Container();
-		container.setLayout(new BorderLayout());
-		container.add(new QueryByXPathPanel(xmlEditor, attrPanel), BorderLayout.NORTH);
-		container.add(scrollPane, BorderLayout.CENTER);
+		xpathAndXmlEditorContainer = new Container();
+		xpathAndXmlEditorContainer.setLayout(new BorderLayout());
+		xpathAndXmlEditorContainer.add(new QueryByXPathPanel(xmlEditor, attrPanel), BorderLayout.NORTH);
+		xpathAndXmlEditorContainer.add(scrollPane, BorderLayout.CENTER);
 
 		// create first split pane (xmlEditor - nodeInsertionPanel)
 		nodeInsertionPanel.setPreferredSize(new Dimension(180, 100 /* height doesn't matter */));
-		JSplitPane splitPane1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, container, nodeInsertionPanel);
-		splitPane1.setResizeWeight(1); // xml content editor gets extra space
+		xmlEditorAndNodeInsertPanelSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, xpathAndXmlEditorContainer, nodeInsertionPanel);
+		xmlEditorAndNodeInsertPanelSplit.setResizeWeight(1); // xml content editor gets extra space
 		//splitPane1.setDividerLocation(-1);
 
 		// create second splitpane (first split pane - attributesPanel)
 		nodeDetailsPanel.setPreferredSize(new Dimension(200 /* width doesn't matter */, 100));
-		splitPane1.setPreferredSize(new Dimension(200 /* width doesn't matter */, 400));
-		JSplitPane splitPane2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPane1, nodeDetailsPanel);
+		xmlEditorAndNodeInsertPanelSplit.setPreferredSize(new Dimension(200 /* width doesn't matter */, 400));
+		JSplitPane splitPane2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, xmlEditorAndNodeInsertPanelSplit, nodeDetailsPanel);
 		splitPane2.setResizeWeight(1); // xml content editor gets extra space
 		//splitPane2.setDividerLocation(-1);
 		add(splitPane2, BorderLayout.CENTER);
@@ -162,6 +159,49 @@ public class XmlEditorPanel extends JPanel implements DomConnected
 	{
 		return schema;
 	}
+
+	public void showValidationErrorsPanel(Collection errors)
+	{
+		if (xmlEditorAndValidationErrorsSplit == null)
+		{
+			xmlEditorAndValidationErrorsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+			xmlEditorAndValidationErrorsSplit.setResizeWeight(1); // xml content editor gets extra space
+		}
+
+		getValidationErrorsPanel(); // to be sure that the panel gets instantiated
+
+		if (xmlEditorAndNodeInsertPanelSplit.getLeftComponent() != xmlEditorAndValidationErrorsSplit)
+		{
+			xmlEditorAndNodeInsertPanelSplit.remove(xpathAndXmlEditorContainer);
+			xmlEditorAndValidationErrorsSplit.setTopComponent(xpathAndXmlEditorContainer);
+			xmlEditorAndValidationErrorsSplit.setBottomComponent(validationErrorsPanel);
+			xmlEditorAndNodeInsertPanelSplit.setLeftComponent(xmlEditorAndValidationErrorsSplit);
+		}
+		validationErrorsPanel.showErrors(errors);
+	}
+
+	public void hideValidationErrorsPanel()
+	{
+		xmlEditorAndNodeInsertPanelSplit.remove(xmlEditorAndValidationErrorsSplit);
+		xmlEditorAndValidationErrorsSplit.remove(xpathAndXmlEditorContainer);
+		xmlEditorAndNodeInsertPanelSplit.setLeftComponent(xpathAndXmlEditorContainer);
+	}
+
+	public ValidateAction getValidateAction()
+	{
+		return validateAction;
+	}
+
+	public ValidationErrorsPanel getValidationErrorsPanel()
+	{
+		if (validationErrorsPanel == null)
+		{
+			validationErrorsPanel = new ValidationErrorsPanel(this, attrPanel);
+			validationErrorsPanel.setPreferredSize(new Dimension(200 /* width doesn't matter */, 200));
+		}
+		return validationErrorsPanel;
+	}
+
 
 	/**
 	 * Removes event listeners.

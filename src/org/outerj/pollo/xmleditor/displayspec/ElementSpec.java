@@ -1,8 +1,8 @@
 package org.outerj.pollo.xmleditor.displayspec;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
-import javax.swing.Icon;
-import java.awt.Color;
 
 /**
  * Class that holds information about how to show an element.

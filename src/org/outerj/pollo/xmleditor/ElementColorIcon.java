@@ -1,9 +1,7 @@
 package org.outerj.pollo.xmleditor;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import javax.swing.Icon;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * A icon consisting of a colored square.

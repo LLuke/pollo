@@ -1,12 +1,9 @@
 package org.outerj.pollo.xmleditor;
 
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.DataFlavor;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
+
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 
 /**
  * Transferable for DOM fragments. Used for drag-and-drop.

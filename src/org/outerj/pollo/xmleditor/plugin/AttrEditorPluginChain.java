@@ -1,9 +1,9 @@
 package org.outerj.pollo.xmleditor.plugin;
 
+import org.w3c.dom.Element;
+
 import javax.swing.table.TableCellEditor;
 import java.util.ArrayList;
-
-import org.w3c.dom.Element;
 
 public class AttrEditorPluginChain implements IAttributeEditorPlugin
 {

@@ -1,8 +1,10 @@
 package org.outerj.pollo.xmleditor.schema;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import org.w3c.dom.Element;
 
 /**
  * This schema implementation chaines a number of other schemas.
@@ -83,6 +85,24 @@ public class ChainedSchema implements ISchema
 				completeCollection.add(result);
 		}
 		return completeCollection;
+	}
+
+
+	public Collection validate(Document document)
+		throws ValidationNotSupportedException, Exception
+	{
+		if (schemas.size() > 0)
+			return ((ISchema)schemas.get(0)).validate(document);
+		else
+			throw new ValidationNotSupportedException();
+	}
+
+	public ISchema getSchema(int position)
+	{
+		if (schemas.size() >= position + 1)
+			return (ISchema)schemas.get(position);
+		else
+			return null;
 	}
 
 }

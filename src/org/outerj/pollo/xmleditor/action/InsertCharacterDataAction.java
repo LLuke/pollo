@@ -1,15 +1,12 @@
 package org.outerj.pollo.xmleditor.action;
 
-import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.SelectionListener;
-
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-import java.awt.event.ActionEvent;
-
-import org.w3c.dom.Node;
+import org.outerj.pollo.xmleditor.XmlEditor;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Node;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
   An action to insert comment, text or cdata nodes before, after

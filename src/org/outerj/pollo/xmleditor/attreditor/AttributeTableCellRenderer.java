@@ -1,14 +1,9 @@
 package org.outerj.pollo.xmleditor.attreditor;
 
-import org.outerj.pollo.xmleditor.attreditor.AttributesTableModel.TempAttrEditInfo;
-
-import java.awt.Component;
-import java.awt.Graphics;
-
+import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.UIManager;
+import org.outerj.pollo.xmleditor.attreditor.AttributesTableModel.TempAttrEditInfo;
+import java.awt.*;
 
 /**
  * TableCellRenderer used by the attributes panel. If an attribute has no

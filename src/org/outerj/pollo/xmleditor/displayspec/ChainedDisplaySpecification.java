@@ -1,8 +1,7 @@
 package org.outerj.pollo.xmleditor.displayspec;
 
+import java.awt.*;
 import java.util.ArrayList;
-import java.awt.Font;
-import java.awt.Color;
 
 /**
  * A wrapper class around a display specification that allows chaining it.

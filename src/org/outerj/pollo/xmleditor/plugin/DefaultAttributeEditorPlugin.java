@@ -1,14 +1,12 @@
 package org.outerj.pollo.xmleditor.plugin;
 
-import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.model.XmlModel;
-
-import javax.swing.table.TableCellEditor;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import java.util.HashMap;
-
+import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.w3c.dom.Element;
+
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import java.util.HashMap;
 
 /**
  * Default implementation of the AttributeEditorPlugin abstract class.

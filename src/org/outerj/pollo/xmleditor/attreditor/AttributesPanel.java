@@ -1,40 +1,21 @@
 package org.outerj.pollo.xmleditor.attreditor;
 
-import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.schema.ISchema;
-import org.outerj.pollo.xmleditor.SelectionListener;
-import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
-import org.outerj.pollo.xmleditor.util.FocusBorder;
 import org.outerj.pollo.DomConnected;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import javax.swing.JDialog;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.table.TableColumn;
-import javax.swing.JOptionPane;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.ListSelectionModel;
-import javax.swing.DefaultCellEditor;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableCellRenderer;
-import java.awt.Frame;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Component;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-import org.w3c.dom.Node;
+import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
+import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.xmleditor.util.FocusBorder;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A Panel containing a JTable to edit attribute values, together with

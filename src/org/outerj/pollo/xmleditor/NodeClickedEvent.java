@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor;
 
 import org.w3c.dom.Node;
+
 import java.awt.event.MouseEvent;
 
 

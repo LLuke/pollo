@@ -1,26 +1,19 @@
 package org.outerj.pollo.xmleditor.action;
 
-import org.outerj.pollo.xmleditor.XmlEditor;
-import org.outerj.pollo.xmleditor.view.View;
-
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-import javax.swing.JFileChooser;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.awt.Graphics2D;
-import java.awt.Color;
-
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
-import java.io.File;
-
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.view.View;
 
-import org.w3c.dom.Node;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 /**
  * An action that renders the selected view to an image and

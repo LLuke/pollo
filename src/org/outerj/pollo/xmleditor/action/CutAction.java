@@ -1,12 +1,10 @@
 package org.outerj.pollo.xmleditor.action;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
-import org.outerj.pollo.xmleditor.SelectionListener;
-
-import javax.swing.Action;
-import java.awt.event.ActionEvent;
-
 import org.w3c.dom.Node;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * A Swing Action that places the currently selected node on the clipboard

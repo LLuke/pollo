@@ -2,8 +2,8 @@ package org.outerj.pollo.xmleditor.displayspec;
 
 import org.outerj.pollo.xmleditor.exception.PolloException;
 
-import java.util.WeakHashMap;
 import java.util.HashMap;
+import java.util.WeakHashMap;
 
 public class BasicDisplaySpecFactory implements IDisplaySpecificationFactory
 {

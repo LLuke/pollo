@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor;
 
 import org.outerj.pollo.xmleditor.exception.PolloException;
+
 import java.util.HashMap;
 
 /**
@@ -25,7 +26,7 @@ public class ComponentManager
 			}
 			catch (Exception e)
 			{
-				throw new PolloException("Could not instantiate the factory " + factoryClassName, e);
+				throw new PolloException("[ComponentManager] Could not instantiate the factory " + factoryClassName, e);
 			}
 		}
 

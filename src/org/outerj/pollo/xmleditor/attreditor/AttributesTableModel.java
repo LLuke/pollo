@@ -1,26 +1,23 @@
 package org.outerj.pollo.xmleditor.attreditor;
 
-import javax.swing.table.AbstractTableModel;
-import javax.swing.event.TableModelEvent;
-import org.outerj.pollo.xmleditor.schema.ElementSchema;
+import org.outerj.pollo.DomConnected;
+import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.schema.AttributeSchema;
 import org.outerj.pollo.xmleditor.schema.ISchema;
-import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.util.QuickSort;
 import org.outerj.pollo.xmleditor.util.DomUtils;
-import org.outerj.pollo.DomConnected;
-
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.w3c.dom.Element;
+import org.outerj.pollo.xmleditor.util.QuickSort;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
-import org.w3c.dom.events.Event;
-import org.w3c.dom.events.MutationEvent;
+
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 /**

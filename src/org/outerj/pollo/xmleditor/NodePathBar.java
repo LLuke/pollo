@@ -1,16 +1,14 @@
 package org.outerj.pollo.xmleditor;
 
-import org.outerj.pollo.xmleditor.util.DomUtils;
 import org.outerj.pollo.xmleditor.attreditor.AttributesPanel;
 import org.outerj.pollo.xmleditor.attreditor.AttributesTableModel;
-
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-
-import org.w3c.dom.Node;
+import org.outerj.pollo.xmleditor.util.DomUtils;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * A JLabel that displays the XPath-path to the currently selected node.

@@ -1,35 +1,29 @@
 package org.outerj.pollo.xmleditor;
 
-import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.model.InvalidXmlException;
-import org.outerj.pollo.xmleditor.schema.ISchema;
-import org.outerj.pollo.xmleditor.schema.ElementSchema;
-import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
-import org.outerj.pollo.xmleditor.view.*;
+import org.jaxen.SimpleNamespaceContext;
+import org.jaxen.dom.XPath;
+import org.outerj.pollo.DomConnected;
 import org.outerj.pollo.xmleditor.action.*;
 import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
-import org.outerj.pollo.DomConnected;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.dnd.*;
-import java.awt.event.*;
-import java.awt.font.FontRenderContext;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.HashMap;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.awt.datatransfer.Transferable;
-import javax.swing.SwingUtilities;
-
+import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
+import org.outerj.pollo.xmleditor.model.InvalidXmlException;
+import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.xmleditor.view.*;
 import org.w3c.dom.*;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
-import org.jaxen.dom.XPath;
-import org.jaxen.SimpleNamespaceContext;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 
 /**
@@ -1168,5 +1162,10 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
 		}
 		rootNodeDisplayed = null;
 		selectionInfo.reconnectToDom();
+	}
+
+	public ISchema getSchema()
+	{
+		return schema;
 	}
 }

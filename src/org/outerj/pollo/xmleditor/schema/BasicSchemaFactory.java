@@ -2,8 +2,8 @@ package org.outerj.pollo.xmleditor.schema;
 
 import org.outerj.pollo.xmleditor.exception.PolloException;
 
-import java.util.WeakHashMap;
 import java.util.HashMap;
+import java.util.WeakHashMap;
 
 /**
  * Factory for BasicSchema's.

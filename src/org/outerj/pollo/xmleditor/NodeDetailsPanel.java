@@ -1,16 +1,12 @@
 package org.outerj.pollo.xmleditor;
 
-import org.outerj.pollo.xmleditor.SelectionListener;
 import org.outerj.pollo.DomConnected;
+import org.w3c.dom.Node;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import java.awt.CardLayout;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import org.w3c.dom.Node;
 
 /**
  * This panel shows other panels based on the selected node. These other panels

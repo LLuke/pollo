@@ -1,37 +1,21 @@
 package org.outerj.pollo.xmleditor;
 
-import org.outerj.pollo.xmleditor.view.View;
-import org.outerj.pollo.xmleditor.attreditor.AttributesPanel;
-import org.outerj.pollo.config.PolloConfiguration;
-import org.outerj.pollo.Pollo;
-import org.outerj.pollo.config.XPathQuery;
-
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JOptionPane;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.KeyStroke;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import java.util.List;
-
-import org.jaxen.dom.XPath;
 import org.jaxen.SimpleNamespaceContext;
-
-import org.w3c.dom.Node;
+import org.jaxen.dom.XPath;
+import org.outerj.pollo.Pollo;
+import org.outerj.pollo.config.PolloConfiguration;
+import org.outerj.pollo.config.XPathQuery;
+import org.outerj.pollo.xmleditor.attreditor.AttributesPanel;
+import org.outerj.pollo.xmleditor.view.View;
 import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class QueryByXPathPanel extends JPanel implements ActionListener
 {

@@ -1,13 +1,9 @@
 package org.outerj.pollo.xmleditor.view;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
-
-import java.awt.Graphics;
-import java.awt.BasicStroke;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-
 import org.w3c.dom.Node;
+
+import java.awt.*;
 
 
 /**

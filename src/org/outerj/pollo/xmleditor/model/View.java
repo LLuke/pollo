@@ -1,5 +1,7 @@
 package org.outerj.pollo.xmleditor.model;
 
+import java.awt.*;
+
 /**
  * This is View interface that the XmlModel class uses to communicate with the
  * views on this model.
@@ -23,4 +25,9 @@ public interface View
 	 * ends.
 	 */
 	public void stop();
+
+	/**
+	 * Should return the component to use as parent for displaying modal dialog boxes.
+	 */
+	public Component getParentForDialogs();
 }

@@ -1,13 +1,13 @@
 package org.outerj.pollo.xmleditor.displayspec;
 
-import org.outerj.pollo.xmleditor.util.NodeMap;
 import org.outerj.pollo.xmleditor.ElementColorIcon;
+import org.outerj.pollo.xmleditor.exception.PolloException;
+import org.outerj.pollo.xmleditor.util.NodeMap;
 
-import java.util.HashMap;
+import java.awt.*;
 import java.util.ArrayList;
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.Icon;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 
 /**
@@ -33,7 +33,7 @@ public class GenericDisplaySpecification implements IDisplaySpecification
 	/** Contains the instances of the ElementSpec class */
 	protected NodeMap elementSpecs = new NodeMap();
 	/** Indicates if this implementation should randomly assign colors. */
-	protected boolean useColors = true;
+	protected boolean useRandomColors = false;
 
 	/** List of colors to use for elements. The list is stolen from somewhere
 	 * in koffice.
@@ -129,15 +129,40 @@ public class GenericDisplaySpecification implements IDisplaySpecification
 
 
 	public void init(HashMap initParams)
+		throws PolloException
 	{
 		defaultColor = new Color(255, 255, 255);
 		elementNameFont = new Font("Default", 0, 12);
 		attributeNameFont = new Font("Default", Font.ITALIC, 12);
 		attributeValueFont = new Font("Default", 0, 12);
 
-		String useColorsParam = (String)initParams.get("use-colors");
-		if (useColorsParam != null && useColorsParam.equals("false"))
-			useColors = false;
+		String useRandomColorsParam = (String)initParams.get("use-random-colors");
+		if (useRandomColorsParam != null && useRandomColorsParam.equals("true"))
+			useRandomColors = true;
+		else
+		{
+			String fixedColorParam = (String)initParams.get("fixed-color");
+			if (fixedColorParam != null)
+			{
+				try
+				{
+					StringTokenizer tokenizer = new StringTokenizer(fixedColorParam, ",");
+					String redString = tokenizer.nextToken();
+					String greenString = tokenizer.nextToken();
+					String blueString = tokenizer.nextToken();
+
+					int red = Integer.parseInt(redString);
+					int green = Integer.parseInt(greenString);
+					int blue = Integer.parseInt(blueString);
+
+					defaultColor = new Color(red, green, blue);
+				}
+				catch (Exception e)
+				{
+					throw new PolloException("[GenericDisplaySpecification] fixed-color parameter not in correct format, should be e.g. 255,255,255", e);
+				}
+			}
+		}
 	}
 
 	protected void addElementSpec(ElementSpec elementSpec)
@@ -154,7 +179,7 @@ public class GenericDisplaySpecification implements IDisplaySpecification
 			elementSpec.nsUri = uri;
 			elementSpec.localName = localName;
 			elementSpec.attributesToShow = new ArrayList();
-			if (useColors)
+			if (useRandomColors)
 			{
 				elementSpec.backgroundColor = colors[colorPointer % numberOfColors];
 				colorPointer++;

@@ -1,13 +1,10 @@
 package org.outerj.pollo.xmleditor.util;
 
-import java.awt.event.FocusListener;
-import java.awt.event.FocusEvent;
-import java.awt.Color;
-
+import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.BevelBorder;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
+import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 
 /**

@@ -1,30 +1,20 @@
 package org.outerj.pollo.xmleditor.view;
 
-import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.NodeClickedEvent;
+import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.XmlTransferable;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Node;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventTarget;
 
 import java.awt.*;
-import java.awt.font.*;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DnDConstants;
-
-import java.util.ArrayList;
-import java.awt.event.*;
 import java.awt.dnd.DragGestureEvent;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Attr;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.CharacterData;
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.events.EventListener;
-import org.w3c.dom.events.EventTarget;
-import org.w3c.dom.events.Event;
-import org.w3c.dom.events.MutationEvent;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.event.MouseEvent;
 
 
 /**

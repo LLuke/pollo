@@ -1,13 +1,11 @@
 package org.outerj.pollo.xmleditor.action;
 
-import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.SelectionListener;
-
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-import java.awt.event.ActionEvent;
-
+import org.outerj.pollo.xmleditor.XmlEditor;
 import org.w3c.dom.*;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 public class PasteAction extends AbstractAction implements SelectionListener
 {

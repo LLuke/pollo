@@ -1,46 +1,24 @@
 package org.outerj.pollo.xmleditor.model;
 
-import org.outerj.pollo.texteditor.XmlTextDocument;
-import org.outerj.pollo.texteditor.XMLTokenMarker;
-import org.outerj.pollo.dialog.ErrorDialog;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Attr;
-
-import org.xml.sax.InputSource;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import javax.swing.JOptionPane;
-import javax.swing.JFileChooser;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Segment;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.event.ActionEvent;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.CharArrayReader;
-import java.io.InputStreamReader;
-import java.io.Writer;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.HashMap;
-
-import org.jaxen.dom.XPath;
-import org.jaxen.SimpleNamespaceContext;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.jaxen.SimpleNamespaceContext;
+import org.jaxen.dom.XPath;
+import org.outerj.pollo.texteditor.XMLTokenMarker;
+import org.outerj.pollo.texteditor.XmlTextDocument;
+import org.w3c.dom.*;
+import org.xml.sax.InputSource;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Segment;
+import java.awt.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 /**
@@ -73,10 +51,6 @@ public class XmlModel
 	protected boolean modified;
 	protected boolean modifiedWhileInTextMode;
 	protected TextDocumentModifiedListener textModifiedListener;
-
-	protected Action saveAction = new SaveAction();
-	protected Action saveAsAction = new SaveAsAction();
-	protected Action closeAction = new CloseAction();
 
 	public static final int FILENAME_CHANGED = 1;
 	public static final int LAST_VIEW_CLOSED = 2;
@@ -166,7 +140,6 @@ public class XmlModel
 			}
 		}
 		modified = false;
-		saveAction.setEnabled(false);
 	}
 
 	public void readFromResource(File file)
@@ -280,7 +253,6 @@ public class XmlModel
 		}
 		
 		modified = false;
-		saveAction.setEnabled(false);
 		notify(FILE_SAVED);
 	}
 
@@ -519,6 +491,18 @@ public class XmlModel
 		return file;
 	}
 
+	public String getFileName()
+	{
+		if (file != null)
+		{
+			return file.getName();
+		}
+		else
+		{
+			return "Untitled";
+		}
+	}
+
 	public void switchToParsedMode()
 		throws Exception
 	{
@@ -571,7 +555,6 @@ public class XmlModel
 		if (modified == false)
 		{
 			modified = true;
-			saveAction.setEnabled(true);
 			notify(FILE_CHANGED);
 		}
 	}
@@ -598,7 +581,7 @@ public class XmlModel
 		if (registeredViewsList.size() == 1)
 		{
 			// this was the last view on the model
-			if (!askToSave()) return false;
+			if (!askToSave(view.getParentForDialogs())) return false;
 
 			// last view was closed, notified XmlModelListeners of this fact
 			notify(LAST_VIEW_CLOSED);
@@ -637,23 +620,23 @@ public class XmlModel
 		}
 	}
 
-	public void save()
+	public void save(Component parent)
 		throws Exception
 	{
 		if (file == null)
 		{
-			saveAs();
+			saveAs(parent);
 		}
 		if (file != null)
 			store();
 	}
 
-	public void saveAs()
+	public void saveAs(Component parent)
 		throws Exception
 	{
 		// ask for a filename
 		JFileChooser fileChooser = new JFileChooser();
-		switch (fileChooser.showSaveDialog(null))
+		switch (fileChooser.showSaveDialog(parent))
 		{
 			case JFileChooser.APPROVE_OPTION:
 				file = fileChooser.getSelectedFile();
@@ -666,14 +649,14 @@ public class XmlModel
 		if (file != null)
 		{
 			notify(FILENAME_CHANGED);
-			save();
+			save(parent);
 		}
 	}
 
-	public boolean closeAllViews()
+	public boolean closeAllViews(Component parent)
 		throws Exception
 	{
-		if (!askToSave()) return false;
+		if (!askToSave(parent)) return false;
 
 		Iterator registeredViewsIt = registeredViewsList.iterator();
 
@@ -693,7 +676,7 @@ public class XmlModel
 	/**
 	 * @return false if the user pressed cancel
 	 */
-	public boolean askToSave()
+	public boolean askToSave(Component parent)
 		throws Exception
 	{
 		if (modified)
@@ -701,11 +684,11 @@ public class XmlModel
 			String message = "This file is not yet saved. Save it before closing?";
 			if (file != null)
 				message = "The file " + file.getAbsolutePath() + " was modified. Save it?";
-			switch (JOptionPane.showConfirmDialog(null, message, "Pollo message",
+			switch (JOptionPane.showConfirmDialog(parent, message, "Pollo message",
 						JOptionPane.YES_NO_CANCEL_OPTION))
 			{
 				case JOptionPane.YES_OPTION:
-					save();
+					save(parent);
 					break;
 				case JOptionPane.NO_OPTION:
 					break;
@@ -717,86 +700,9 @@ public class XmlModel
 	}
 
 
-	public Action getSaveAction()
-	{
-		return saveAction;
-	}
-
-	public Action getSaveAsAction()
-	{
-		return saveAsAction;
-	}
-
-	public Action getCloseAction()
-	{
-		return closeAction;
-	}
-
 	public boolean isModified()
 	{
 		return modified;
-	}
-
-	public class SaveAction extends AbstractAction
-	{
-		public SaveAction()
-		{
-			super("Save");
-		}
-
-		public void actionPerformed(ActionEvent event)
-		{
-			try
-			{
-				save();
-			}
-			catch (Exception e)
-			{
-				ErrorDialog errorDialog = new ErrorDialog(null, "Error saving document.", e);
-				errorDialog.show();
-			}
-		}
-	}
-
-	public class SaveAsAction extends AbstractAction
-	{
-		public SaveAsAction()
-		{
-			super("Save As...");
-		}
-
-		public void actionPerformed(ActionEvent event)
-		{
-			try
-			{
-				saveAs();
-			}
-			catch (Exception e)
-			{
-				ErrorDialog errorDialog = new ErrorDialog(null, "Error saving document.", e);
-				errorDialog.show();
-			}
-		}
-	}
-
-	public class CloseAction extends AbstractAction
-	{
-		public CloseAction()
-		{
-			super("Close");
-		}
-
-		public void actionPerformed(ActionEvent event)
-		{
-			try
-			{
-				closeAllViews();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
 	}
 
 	public class TextDocumentModifiedListener implements DocumentListener

@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor.schema;
 
 import org.outerj.pollo.xmleditor.exception.PolloException;
+
 import java.util.HashMap;
 
 /**

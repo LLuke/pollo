@@ -20,10 +20,15 @@ public class PolloException extends Exception
 		this.nestedException = nestedException;
 	}
 
+	public Exception getNestedException()
+	{
+		return nestedException;
+	}
+
 	public String toString()
 	{
 		if (nestedException != null)
-			return nestedException + " Nested exception is: " + nestedException;
+			return super.toString() + ", nested exception is: " + nestedException;
 		else
 			return super.toString();
 	}

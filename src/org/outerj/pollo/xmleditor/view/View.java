@@ -1,11 +1,12 @@
 package org.outerj.pollo.xmleditor.view;
 
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
 import org.w3c.dom.Node;
 import org.w3c.dom.events.EventListener;
+
+import java.awt.*;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DropTargetDragEvent;
+import java.awt.event.MouseEvent;
 
 /**
  * A view contains the visual represantation of an element from

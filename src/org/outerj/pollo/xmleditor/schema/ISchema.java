@@ -1,7 +1,9 @@
 package org.outerj.pollo.xmleditor.schema;
 
-import java.util.Collection;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.util.Collection;
 
 /**
  * Schema implementations should implement this interface.
@@ -20,4 +22,7 @@ public interface ISchema
 	public String [] getPossibleAttributeValues(Element element, String namespaceURI, String localName);
 
 	public Collection getAllowedSubElements(Element element);
+
+	public Collection validate(Document document)
+		throws ValidationNotSupportedException, Exception;
 }

@@ -1,28 +1,20 @@
 package org.outerj.pollo.xmleditor.chardataeditor;
 
-import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.SelectionListener;
-import org.outerj.pollo.xmleditor.util.FocusBorder;
 import org.outerj.pollo.DomConnected;
-
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import java.awt.Font;
-import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-import org.w3c.dom.Node;
+import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.outerj.pollo.xmleditor.util.FocusBorder;
 import org.w3c.dom.CharacterData;
+import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
-import org.w3c.dom.events.Event;
-import org.w3c.dom.events.MutationEvent;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class CharDataPanel extends JPanel implements SelectionListener, EventListener, DomConnected
 {

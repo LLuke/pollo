@@ -1,11 +1,9 @@
 package org.outerj.pollo.xmleditor.view;
 
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.w3c.dom.Comment;
 
 import java.awt.*;
-import java.awt.font.*;
-
-import org.w3c.dom.Comment;
 
 
 /**

@@ -1,10 +1,11 @@
 package org.outerj.pollo.xmleditor.schema;
 
-import java.util.Collections;
-import java.util.Collection;
-import java.util.HashMap;
-
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * This is a generic implementation of the ISchema interface.
@@ -37,5 +38,11 @@ public class GenericSchema implements ISchema
 	public Collection getAllowedSubElements(Element element)
 	{
 		return Collections.EMPTY_LIST;
+	}
+
+	public Collection validate(Document doc)
+		throws ValidationNotSupportedException
+	{
+		throw new ValidationNotSupportedException();
 	}
 }

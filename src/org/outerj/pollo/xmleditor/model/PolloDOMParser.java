@@ -17,6 +17,7 @@ public class PolloDOMParser extends DOMParser
 		throws Exception
 	{
 		super.setIncludeIgnorableWhitespace(false);
+		super.setCreateEntityReferenceNodes(false);
 	}
 
 

@@ -1,7 +1,6 @@
 package org.outerj.pollo.xmleditor.displayspec;
 
-import java.awt.Font;
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Interface that must be implemented by display specifications.

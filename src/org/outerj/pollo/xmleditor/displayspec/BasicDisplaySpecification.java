@@ -1,25 +1,21 @@
 package org.outerj.pollo.xmleditor.displayspec;
 
-import org.outerj.pollo.xmleditor.util.NodeMap;
+import org.outerj.pollo.util.URLFactory;
 import org.outerj.pollo.xmleditor.ElementColorIcon;
 import org.outerj.pollo.xmleditor.exception.PolloException;
+import org.outerj.pollo.xmleditor.util.NodeMap;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.NamespaceSupport;
 
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.StringTokenizer;
-
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.Icon;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.awt.*;
 import java.io.InputStream;
-
-import javax.xml.parsers.*;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 /**
  * An implementation of the IDisplaySpecification interface.
@@ -64,7 +60,7 @@ public class BasicDisplaySpecification implements IDisplaySpecification
 		SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 		parserFactory.setNamespaceAware(true);
 		SAXParser parser = parserFactory.newSAXParser();
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream(source);
+		InputStream is = URLFactory.createUrl(source).openStream();
 		try
 		{
 			parser.parse(new InputSource(is), displaySpecHandler);

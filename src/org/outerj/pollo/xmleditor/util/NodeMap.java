@@ -21,7 +21,7 @@ public class NodeMap extends HashMap
 		return get(getHashString(namespaceURI, localName));
 	}
 
-	protected String getHashString(String uri, String localName)
+	private final String getHashString(String uri, String localName)
 	{
 		if (uri == null) uri = "";
 		StringBuffer fqn = new StringBuffer();

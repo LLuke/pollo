@@ -1,25 +1,20 @@
 package org.outerj.pollo.xmleditor.action;
 
-import org.outerj.pollo.dialog.ErrorDialog;
-import org.outerj.pollo.xmleditor.model.Undo;
-import org.outerj.pollo.xmleditor.XmlEditor;
-import org.outerj.pollo.xmleditor.SelectionListener;
-
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.io.StringWriter;
-
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.Document;
-import org.w3c.dom.Comment;
-
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.outerj.pollo.dialog.ErrorDialog;
+import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.model.Undo;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.StringWriter;
 
 /**
  * A Swing Action to comment out the selected node. This serializes the selected

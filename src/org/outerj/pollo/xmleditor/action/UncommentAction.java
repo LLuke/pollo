@@ -1,29 +1,20 @@
 package org.outerj.pollo.xmleditor.action;
 
-import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.dialog.ErrorDialog;
+import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.model.PolloDOMParser;
 import org.outerj.pollo.xmleditor.model.Undo;
-import org.outerj.pollo.xmleditor.SelectionListener;
+import org.w3c.dom.*;
+import org.xml.sax.InputSource;
 
-import java.awt.Frame;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Iterator;
-
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Document;
-import org.w3c.dom.Comment;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+import java.util.Map.Entry;
 
 public class UncommentAction extends AbstractAction implements SelectionListener
 {

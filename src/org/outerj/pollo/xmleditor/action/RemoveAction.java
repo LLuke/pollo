@@ -1,14 +1,12 @@
 package org.outerj.pollo.xmleditor.action;
 
-import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.SelectionListener;
+import org.outerj.pollo.xmleditor.XmlEditor;
 import org.outerj.pollo.xmleditor.view.View;
-
-import javax.swing.AbstractAction;
-import java.awt.event.ActionEvent;
-
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 public class RemoveAction extends AbstractAction implements SelectionListener
 {

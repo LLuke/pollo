@@ -1,25 +1,18 @@
 package org.outerj.pollo.xmleditor.model;
 
-import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.util.DomUtils;
 import org.outerj.pollo.DomConnected;
-
-import java.util.Stack;
-import java.util.EmptyStackException;
-import java.util.ArrayList;
-
-import javax.swing.AbstractAction;
-import java.awt.event.ActionEvent;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Node;
-import org.w3c.dom.CharacterData;
-import org.w3c.dom.ProcessingInstruction;
+import org.outerj.pollo.xmleditor.util.DomUtils;
+import org.w3c.dom.*;
+import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.MutationEvent;
-import org.w3c.dom.events.Event;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.Stack;
 
 
 /**

@@ -1,6 +1,7 @@
 package org.outerj.pollo.xmleditor.displayspec;
 
 import org.outerj.pollo.xmleditor.exception.PolloException;
+
 import java.util.HashMap;
 
 /**

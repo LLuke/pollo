@@ -1,25 +1,22 @@
 package org.outerj.pollo.xmleditor.schema;
 
+import org.jaxen.SimpleNamespaceContext;
+import org.outerj.pollo.util.URLFactory;
+import org.outerj.pollo.xmleditor.exception.PolloException;
 import org.outerj.pollo.xmleditor.util.NodeMap;
 import org.outerj.pollo.xmleditor.schema.ElementSchema.SubElement;
-import org.outerj.pollo.xmleditor.exception.PolloException;
-
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.NamespaceSupport;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.StringTokenizer;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
-
-import javax.xml.parsers.*;
-
-import org.jaxen.SimpleNamespaceContext;
+import java.util.*;
 
 
 /**
@@ -115,7 +112,7 @@ public class BasicSchema implements ISchema
 		SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 		parserFactory.setNamespaceAware(true);
 		SAXParser parser = parserFactory.newSAXParser();
-		InputStream is = this.getClass().getClassLoader().getResourceAsStream(source);
+		InputStream is = URLFactory.createUrl(source).openStream();
 		try
 		{
 			parser.parse(new InputSource(is), schemaHandler);
@@ -138,21 +135,7 @@ public class BasicSchema implements ISchema
 		if (elementSchema == null)
 			return null;
 		else
-		{
-			Iterator attrSchemaIt = elementSchema.attributes.iterator();
-			while (attrSchemaIt.hasNext())
-			{
-				AttributeSchema attrSchema = (AttributeSchema)attrSchemaIt.next();
-				if (((attrSchema.namespaceURI == null && namespaceURI == null)
-							|| (attrSchema.namespaceURI != null
-								&& attrSchema.namespaceURI.equals(namespaceURI)))
-						&& attrSchema.localName.equals(localName))
-				{
-					return attrSchema;
-				}
-			}
-		}
-		return null;
+			return elementSchema.getAttributeSchema(namespaceURI, localName);
 	}
 
 	protected ElementSchema getElementSchema(String namespaceURI, String localName)
@@ -160,6 +143,11 @@ public class BasicSchema implements ISchema
 		return (ElementSchema)elementSchemas.get(namespaceURI, localName);
 	}
 
+	public Collection validate(Document document)
+			throws ValidationNotSupportedException
+	{
+		throw new ValidationNotSupportedException();
+	}
 
 
 	/*
@@ -208,10 +196,8 @@ public class BasicSchema implements ISchema
 				inAttribute = true;
 				attributeName = atts.getValue("name");
 				nameParts = nsSupport.processName(attributeName, nameParts, false);
-				currentAttributeSchema = new AttributeSchema(namespaceContext);
-				currentAttributeSchema.namespaceURI = nameParts[0].equals("") ? null : nameParts[0];
-				currentAttributeSchema.localName = nameParts[1];
-				currentAttributeSchema.xpathExpr = atts.getValue("readvaluesfrom");
+				currentAttributeSchema = new AttributeSchema(nameParts[0].equals("") ? null : nameParts[0], nameParts[1],
+						atts.getValue("readvaluesfrom"), namespaceContext);
 				if (currentAttributeSchema.xpathExpr == null)
 				{
 					String choosefrom = atts.getValue("choosefrom");
@@ -237,10 +223,8 @@ public class BasicSchema implements ISchema
 				int i = 0;
 				while (tokenizer.hasMoreTokens())
 				{
-					SubElement subelement = currentElementSchema.createSubElement();
 					nameParts = nsSupport.processName(tokenizer.nextToken(), nameParts, false);
-					subelement.namespaceURI = nameParts[0];
-					subelement.localName    = nameParts[1];
+					SubElement subelement = currentElementSchema.createSubElement(nameParts[0], nameParts[1]);
 					currentElementSchema.subelements.put(subelement.namespaceURI, subelement.localName, subelement);
 					i++;
 				}

@@ -1,43 +1,27 @@
 package org.outerj.pollo.xmleditor;
 
+import org.outerj.pollo.DomConnected;
 import org.outerj.pollo.xmleditor.displayspec.ElementSpec;
 import org.outerj.pollo.xmleditor.displayspec.IDisplaySpecification;
 import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.schema.ElementSchema;
-import org.outerj.pollo.xmleditor.util.QuickSort;
+import org.outerj.pollo.xmleditor.schema.ISchema;
 import org.outerj.pollo.xmleditor.util.DomUtils;
 import org.outerj.pollo.xmleditor.util.FocusBorder;
-import org.outerj.pollo.DomConnected;
+import org.outerj.pollo.xmleditor.util.QuickSort;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.ListCellRenderer;
-import javax.swing.JScrollPane;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JOptionPane;
-import javax.swing.AbstractAction;
-import javax.swing.InputMap;
-import javax.swing.ActionMap;
-import javax.swing.KeyStroke;
-
-import java.awt.Component;
-import java.awt.Font;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.KeyEvent;
-import java.awt.Dimension;
-import java.awt.BorderLayout;
-
-import java.util.Iterator;
 import java.util.Collection;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import java.util.Iterator;
 
 public class NodeInsertionPanel extends JPanel implements DomConnected
 {
@@ -59,6 +43,7 @@ public class NodeInsertionPanel extends JPanel implements DomConnected
 		XmlEditor xmlEditor = xmlEditorPanel.getXmlEditor();
 		this.displaySpec = xmlEditor.getDisplaySpec();
 
+		setBorder(new EmptyBorder(0, 0, 0, 0));
 		setLayout(new BorderLayout());
 		Box box = new Box(BoxLayout.Y_AXIS);
 		Dimension dimension;

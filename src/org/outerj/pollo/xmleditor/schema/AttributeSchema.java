@@ -1,16 +1,14 @@
 package org.outerj.pollo.xmleditor.schema;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import java.util.List;
-import java.util.Iterator;
-
-import org.jaxen.dom.XPath;
 import org.jaxen.NamespaceContext;
 import org.jaxen.dom.DocumentNavigator;
+import org.jaxen.dom.XPath;
 import org.jaxen.function.StringFunction;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class represents the definition of an attribute
@@ -18,17 +16,20 @@ import org.jaxen.function.StringFunction;
  *
  * @author Bruno Dumon
  */
-public class AttributeSchema
+public final class AttributeSchema
 {
 	public NamespaceContext namespaceContext;
-	public String namespaceURI;
-	public String localName;
-	public String xpathExpr;
+	public final String namespaceURI;
+	public final String localName;
+	public final String xpathExpr;
 	public String [] values;
 
-	public AttributeSchema(NamespaceContext namespaceContext)
+	public AttributeSchema(String namespaceURI, String localName, String xpathExpr, NamespaceContext namespaceContext)
 	{
 		this.namespaceContext = namespaceContext;
+		this.localName = localName;
+		this.namespaceURI = namespaceURI;
+		this.xpathExpr = xpathExpr;
 	}
 
 	public String [] getPossibleValues(Element element)
