@@ -65,11 +65,13 @@ public class MsvSchema implements ISchema
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             saxParserFactory.setNamespaceAware(true);
 
+            boolean trackOptionalAttributes = false;
             InputSource inputSource = new InputSource(URLFactory.createUrl(source).toExternalForm());
             String type = (String)initParams.get("type");
             if (type != null && type.equals("dtd"))
             {
                 grammar =  DTDReader.parse(inputSource, new PolloMsvController());
+                trackOptionalAttributes = true;
             }
             else
             {
@@ -82,7 +84,7 @@ public class MsvSchema implements ISchema
 
             elementSchemas = new NodeMap();
 
-            MsvGrammarWalker walker = new MsvGrammarWalker();
+            MsvGrammarWalker walker = new MsvGrammarWalker(trackOptionalAttributes);
             grammar.getTopLevel().visit(walker);
 
         }
@@ -102,6 +104,17 @@ public class MsvSchema implements ISchema
         final Set visitedSubNodes = new HashSet();
         ElementSchema elementSchema; // the current ElementSchema being created
         final SubNodeWalker subNodeWalker = new SubNodeWalker();
+        final boolean trackOptionalAttributes;
+
+        /**
+         * @param trackOptionalAttributes in general, should only be used for DTD's
+         * because for other schema languages the content model for attributes can be more complex,
+         * or the same element name may be reused with different required attributes on it.
+         */
+        public MsvGrammarWalker(boolean trackOptionalAttributes)
+        {
+            this.trackOptionalAttributes = trackOptionalAttributes;
+        }
 
         public void onElement(ElementExp exp)
         {
@@ -144,6 +157,7 @@ public class MsvSchema implements ISchema
             protected AttributeSchema attrSchema;
             protected final HashSet attrValues = new HashSet();
             protected final AttributeWalker attrWalker = new AttributeWalker();
+            protected boolean nextAttributeOptional = false;
 
             public void onElement(ElementExp subExp)
             {
@@ -178,6 +192,12 @@ public class MsvSchema implements ISchema
                     {
                         attrSchema = new AttributeSchema(names[0], names[1], null, null);
 
+                        if (trackOptionalAttributes)
+                        {
+                            attrSchema.required = !nextAttributeOptional;
+                            nextAttributeOptional = false;
+                        }
+
                         // search possible values for this attribute by using the AttributeWalker
                         attrValues.clear();
                         attrExp.exp.visit(attrWalker);
@@ -186,6 +206,32 @@ public class MsvSchema implements ISchema
                         elementSchema.attributes.add(attrSchema);
                     }
                 }
+            }
+
+            public void onChoice(ChoiceExp choiceExp)
+            {
+                if (trackOptionalAttributes)
+                {
+                    if (choiceExp.exp1 == Expression.epsilon)
+                    {
+                        if (choiceExp.exp2 instanceof AttributeExp)
+                        {
+                            nextAttributeOptional = true;
+                            choiceExp.exp2.visit(this);
+                            return;
+                        }
+                    }
+                    else if (choiceExp.exp2 == Expression.epsilon)
+                    {
+                        if (choiceExp.exp1 instanceof AttributeExp)
+                        {
+                            nextAttributeOptional = true;
+                            choiceExp.exp1.visit(this);
+                            return;
+                        }
+                    }
+                }
+                super.onChoice(choiceExp);
             }
 
             public void onValue(ValueExp exp)
