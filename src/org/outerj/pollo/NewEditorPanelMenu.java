@@ -1,6 +1,7 @@
 package org.outerj.pollo;
 
 import org.outerj.pollo.util.ResourceManager;
+import org.outerj.pollo.util.Utilities;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 
 import javax.swing.*;
@@ -29,6 +30,7 @@ public class NewEditorPanelMenu extends JMenu implements MenuListener
 
     public void menuSelected(MenuEvent e)
     {
+        Utilities.destructMenus(getMenuComponents());
         removeAll();
         // create the items in the menu, one for each XmlModel
         List openFiles = Pollo.getInstance().getOpenFiles();
@@ -36,7 +38,7 @@ public class NewEditorPanelMenu extends JMenu implements MenuListener
         while (it.hasNext())
         {
             XmlModel xmlModel = (XmlModel)it.next();
-            add(new NewEditorPanelAction(xmlModel));
+            add(new JMenuItem(new NewEditorPanelAction(xmlModel)));
         }
     }
 

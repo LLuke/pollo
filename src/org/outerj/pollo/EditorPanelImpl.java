@@ -397,36 +397,6 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         return false;
     }
 
-    /**
-     * Removes actions from JMenuItems. This is necessary because JMenuItem's
-     * add an event listener to the action, and if the action lives longer
-     * then this EditorPanelImpl, we would have a memory leak.
-     */
-    private void destructMenus(Component [] components)
-    {
-        for (int i = 0; i < components.length; i++)
-        {
-            if (components[i] instanceof JMenu)
-            {
-                destructMenus(((JMenu)components[i]).getMenuComponents());
-            }
-            else if (components[i] instanceof JPopupMenu)
-            {
-                destructMenus(((JPopupMenu)components[i]).getComponents());
-            }
-            else if (components[i] instanceof JMenuItem)
-            {
-                JMenuItem item = (JMenuItem)components[i];
-                item.setAction(null);
-            }
-            else if (components[i] instanceof JButton)
-            {
-                JButton item = (JButton)components[i];
-                item.setAction(null);
-            }
-        }
-    }
-
     public void addListener(EditorPanelListener listener)
     {
         listeners.add(listener);
@@ -529,10 +499,10 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         // disconnect actions from menu, this is important for action instances
         // that are shared between all EditorPanel's, because Swing attaches
         // event listener to those actions, which would cause memory leaks
-        destructMenus(domModeMenuBar.getComponents());
-        destructMenus(textModeMenuBar.getComponents());
-        destructMenus(domModeToolBar.getComponents());
-        destructMenus(textModeToolBar.getComponents());
+        Utilities.destructMenus(domModeMenuBar.getComponents());
+        Utilities.destructMenus(textModeMenuBar.getComponents());
+        Utilities.destructMenus(domModeToolBar.getComponents());
+        Utilities.destructMenus(textModeToolBar.getComponents());
 
         // the texteditor should remove its event listener from the document, do
         // this by setting a new document on it.
@@ -573,7 +543,7 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
 
         public void menuSelected(MenuEvent e)
         {
-            destructMenus(getMenuComponents());
+            Utilities.destructMenus(getMenuComponents());
             removeAll();
             actionPlugin.addActionsToPluginMenu(this, xmlEditorPanel.getXmlEditor().getSelectedNode());
             if (getMenuComponentCount() == 0)
