@@ -332,7 +332,7 @@ public abstract class CharacterDataBlockView extends BlockView
      */
     protected int getFooter()
     {
-        return 3;
+        return 0;
     }
 
     /**
