@@ -36,14 +36,18 @@ public class ValidationErrorsPanel extends JPanel implements ActionListener
 		box.add(title);
 		box.add(Box.createHorizontalGlue());
 
-		JButton revalidateButton = new JButton("Revalidate");
+		JButton revalidateButton = new JButton(IconManager.getIcon("org/outerj/pollo/resource/stock_refresh-16.png"));
+		revalidateButton.setToolTipText("Revalidate document");
 		revalidateButton.setActionCommand("revalidate");
 		revalidateButton.addActionListener(this);
+		revalidateButton.setBorderPainted(false);
 		box.add(revalidateButton);
 
-		JButton hideButton = new JButton("Hide panel");
+		JButton hideButton = new JButton(IconManager.getIcon("org/outerj/pollo/resource/stock_cancel.png"));
+		hideButton.setToolTipText("Hide validation errors panel");
 		hideButton.setActionCommand("hide-panel");
 		hideButton.addActionListener(this);
+		hideButton.setBorderPainted(false);
 		box.add(hideButton);
 
 
