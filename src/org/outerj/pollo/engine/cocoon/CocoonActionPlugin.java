@@ -9,8 +9,10 @@ import org.outerj.pollo.xmleditor.exception.PolloException;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 import org.outerj.pollo.xmleditor.XmlEditorPanel;
 import org.outerj.pollo.xmleditor.XmlEditor;
+import org.outerj.pollo.xmleditor.view.View;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Attr;
 import org.jaxen.dom.XPath;
 import org.jaxen.SimpleNamespaceContext;
 
@@ -26,6 +28,9 @@ public class CocoonActionPlugin implements IActionPlugin
 	protected PolloFrame polloFrame;
 	protected XmlModel xmlModel;
 	protected XmlEditor xmlEditor;
+	protected SimpleNamespaceContext namespaceContext;
+	protected GotoMatcherAction gotoMatcherAction;
+
 
 	/**
 	 * This map contains mappings betweeen sitemap element names and the
@@ -50,6 +55,9 @@ public class CocoonActionPlugin implements IActionPlugin
 	{
 		this.editorPanel = editorPanel;
 		this.polloFrame = polloFrame;
+
+		namespaceContext = new SimpleNamespaceContext();
+		namespaceContext.addNamespace("map", SITEMAP_NS);
 	}
 
 	private final void lateInitialisation()
@@ -69,11 +77,17 @@ public class CocoonActionPlugin implements IActionPlugin
 			// the EditorPanel
 			xmlEditor = ((EditorPanelImpl)editorPanel).getXmlEditorPanel().getXmlEditor();
 		}
+		if (this.gotoMatcherAction == null)
+		{
+			gotoMatcherAction = new GotoMatcherAction();
+		}
 	}
 
 	public void addActionsToPluginMenu(JMenu menu, Node selectedNode)
 	{
 		lateInitialisation();
+
+		menu.add(gotoMatcherAction);
 
 		if (selectedNode != null && selectedNode instanceof Element)
 		{
@@ -82,11 +96,11 @@ public class CocoonActionPlugin implements IActionPlugin
 			{
 				menu.add(new EditSourceAction("Edit generator source", element, xmlModel, polloFrame));
 			}
-/*
+
 			if (SITEMAP_NS.equals(element.getNamespaceURI()) && sitemapComponentMap.containsKey(element.getLocalName()))
 			{
 				menu.add(new GotoComponentDeclarationAction(element));
-			}*/
+			}
 		}
 	}
 
@@ -128,7 +142,7 @@ public class CocoonActionPlugin implements IActionPlugin
 		}
 	}
 
-	/*
+
     public class GotoComponentDeclarationAction extends AbstractAction
     {
         Element element;
@@ -139,12 +153,14 @@ public class CocoonActionPlugin implements IActionPlugin
 			this.element = element;
 		}
 
-        public void actionPerformed(ActionEvent e)
+        public void actionPerformed(ActionEvent evt)
         {
 			try
 			{
 				String componentName = element.getLocalName();
 				String componentType = element.getAttribute("type");
+				if (componentType != null && componentType.equals(""))
+					componentType = null;
 				String componentDeclartionName = (String)sitemapComponentMap.get(componentName);
 
 
@@ -153,11 +169,33 @@ public class CocoonActionPlugin implements IActionPlugin
 					// find out what the default type is
 					String typeXPathString = "/map:sitemap/map:components/map:" + componentDeclartionName + "s/@default";
 					XPath xpath = new XPath(typeXPathString);
-					SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
-					namespaceContext.addElementNamespaces(xpath.getNavigator(), xmlModel.getDocument().getDocumentElement());
 					xpath.setNamespaceContext(namespaceContext);
-					Object o = xpath.selectSingleNode(xmlModel.getDocument().getDocumentElement());
-					System.out.println("o is: " + o);
+					Attr attr = (Attr)xpath.selectSingleNode(xmlModel.getDocument().getDocumentElement());
+					if (attr != null)
+						componentType = attr.getValue();
+					else
+					{
+						JOptionPane.showMessageDialog(polloFrame, "This element has no type attribute and there is no default " + componentDeclartionName + " defined.");
+						return;
+					}
+				}
+
+				String declarationXPathString = "/map:sitemap/map:components/map:" + componentDeclartionName + "s/map:" + componentDeclartionName + "[@name='" + componentType + "']";
+				XPath xpath = new XPath(declarationXPathString);
+				xpath.setNamespaceContext(namespaceContext);
+				Element foundElement = (Element)xpath.selectSingleNode(xmlModel.getDocument().getDocumentElement());
+				if (foundElement != null)
+				{
+					View view = (View)xmlEditor.getRootView().findNode(foundElement);
+					view.assureVisibility(false);
+					int startV = view.getVerticalPosition();
+					int startH = view.getHorizontalPosition();
+					view.markAsSelected(startH, startV);
+					xmlEditor.scrollAlignTop(startV, view.getHeight());
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(polloFrame, "No component declaration found for this type of " + componentDeclartionName);
 				}
 			}
 			catch (Exception e)
@@ -166,5 +204,29 @@ public class CocoonActionPlugin implements IActionPlugin
 			}
         }
     }
-     */
+
+	public class GotoMatcherAction extends AbstractAction
+	{
+		public GoToMatcherDialog dialog;
+
+		public GotoMatcherAction()
+		{
+			super("Goto matcher...");
+			dialog = new GoToMatcherDialog(polloFrame, xmlModel);
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			Element selected = dialog.showIt();
+			if (selected != null)
+			{
+				View view = (View)xmlEditor.getRootView().findNode(selected);
+				view.assureVisibility(false);
+				int startV = view.getVerticalPosition();
+				int startH = view.getHorizontalPosition();
+				view.markAsSelected(startH, startV);
+				xmlEditor.scrollAlignTop(startV, view.getHeight());
+			}
+		}
+	}
 }

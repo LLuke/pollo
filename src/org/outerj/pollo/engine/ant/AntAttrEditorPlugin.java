@@ -1,87 +1,45 @@
 package org.outerj.pollo.engine.ant;
 
-import org.outerj.pollo.xmleditor.schema.ISchema;
-import org.outerj.pollo.xmleditor.model.XmlModel;
-import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
 import org.outerj.pollo.util.CustomTableCellEditor;
-import org.outerj.pollo.util.CustomTableCellEditor.Valuable;
-import org.outerj.pollo.util.TextFieldValuable;
-import org.outerj.pollo.util.ComboBoxValuable;
-
-import javax.swing.table.TableCellEditor;
-import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JTextField;
-import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.JTabbedPane;
-import javax.swing.JScrollPane;
-import javax.swing.JDialog;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.AbstractTableModel;
-import java.awt.Frame;
-import java.util.HashMap;
-import java.util.Vector;
-import java.util.ArrayList;
-import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
+import org.outerj.pollo.xmleditor.model.XmlModel;
+import org.outerj.pollo.xmleditor.plugin.AttributeEditorSupport;
+import org.outerj.pollo.xmleditor.plugin.IAttributeEditorPlugin;
+import org.outerj.pollo.xmleditor.schema.ISchema;
+import org.outerj.pollo.PolloFrame;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class AntAttrEditorPlugin implements IAttributeEditorPlugin
 {
-	XmlModel xmlModel;
-	ISchema schema;
+	protected XmlModel xmlModel;
+	protected PolloFrame polloFrame;
+	protected PropertiesDialog propDialog;
+	protected AttributeEditorSupport editorSupport;
+	protected JButton propButton;
+	protected CustomTableCellEditor.Valuable currentValuable;
 
-	TextFieldValuable textFieldValuable = null;
-	ComboBoxValuable comboBoxValuable = null;
-
-	TableCellEditor textFieldEditor = null;
-	TableCellEditor comboBoxEditor = null;
-
-	PropertiesDialog propDialog;
-
-	public void init(HashMap initParams, XmlModel xmlModel, ISchema schema)
+	public void init(HashMap initParams, XmlModel xmlModel, ISchema schema, PolloFrame polloFrame)
 	{
 		this.xmlModel = xmlModel;
-		this.schema = schema;
-		this.propDialog = new PropertiesDialog(null);
+		this.polloFrame = polloFrame;
+		this.propDialog = new PropertiesDialog(polloFrame);
+		this.editorSupport = new AttributeEditorSupport(schema);
 
 		// create the textfield editor
-		textFieldValuable = new TextFieldValuable();
-		Box box = new Box(BoxLayout.X_AXIS);
-		box.add(textFieldValuable);
-		JButton propButton = new JButton("prop");
-		propButton.setToolTipText("Select a property");
-		propButton.addActionListener(new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						String prop = propDialog.askProperty();
-						if (prop != null)
-						{
-							textFieldValuable.insertString("${" + prop + "}");
-						}
-					}
-				});
-		box.add(propButton);
-		textFieldEditor = new CustomTableCellEditor(box, textFieldValuable);
-
-		// create the combobox editor
-		comboBoxValuable = new ComboBoxValuable();
-		box = new Box(BoxLayout.X_AXIS);
-		box.add(comboBoxValuable);
 		propButton = new JButton("prop");
 		propButton.setToolTipText("Select a property");
+		propButton.setRequestFocusEnabled(false);
+		propButton.setMargin(new Insets(0, 0, 0, 0));
 		propButton.addActionListener(new ActionListener()
 				{
 					public void actionPerformed(ActionEvent e)
@@ -89,26 +47,18 @@ public class AntAttrEditorPlugin implements IAttributeEditorPlugin
 						String prop = propDialog.askProperty();
 						if (prop != null)
 						{
-							comboBoxValuable.insertString("${" + prop + "}");
+							currentValuable.insertString("${" + prop + "}");
 						}
 					}
 				});
-		box.add(propButton);
-		comboBoxEditor = new CustomTableCellEditor(box, comboBoxValuable);
 	}
 
 	public TableCellEditor getAttributeEditor(Element element, String namespaceURI, String localName)
 	{
-		String [] values = schema.getPossibleAttributeValues(element, namespaceURI, localName);
-		if (values != null)
-		{
-			comboBoxValuable.setModel(new DefaultComboBoxModel(values));
-			return comboBoxEditor;
-		}
-		else
-		{
-			return textFieldEditor;
-		}
+		editorSupport.reset(element, namespaceURI, localName);
+		editorSupport.addComponent(propButton);
+		currentValuable = editorSupport.getValuable();
+		return editorSupport.getEditor();
 	}
 
 
@@ -244,6 +194,7 @@ public class AntAttrEditorPlugin implements IAttributeEditorPlugin
 			populateAntProperties();
 			populateJavaProperties();
 
+			setLocationRelativeTo(getParent());
 			show();
 
 			if (!ok)

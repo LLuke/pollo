@@ -216,7 +216,8 @@ public class PolloAntStructure extends Task {
 
         Vector v = new Vector();
         if (ih.supportsCharacters()) {
-            v.addElement("#PCDATA");
+			sb.append(lSep).append("  <allowedsubtexts texts='#any'/>");
+            //v.addElement("#PCDATA");
         }
 
         Enumeration enum = ih.getNestedElements();
