@@ -30,6 +30,11 @@ public class ExtendedComboBoxTableCellEditor extends AbstractCellEditor implemen
 		comboBox.setModel(comboBoxModel);
 	}
 
+	public JTextField getTextField()
+	{
+		return comboBox.textField;
+	}
+
 	public Component getTableCellEditorComponent(JTable table, Object value,
 												 boolean isSelected,
 												 int row, int column)

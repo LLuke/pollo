@@ -20,6 +20,11 @@ public class ExtendedTextFieldTableCellEditor extends AbstractCellEditor impleme
 		panel.add(extraStuff);
 	}
 
+	public JTextField getTextField()
+	{
+		return textField;
+	}
+
 	public Valuable getValuable()
 	{
 		return this;
