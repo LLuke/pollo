@@ -150,6 +150,15 @@ public class PolloFrame extends JFrame implements EditorPanelListener, ChangeLis
         editorPanelTabs.remove(editorPanel);
     }
 
+    public java.util.List getEditorPanels()
+    {
+        Component[] components = editorPanelTabs.getComponents();
+        ArrayList editorPanels = new ArrayList();
+        for (int i = 0; i < components.length; i++)
+            editorPanels.add(components[i]);
+        return editorPanels;
+    }
+
     public Action getFileOpenAction()
     {
         return fileOpenAction;

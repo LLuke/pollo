@@ -276,6 +276,14 @@ public class Pollo implements XmlModelListener
         return configuration;
     }
 
+    /**
+     * Returns a list of PolloFrame's
+     */
+    public java.util.List getOpenFrames()
+    {
+        return openFrames;
+    }
+
 
     // -------------------------------------------------------------------
     // factory methods

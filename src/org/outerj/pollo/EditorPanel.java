@@ -24,4 +24,6 @@ public abstract class EditorPanel extends JPanel implements View
      * The title to be shown on the tab for this editor panel.
      */
     public abstract String getTitle();
+
+    public abstract void refreshUserPreferences();
 }

@@ -251,9 +251,9 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
     protected void paintComponent(Graphics g)
     {
         if (antialiasing)
-        {
             ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        }
+        else
+            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
         if (characterDataFontMetrics == null)
         {
@@ -287,6 +287,7 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
                 mainView.layout(this.getWidth() - MARGIN_RIGHT);
                 oldWidth = this.getWidth();
                 setSize(new Dimension(getWidth(), mainView.getHeight()));
+                g.setClip(this.getVisibleRect());
             }
             catch (Exception e)
             {
@@ -348,6 +349,14 @@ public class XmlEditor extends JComponent implements MouseListener, NodeClickedL
         throws InvalidXmlException
     {
         mainView = createView(getRootElement(), null);
+    }
+
+    /**
+     * This will cause the view to be relayouted the next time it is painted.
+     */
+    public void invalidateView()
+    {
+        mainView = null;
     }
 
     /**

@@ -152,11 +152,6 @@ public class UserPreferencesDialog extends JPanel implements ActionListener
             gbc.gridx = 0;
             gbc.gridy = 5;
             add(textAntialiasingCheckBox, gbc);
-
-            gbc.gridx = 0;
-            gbc.gridy = 6;
-            gbc.gridwidth = gbc.REMAINDER;
-            add(new JLabel(resourceManager.getString("settings-only-affect-new-views")), gbc);
         }
 
 

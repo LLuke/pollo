@@ -71,22 +71,12 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         xmlEditorPanel = new XmlEditorPanel(xmlModel, null, idisplayspecification, ischema, iattributeeditorplugin);
         xmlTextEditorPanel = new XmlTextEditorPanel(xmlModel, ischema);
 
-        // configure xmlEditorPanel
-        Pollo pollo = Pollo.getInstance();
-        PolloConfiguration configuration = pollo.getConfiguration();
-        xmlEditorPanel.getXmlEditor().setElementNameFont(new Font("Default", configuration.getElementNameFontStyle(),
-            configuration.getElementNameFontSize()));
-        xmlEditorPanel.getXmlEditor().setAttributeNameFont(new Font("Default", configuration.getAttributeNameFontStyle(),
-            configuration.getAttributeNameFontSize()));
-        xmlEditorPanel.getXmlEditor().setAttributeValueFont(new Font("Default", configuration.getAttributeValueFontStyle(),
-            configuration.getAttributeValueFontSize()));
-        xmlEditorPanel.getXmlEditor().setCharacterDataFont(new Font("Monospaced", 0, configuration.getTextFontSize()));
-        xmlEditorPanel.getXmlEditor().setAntialiasing(configuration.isTextAntialiasing());
-
         // no borders
         xmlTextEditorPanel.setBorder(BorderFactory.createEmptyBorder());
         xmlEditorPanel.setBorder(BorderFactory.createEmptyBorder());
         this.setBorder(new EmptyBorder(3, 3, 3, 3));
+
+        applyUserPreferences();
 
         // determine the start mode
         if (xmlModel.isInTextMode())
@@ -543,6 +533,29 @@ public class EditorPanelImpl extends EditorPanel implements View, XmlModelListen
         // this by setting a new document on it.
         xmlTextEditorPanel.getEditor().setDocument(new SyntaxDocument());
         xmlTextEditorPanel.dispose();
+    }
+
+    public void refreshUserPreferences()
+    {
+        applyUserPreferences();
+        xmlEditorPanel.getXmlEditor().invalidateView();
+        if (xmlEditorPanel.getXmlEditor().isShowing())
+            xmlEditorPanel.getXmlEditor().repaint();
+    }
+
+    protected void applyUserPreferences()
+    {
+        // configure xmlEditorPanel
+        Pollo pollo = Pollo.getInstance();
+        PolloConfiguration configuration = pollo.getConfiguration();
+        xmlEditorPanel.getXmlEditor().setElementNameFont(new Font("Default", configuration.getElementNameFontStyle(),
+            configuration.getElementNameFontSize()));
+        xmlEditorPanel.getXmlEditor().setAttributeNameFont(new Font("Default", configuration.getAttributeNameFontStyle(),
+            configuration.getAttributeNameFontSize()));
+        xmlEditorPanel.getXmlEditor().setAttributeValueFont(new Font("Default", configuration.getAttributeValueFontStyle(),
+            configuration.getAttributeValueFontSize()));
+        xmlEditorPanel.getXmlEditor().setCharacterDataFont(new Font("Monospaced", 0, configuration.getTextFontSize()));
+        xmlEditorPanel.getXmlEditor().setAntialiasing(configuration.isTextAntialiasing());
     }
 
     protected class ActionPluginMenu extends JMenu implements MenuListener
