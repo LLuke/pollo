@@ -64,6 +64,9 @@ public class CheckPanel extends JPanel implements ActionListener
 				xmlModel.getTextDocument().getText(0, xmlModel.getTextDocument().getLength(), seg);
 				SAXParser saxParser = new SAXParser();
 				saxParser.setFeature("http://xml.org/sax/features/namespaces", true);
+                saxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                saxParser.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                saxParser.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 				saxParser.parse(new InputSource(new CharArrayReader(seg.array, seg.offset, seg.count)));
 			}
 			catch (SAXParseException e)
