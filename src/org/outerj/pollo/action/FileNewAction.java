@@ -4,7 +4,6 @@ import org.outerj.pollo.Pollo;
 import org.outerj.pollo.PolloFrame;
 
 import org.outerj.pollo.util.ResourceManager;
-import org.outerj.pollo.xmleditor.IconManager;
 
 import javax.swing.*;
 

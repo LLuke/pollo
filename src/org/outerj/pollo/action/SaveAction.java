@@ -2,7 +2,6 @@ package org.outerj.pollo.action;
 
 import org.outerj.pollo.PolloFrame;
 import org.outerj.pollo.gui.ErrorDialog;
-import org.outerj.pollo.gui.EmptyIcon;
 import org.outerj.pollo.util.ResourceManager;
 import org.outerj.pollo.xmleditor.model.XmlModel;
 

@@ -2,7 +2,6 @@ package org.outerj.pollo.action;
 
 import org.outerj.pollo.Pollo;
 import org.outerj.pollo.PolloFrame;
-import org.outerj.pollo.xmleditor.IconManager;
 import org.outerj.pollo.util.ExtensionFileFilter;
 import org.outerj.pollo.util.ResourceManager;
 
