@@ -61,6 +61,6 @@ public class PIView extends CharacterDataBlockView
 
     public int getFooter()
     {
-        return 2;
+        return 5;
     }
 }
