@@ -263,6 +263,7 @@ public class XmlEditorPanel extends JPanel implements DomConnected, Disposable
 	public void dispose()
 	{
 		queryByXPathPanel.dispose();
+		attrPanel.dispose();
 		remove(xmlEditor);
 	}
 }
