@@ -51,7 +51,7 @@
 					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
 					<init-param>
 						<param-name>source</param-name>
-						<param-value>classpath:/antschema.xml</param-value>
+						<param-value>classpath:/schema/antschema.xml</param-value>
 					</init-param>
 				</schema>
 			</schemas>
@@ -61,7 +61,7 @@
 					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
 					<init-param>
 						<param-name>source</param-name>
-						<param-value>classpath:/antspec.xml</param-value>
+						<param-value>classpath:/displayspec/antspec.xml</param-value>
 					</init-param>
 				</display-specification>
 				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
@@ -93,7 +93,7 @@
 					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
 					<init-param>
 						<param-name>source</param-name>
-						<param-value>classpath:/sitemapschema.xml</param-value>
+						<param-value>classpath:/schema/sitemapschema.xml</param-value>
 					</init-param>
 				</schema>
 			</schemas>
@@ -103,7 +103,7 @@
 					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
 					<init-param>
 						<param-name>source</param-name>
-						<param-value>classpath:/sitemapspec.xml</param-value>
+						<param-value>classpath:/displayspec/sitemapspec.xml</param-value>
 					</init-param>
 				</display-specification>
 				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
@@ -113,6 +113,9 @@
 			</display-specifications>
 
 			<attribute-editor-plugins>
+				<attribute-editor-plugin>
+					<factory-class>org.outerj.pollo.engine.cocoon.CocoonAttrEditorPluginFactory</factory-class>
+				</attribute-editor-plugin>
 				<attribute-editor-plugin>
 					<factory-class>org.outerj.pollo.xmleditor.plugin.DefaultAttributeEditorPluginFactory</factory-class>
 				</attribute-editor-plugin>
@@ -134,7 +137,7 @@
 					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
 					<init-param>
 						<param-name>source</param-name>
-						<param-value>classpath:/xmlschema_schema.xml</param-value>
+						<param-value>classpath:/schema/xmlschema_schema.xml</param-value>
 					</init-param>
 				</schema>
 			</schemas>
@@ -144,7 +147,7 @@
 					<factory-class>org.outerj.pollo.xmleditor.displayspec.BasicDisplaySpecFactory</factory-class>
 					<init-param>
 						<param-name>source</param-name>
-						<param-value>classpath:/xmlschema_spec.xml</param-value>
+						<param-value>classpath:/displayspec/xmlschema_spec.xml</param-value>
 					</init-param>
 				</display-specification>
 				<!-- note: the display specification chain should always end with a GenericDisplaySpecification -->
@@ -169,7 +172,7 @@
 					<factory-class>org.outerj.pollo.xmleditor.schema.BasicSchemaFactory</factory-class>
 					<init-param>
 						<param-name>source</param-name>
-						<param-value>classpath:/xslfo_schema.xml</param-value>
+						<param-value>classpath:/schema/xslfo_schema.xml</param-value>
 					</init-param>
 				</schema>
 			</schemas>
@@ -201,7 +204,7 @@
 			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
 			<init-param>
 				<param-name>source</param-name>
-				<param-value>classpath:/templates/build.xml</param-value>
+				<param-value>classpath:/template/build.xml</param-value>
 			</init-param>
 		</template>
 		<template>
@@ -209,7 +212,7 @@
 			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
 			<init-param>
 				<param-name>source</param-name>
-				<param-value>classpath:/templates/sitemap.xmap</param-value>
+				<param-value>classpath:/template/sitemap.xmap</param-value>
 			</init-param>
 		</template>
 		<template>
@@ -217,7 +220,7 @@
 			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
 			<init-param>
 				<param-name>source</param-name>
-				<param-value>classpath:/templates/schema.xsd</param-value>
+				<param-value>classpath:/template/schema.xsd</param-value>
 			</init-param>
 		</template>
 		<template>
@@ -225,7 +228,7 @@
 			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
 			<init-param>
 				<param-name>source</param-name>
-				<param-value>classpath:/templates/po.xsd</param-value>
+				<param-value>classpath:/template/po.xsd</param-value>
 			</init-param>
 		</template>
 		<template>
@@ -233,7 +236,7 @@
 			<factory-class>org.outerj.pollo.template.FileTemplateFactory</factory-class>
 			<init-param>
 				<param-name>source</param-name>
-				<param-value>classpath:/templates/template.fo</param-value>
+				<param-value>classpath:/template/template.fo</param-value>
 			</init-param>
 		</template>
 	</templates>
