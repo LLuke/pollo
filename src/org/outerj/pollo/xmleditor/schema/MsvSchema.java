@@ -246,7 +246,7 @@ public class MsvSchema implements ISchema
                     Iterator it = ((EnumerationFacet)exp.getType()).values.iterator();
                     while (it.hasNext())
                     {
-                        String value = (String)it.next();
+                        String value = it.next().toString();
                         elementSchema.subtexts.add(value);
                     }
                 }
@@ -275,7 +275,7 @@ public class MsvSchema implements ISchema
 
                 public void onValue(ValueExp exp)
                 {
-                    attrValues.add(exp.value);
+                    attrValues.add(exp.value.toString());
                 }
 
                 public void onData(DataExp exp)
@@ -285,7 +285,7 @@ public class MsvSchema implements ISchema
                         Iterator it = ((EnumerationFacet)exp.getType()).values.iterator();
                         while (it.hasNext())
                         {
-                            attrValues.add(it.next());
+                            attrValues.add(it.next().toString());
                         }
                     }
                 }
